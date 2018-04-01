@@ -4,7 +4,7 @@
 This package Export Google DocString to Markdown from Python module.
 
 The following files comprise the `docstring2md` package:
-* `LICENSE`: The license file. `config-from-json` is released under the terms of
+* `LICENSE`: The license file. `docstring2md` is released under the terms of
 the GNU General Public License (GPL), version 3.
 * `README.md`: This readme file.
 * `Makefile`: Generic management tasks.
