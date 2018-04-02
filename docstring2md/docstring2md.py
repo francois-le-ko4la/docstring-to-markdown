@@ -1,61 +1,5 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""
-# docstring2md
-## Description:
-
-This package Export Google DocString to Markdown from Python module.
-
-The following files comprise the `docstring2md` package:
-* `LICENSE`: The license file. `docstring2md` is released under the terms of
-the GNU General Public License (GPL), version 3.
-* `README.md`: This readme file.
-* `Makefile`: Generic management tasks.
-* `setup.py`: Package and distribution management.
-* `setup.cfg`: The setuptools setup file.
-
-The package contents itself are in the config_from_json directory:
-* `__ init __.py` Initialization file for the Python package.
-* `docstring2md/docstring2md.py`: The code of interest.
-
-## Setup:
-
-    git clone https://github.com/francois-le-ko4la/docstring2md.git
-    cd config-from-json
-    sudo make install
-
-## Test:
-
-This module has been tested and validated on Ubuntu.
-
-    sudo make test
-
-## How to use this Class:
-
-To be continued...
-
-## Todo:
-
-- [X] Create the project
-- [X] Write code and tests
-- [ ] Test installation and requirements (setup.py and/or Makefile)
-- [X] Test code
-- [ ] Validate features
-- [ ] Write Doc/stringdoc
-- [ ] Run PEP8 validation
-- [ ] Clean & last check
-- [ ] Release
-
-## Note:
-This script is free software; you can redistribute it and/or
-modify it under the terms of the GNU Lesser General Public
-License as published by the Free Software Foundation; either
-version 3 of the License, or (at your option) any later version.
-
-This script is provided in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-"""
 
 import os
 import sys
@@ -64,97 +8,208 @@ import inspect
 import importlib.util
 import getopt
 
+
 class DocString2MD(object):
 
     """
-    Class documentation
+    Class DocString2MD : export Google docstring to MD File.
     """
 
-    def __init__(self, module_name):
-        """
+    def __init__(self, module_name, export_file=None):
+        """Init the ConfigFromJson Class
+        This function define default attributs.
+
+        Args:
+            module_name (str): /path/to/the/module/
+
+        Attributes:
+            self.__module_name
+            self.__module
+            self.__module_spec
+            self.__output
+            self.__firstItem
+
+        Returns:
+            obj
+
         """
         sys.path.append(os.getcwd())
-        #print(os.getcwd())
         self.__module_name = module_name
         self.__module = None
         self.__module_spec = None
         self.__output = ""
         self.__firstItem = True
+        self.__exportfile = export_file
 
     def check_module(self):
         """
-        Checks if module can be imported without actually
-        importing it
+        Checks if module can be imported without actually importing it.
+        Updates self.__module_spec in order to import the module.
+
+        Args:
+            None
+
+        Retuns:
+            bool: The return value. True for success, False otherwise.
+
         """
         self.__module_spec = importlib.util.find_spec(self.__module_name)
         if self.__module_spec is None:
             print('Module: {} not found'.format(self.__module_name))
             return False
         else:
-            # print('Module: {} can be imported!'.format(self.__module_name))
             return True
 
-    def import_module_from_spec(self):
+    def import_module(self):
         """
         Import the module via the passed in module specification
-        Returns the newly imported module
+        Returns the newly imported module and updates attributes self.__module
+
+        Args:
+            None
+
+        Returns:
+            None
+
         """
         self.__module = importlib.util.module_from_spec(self.__module_spec)
         self.__module_spec.loader.exec_module(self.__module)
 
-    def getdoc(self, obj):
+    def extract_doc(self):
+        """
+        Extract docstring inside the module and updates self.__output:
+        - Header
+        - Class
+        - Functions
+
+        Args:
+            None
+
+        Returns:
+            None
+        """
+        self.__output += self.__getdoc(self.__module)
+        self.__extract_class(self.__module)
+        self.__extract_function(self.__module)
+
+    def get_doc(self):
+        """
+        Returns self.__output
+
+        Args:
+            None
+
+        Returns:
+            str: self.__output
+        """
+        if self.__exportfile is None:
+            return self.__output
+        else:
+            return self.__writedoc()
+
+    def __writedoc(self):
+        """
+        Writes the content in the file
+
+        args:
+            None
+
+        Returns:
+            bool: The return value. True for success, False otherwise.
+
+        """
+        try:
+            exportfile = open(self.__exportfile, "w")
+            try:
+                exportfile.write(self.__output)
+            finally:
+                exportfile.close()
+        except IOError:
+            print("Unable to create {0} on disk.".format(self.__exportfile))
+            return False
+
+        return True
+
+    def __getdoc(self, obj):
+        """
+        Call inspect.getdoc with obj parameter.
+        If docstring is not usable returns an empty string.
+
+        Args:
+            None
+
+        Returns:
+            str: docstring
+
+        """
         doc = inspect.getdoc(obj)
         if doc is None:
             return ""
         return doc
 
-    def extract_docstring(self):
+    def __create_doc(self, member, member_isclass=False, class_member=False):
         """
-        extract all
+        Updates self.__output according to args provided.
+
+        Args:
+            member (obj): inspect object
+            member_isclass (bool): False by default / if class -> True
+            class_member (bool): False by default / if def in class -> True
+
+        Returns:
+            None
+
         """
-        self.__output += self.getdoc(self.__module)
-        self.__output += "\n\n## Dev docstring\n"
-        self.__extract_class_docstring(self.__module)
-        self.__extract_function_docstring(self.__module)
-        # print(self.__output)
+        if self.__firstItem:
+            self.__firstItem = False
+            self.__output += "\n\n## Dev docstring\n"
 
-    def __generate_func_doc(self, func, class_member=False):
+        if member_isclass:
+            self.__output += "### Class {0}:\n{1}\n\n".format(member[0],
+                    self.__getdoc(member[1]))
+        else:
+            func_name = ""
+            if class_member:
+                func_name = "#"
 
-        func_name = ""
-        if class_member:
-            func_name = "#"
+            func_name += "### Function {0}{1}:".format(
+                                            (str(member[1]).split(" "))[1],
+                                            str(inspect.signature(member[1]))
+                                            )
+            func_doc = self.__getdoc(member[1])
 
-        func_name += "### Function {0}{1}:".format(
-            (str(func['full_name']).split(" "))[1], func['args'])
+            self.__output += "{0}\n\n```\n{1}\n```\n\n".format(func_name,
+                                                               func_doc
+                                                               )
 
-        return "{0}\n\n```\n{1}\n```\n\n".format(func_name, func['doc'])
-
-    def __generate_class_doc(self, clas):
-        self.__output += "### Class {0}:\n{1}\n\n".format(clas[0],
-                                                          self.getdoc(clas[1]))
-
-    def __extract_function_docstring(self, item, class_member=False):
+    def __extract_function(self, item, class_member=False):
         """
-        zjedaé azjd ajkzd
+        Inspects functions in a moddule.
+        Call self.__create_doc()
+
+        Args:
+            itms (obj): inspect obect
+            class_member (bool): False by default / if def in class -> True
+
+        Returns:
+            None
         """
-        for func in inspect.getmembers(item, inspect.isfunction):
-            self.__output += self.__generate_func_doc(
-                {'name': func[0],
-                 'args': str(inspect.signature(func[1])),
-                 'full_name': func[1],
-                 'doc': self.getdoc(func[1])
-                 },
-                class_member)
+        for member in inspect.getmembers(item, inspect.isfunction):
+            self.__create_doc(member, False, class_member)
 
-    def __extract_class_docstring(self, item):
-        for cl in inspect.getmembers(item, inspect.isclass):
-            if cl[0] != "__class__":
-                # self.__output += "\n\n**** class_header"
-                # self.__output += cl[0]
-                # self.__output += inspect.getdoc(cl[1])
-                self.__generate_class_doc(cl)
-                self.__extract_function_docstring(cl[1], class_member=True)
-                # self.__extract_class_docstring(cl[1])
+    def __extract_class(self, module):
+        """
+        Inspects classes in a module
+        Call self.__create_doc() & self.__extract_function()
 
-    def get(self):
-        return self.__output
+        Args:
+            module (obj): instpect object
+
+        Returns:
+            None
+
+        """
+        for member in inspect.getmembers(module, inspect.isclass):
+            if member[0] != "__class__":
+                self.__create_doc(member, member_isclass=True)
+                self.__extract_function(member[1], class_member=True)

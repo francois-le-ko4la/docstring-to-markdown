@@ -11,37 +11,44 @@ the GNU General Public License (GPL), version 3.
 * `setup.py`: Package and distribution management.
 * `setup.cfg`: The setuptools setup file.
 
-The package contents itself are in the config_from_json directory:
+The package contents itself are in the `docstring2md` directory:
 * `__ init __.py` Initialization file for the Python package.
 * `docstring2md/docstring2md.py`: The code of interest.
 
-## Setup:
+The script is in the `bin` directory:
+* `export_docstring2md.py`: The script to run
 
-    git clone https://github.com/francois-le-ko4la/docstring2md.git
-    cd config-from-json
-    sudo make install
+## Setup:
+````shell
+git clone https://github.com/francois-le-ko4la/docstring2md.git
+cd config-from-json
+make install
+````
 
 ## Test:
 
 This module has been tested and validated on Ubuntu.
+````shell
+make test
+````
 
-    sudo make test
-
-## How to use this Class:
-
-To be continued...
+## Use:
+Use the script:
+```shell
+export_docstring2md.py -i <inputmodule> [-o <outputfile>]`
+```
 
 ## Todo:
 
-    - [X] Create the project
-    - [X] Write code and tests
-    - [ ] Test installation and requirements (setup.py and/or Makefile)
-    - [X] Test code
-    - [ ] Validate features
-    - [ ] Write Doc/stringdoc
-    - [ ] Run PEP8 validation
-    - [ ] Clean & last check
-    - [ ] Release
+- [X] Create the project
+- [X] Write code and tests
+- [X] Test installation and requirements (setup.py and/or Makefile)
+- [X] Test code
+- [ ] Validate features
+- [ ] Write Doc/stringdoc
+- [ ] Run PEP8 validation
+- [ ] Clean & last check
+- [ ] Release
 
 ## Note:
 This script is free software; you can redistribute it and/or
@@ -55,68 +62,144 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 ## Dev docstring
 ### Class DocString2MD:
-Class documentation
+Class DocString2MD : export Google docstring to MD File.
 
-#### Function DocString2MD.__extract_class_docstring(self, item):
-
-```
-None
-```
-
-#### Function DocString2MD.__extract_function_docstring(self, item, class_member=False):
+#### Function DocString2MD.__create_doc(self, member, member_isclass=False, class_member=False):
 
 ```
-zjedaé azjd ajkzd
+Updates self.__output according to args provided.
+
+Args:
+    member (obj): inspect object
+    member_isclass (bool): False by default / if class -> True
+    class_member (bool): False by default / if def in class -> True
+
+Returns:
+    None
 ```
 
-#### Function DocString2MD.__generate_class_doc(self, clas):
+#### Function DocString2MD.__extract_class(self, module):
 
 ```
-None
+Inspects classes in a module
+Call self.__create_doc() & self.__extract_function()
+
+Args:
+    module (obj): instpect object
+
+Returns:
+    None
 ```
 
-#### Function DocString2MD.__generate_func_doc(self, func, class_member=False):
+#### Function DocString2MD.__extract_function(self, item, class_member=False):
 
 ```
-None
+Inspects functions in a moddule.
+Call self.__create_doc()
+
+Args:
+    itms (obj): inspect obect
+    class_member (bool): False by default / if def in class -> True
+
+Returns:
+    None
 ```
 
-#### Function DocString2MD.__init__(self, module_name):
+#### Function DocString2MD.__getdoc(self, obj):
 
 ```
-        
+Call inspect.getdoc with obj parameter.
+If docstring is not usable returns an empty string.
+
+Args:
+    None
+
+Returns:
+    str: docstring
+```
+
+#### Function DocString2MD.__writedoc(self):
+
+```
+Writes the content in the file
+
+args:
+    None
+
+Returns:
+    bool: The return value. True for success, False otherwise.
+```
+
+#### Function DocString2MD.__init__(self, module_name, export_file=None):
+
+```
+Init the ConfigFromJson Class
+This function define default attributs.
+
+Args:
+    module_name (str): /path/to/the/module/
+
+Attributes:
+    self.__module_name
+    self.__module
+    self.__module_spec
+    self.__output
+    self.__firstItem
+
+Returns:
+    obj
 ```
 
 #### Function DocString2MD.check_module(self):
 
 ```
-Checks if module can be imported without actually
-importing it
+Checks if module can be imported without actually importing it.
+Updates self.__module_spec in order to import the module.
+
+Args:
+    None
+
+Retuns:
+    bool: The return value. True for success, False otherwise.
 ```
 
-#### Function DocString2MD.extract_docstring(self):
+#### Function DocString2MD.extract_doc(self):
 
 ```
-extract all
+Extract docstring inside the module and updates self.__output:
+- Header
+- Class
+- Functions
+
+Args:
+    None
+
+Returns:
+    None
 ```
 
-#### Function DocString2MD.get(self):
+#### Function DocString2MD.get_doc(self):
 
 ```
-None
+Returns self.__output
+
+Args:
+    None
+
+Returns:
+    str: self.__output
 ```
 
-#### Function DocString2MD.import_module_from_spec(self):
+#### Function DocString2MD.import_module(self):
 
 ```
 Import the module via the passed in module specification
-Returns the newly imported module
-```
+Returns the newly imported module and updates attributes self.__module
 
-### Function main(argv):
+Args:
+    None
 
+Returns:
+    None
 ```
-None
-```
-
 
