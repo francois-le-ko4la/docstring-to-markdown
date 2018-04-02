@@ -36,15 +36,15 @@ To be continued...
 
 ## Todo:
 
-    - [X] Create the project
-    - [X] Write code and tests
-    - [ ] Test installation and requirements (setup.py and/or Makefile)
-    - [X] Test code
-    - [ ] Validate features
-    - [ ] Write Doc/stringdoc
-    - [ ] Run PEP8 validation
-    - [ ] Clean & last check
-    - [ ] Release
+- [X] Create the project
+- [X] Write code and tests
+- [ ] Test installation and requirements (setup.py and/or Makefile)
+- [X] Test code
+- [ ] Validate features
+- [ ] Write Doc/stringdoc
+- [ ] Run PEP8 validation
+- [ ] Clean & last check
+- [ ] Release
 
 ## Note:
 This script is free software; you can redistribute it and/or
@@ -102,14 +102,19 @@ class DocString2MD(object):
         self.__module = importlib.util.module_from_spec(self.__module_spec)
         self.__module_spec.loader.exec_module(self.__module)
 
+    def getdoc(self, obj):
+        doc = inspect.getdoc(obj)
+        if doc is None:
+            return ""
+        return doc
+
     def extract_docstring(self):
         """
         extract all
         """
-        self.__output = inspect.getdoc(self.__module)
+        self.__output += self.getdoc(self.__module)
         self.__output += "\n\n## Dev docstring\n"
         self.__extract_class_docstring(self.__module)
-
         self.__extract_function_docstring(self.__module)
         # print(self.__output)
 
@@ -126,7 +131,7 @@ class DocString2MD(object):
 
     def __generate_class_doc(self, clas):
         self.__output += "### Class {0}:\n{1}\n\n".format(clas[0],
-                                                          inspect.getdoc(clas[1]))
+                                                          self.getdoc(clas[1]))
 
     def __extract_function_docstring(self, item, class_member=False):
         """
@@ -137,7 +142,7 @@ class DocString2MD(object):
                 {'name': func[0],
                  'args': str(inspect.signature(func[1])),
                  'full_name': func[1],
-                 'doc': inspect.getdoc(func[1])
+                 'doc': self.getdoc(func[1])
                  },
                 class_member)
 
@@ -153,33 +158,3 @@ class DocString2MD(object):
 
     def get(self):
         return self.__output
-
-
-def main(argv):
-    inputmodule = None
-    outputfile = None
-    try:
-        opts, args = getopt.getopt(argv,"hi:o:",["imodule=","ofile="])
-    except getopt.GetoptError:
-        print('./docstring2md.py -i <inputmodule> -o <outputfile>')
-        sys.exit(2)
-    for opt, arg in opts:
-        if opt == '-h':
-            print('./docstring2md.py -i <inputmodule> -o <outputfile>')
-            sys.exit()
-        elif opt in ("-i", "--imodule"):
-            inputmodule = arg
-        elif opt in ("-o", "--ofile"):
-            outputfile = arg
-    if inputmodule is None or outputfile is None:
-        print('./docstring2md.py -i <inputmodule> -o <outputfile>')
-
-    module = DocString2MD(inputmodule)
-    if module.check_module():
-        module.import_module_from_spec()
-        module.extract_docstring()
-        print(module.get())
-
-
-if __name__ == '__main__':
-    main(sys.argv[1:])

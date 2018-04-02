@@ -51,5 +51,6 @@ setup(
     setup_requires=['pytest-runner'],
     tests_require=['pytest'],
     test_suite="tests.test_docstring2md",
+    scripts=['bin/export_docstring2md.py'],
     zip_safe=False
     )
