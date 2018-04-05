@@ -2,7 +2,12 @@
 __pycache__/
 *.py[cod]
 *$py.class
+
+#Pytest
 .pytest_cache/
+
+#JPEG
+*.jpg
 
 # C extensions
 *.so

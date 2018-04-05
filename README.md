@@ -44,7 +44,7 @@ export_docstring2md.py -i <inputmodule> [-o <outputfile>]`
 - [X] Write code and tests
 - [X] Test installation and requirements (setup.py and/or Makefile)
 - [X] Test code
-- [ ] Validate features
+- [X] Validate features
 - [ ] Write Doc/stringdoc
 - [ ] Run PEP8 validation
 - [ ] Clean & last check
@@ -61,145 +61,169 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 ## Dev docstring
-### Class DocString2MD:
-Class DocString2MD : export Google docstring to MD File.
+### DocString2MD
 
-#### Function DocString2MD.__create_doc(self, member, member_isclass=False, class_member=False):
+````python
+class DocString2MD:
+````
 
-```
-Updates self.__output according to args provided.
+><br />
+> Class DocString2MD : export Google docstring to MD File. <br />
+> <br />
 
-Args:
-    member (obj): inspect object
-    member_isclass (bool): False by default / if class -> True
-    class_member (bool): False by default / if def in class -> True
-
-Returns:
-    None
-```
-
-#### Function DocString2MD.__extract_class(self, module):
-
-```
-Inspects classes in a module
-Call self.__create_doc() & self.__extract_function()
-
-Args:
-    module (obj): instpect object
-
-Returns:
-    None
-```
-
-#### Function DocString2MD.__extract_function(self, item, class_member=False):
-
-```
-Inspects functions in a moddule.
-Call self.__create_doc()
-
-Args:
-    itms (obj): inspect obect
-    class_member (bool): False by default / if def in class -> True
-
-Returns:
-    None
-```
-
-#### Function DocString2MD.__getdoc(self, obj):
-
-```
-Call inspect.getdoc with obj parameter.
-If docstring is not usable returns an empty string.
-
-Args:
-    None
-
-Returns:
-    str: docstring
-```
-
-#### Function DocString2MD.__writedoc(self):
-
-```
-Writes the content in the file
-
-args:
-    None
-
-Returns:
-    bool: The return value. True for success, False otherwise.
-```
-
-#### Function DocString2MD.__init__(self, module_name, export_file=None):
-
-```
-Init the ConfigFromJson Class
-This function define default attributs.
-
-Args:
-    module_name (str): /path/to/the/module/
-
-Attributes:
-    self.__module_name
-    self.__module
-    self.__module_spec
-    self.__output
-    self.__firstItem
-
-Returns:
-    obj
-```
-
-#### Function DocString2MD.check_module(self):
-
-```
-Checks if module can be imported without actually importing it.
-Updates self.__module_spec in order to import the module.
-
-Args:
-    None
-
-Retuns:
-    bool: The return value. True for success, False otherwise.
-```
-
-#### Function DocString2MD.extract_doc(self):
-
-```
-Extract docstring inside the module and updates self.__output:
-- Header
-- Class
-- Functions
-
-Args:
-    None
-
-Returns:
-    None
-```
-
-#### Function DocString2MD.get_doc(self):
-
-```
-Returns self.__output
-
-Args:
-    None
-
-Returns:
-    str: self.__output
-```
-
-#### Function DocString2MD.import_module(self):
-
-```
-Import the module via the passed in module specification
-Returns the newly imported module and updates attributes self.__module
-
-Args:
-    None
-
-Returns:
-    None
-```
-
+#### DocString2MD.__create_doc
+````python
+def DocString2MD.__create_doc(self, member, member_isclass=False, class_member=False):
+````
+><br />
+> Updates self.__output according to args provided. <br />
+>  <br />
+> <b> Args: </b> <br />
+>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;   member (obj): inspect object <br />
+>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;   member_isclass (bool): False by default / if class -> True <br />
+>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;   class_member (bool): False by default / if def in class -> True <br />
+>  <br />
+> <b> Returns: </b> <br />
+>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;   None <br />
+> <br />
+#### DocString2MD.__extract_class
+````python
+def DocString2MD.__extract_class(self, module):
+````
+><br />
+> Inspects classes in a module <br />
+> Call self.__create_doc() & self.__extract_function() <br />
+>  <br />
+> <b> Args: </b> <br />
+>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;   module (obj): instpect object <br />
+>  <br />
+> <b> Returns: </b> <br />
+>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;   None <br />
+> <br />
+#### DocString2MD.__extract_function
+````python
+def DocString2MD.__extract_function(self, item, class_member=False):
+````
+><br />
+> Inspects functions in a moddule. <br />
+> Call self.__create_doc() <br />
+>  <br />
+> <b> Args: </b> <br />
+>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;   item (obj): inspect obect <br />
+>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;   class_member (bool): False by default / if def in class -> True <br />
+>  <br />
+> <b> Returns: </b> <br />
+>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;   None <br />
+> <br />
+#### DocString2MD.__format_docstring
+````python
+def DocString2MD.__format_docstring(self, docstring):
+````
+><br />
+>  <br />
+> <br />
+#### DocString2MD.__getdoc
+````python
+def DocString2MD.__getdoc(self, obj):
+````
+><br />
+> Call inspect.getdoc with obj parameter. <br />
+> If docstring is not usable returns an empty string. <br />
+>  <br />
+> <b> Args: </b> <br />
+>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;   None <br />
+>  <br />
+> <b> Returns: </b> <br />
+>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;   str: docstring <br />
+> <br />
+#### DocString2MD.__writedoc
+````python
+def DocString2MD.__writedoc(self):
+````
+><br />
+> Writes the content in the file <br />
+>  <br />
+> <b> args: </b> <br />
+>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;   None <br />
+>  <br />
+> <b> Returns: </b> <br />
+>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;   bool: The return value. True for success, False otherwise. <br />
+> <br />
+#### DocString2MD.__init__
+````python
+def DocString2MD.__init__(self, module_name, export_file=None):
+````
+><br />
+> Init the ConfigFromJson Class <br />
+> This function define default attributs. <br />
+>  <br />
+> <b> Args: </b> <br />
+>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;   module_name (str): /path/to/the/module/ <br />
+>  <br />
+> <b> Attributes: </b> <br />
+>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;   self.__module_name <br />
+>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;   self.__module <br />
+>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;   self.__module_spec <br />
+>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;   self.__output <br />
+>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;   self.__firstItem <br />
+>  <br />
+> <b> Returns: </b> <br />
+>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;   obj <br />
+> <br />
+#### DocString2MD.check_module
+````python
+def DocString2MD.check_module(self):
+````
+><br />
+> Checks if module can be imported without actually importing it. <br />
+> Updates self.__module_spec in order to import the module. <br />
+>  <br />
+> <b> Args: </b> <br />
+>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;   None <br />
+>  <br />
+> <b> Retuns: </b> <br />
+>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;   bool: The return value. True for success, False otherwise. <br />
+> <br />
+#### DocString2MD.extract_doc
+````python
+def DocString2MD.extract_doc(self):
+````
+><br />
+> <b> Extract docstring inside the module and updates self.__output: </b> <br />
+> - Header <br />
+> - Class <br />
+> - Functions <br />
+>  <br />
+> <b> Args: </b> <br />
+>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;   None <br />
+>  <br />
+> <b> Returns: </b> <br />
+>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;   None <br />
+> <br />
+#### DocString2MD.get_doc
+````python
+def DocString2MD.get_doc(self):
+````
+><br />
+> Returns self.__output <br />
+>  <br />
+> <b> Args: </b> <br />
+>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;   None <br />
+>  <br />
+> <b> Returns: </b> <br />
+>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;   str: self.__output <br />
+> <br />
+#### DocString2MD.import_module
+````python
+def DocString2MD.import_module(self):
+````
+><br />
+> Import the module via the passed in module specification <br />
+> Returns the newly imported module and updates attributes self.__module <br />
+>  <br />
+> <b> Args: </b> <br />
+>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;   None <br />
+>  <br />
+> <b> Returns: </b> <br />
+>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;   None <br />
+> <br />

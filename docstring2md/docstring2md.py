@@ -7,7 +7,7 @@ import string
 import inspect
 import importlib.util
 import getopt
-
+import re
 
 class DocString2MD(object):
 
@@ -147,6 +147,15 @@ class DocString2MD(object):
             return ""
         return doc
 
+    def __format_docstring(self, docstring):
+
+        docstring = re.sub('^(.*):$',r'<b> \1: </b>',docstring,flags=re.MULTILINE)
+        docstring = re.sub('^(.*)$',r'> \1 <br />',docstring,flags=re.MULTILINE)
+        docstring = docstring.replace('    ','&nbsp;' * 15 + '  ')
+        docstring = "><br />\n{0}\n> <br />".format(docstring)
+
+        return docstring
+
     def __create_doc(self, member, member_isclass=False, class_member=False):
         """
         Updates self.__output according to args provided.
@@ -165,20 +174,20 @@ class DocString2MD(object):
             self.__output += "\n\n## Dev docstring\n"
 
         if member_isclass:
-            self.__output += "### Class {0}:\n{1}\n\n".format(member[0],
-                    self.__getdoc(member[1]))
+            self.__output += "### {0}\n\n````python\nclass {0}:\n````\n\n{1}\n\n".format(member[0],
+                    self.__format_docstring(self.__getdoc(member[1])))
         else:
             func_name = ""
             if class_member:
                 func_name = "#"
 
-            func_name += "### Function {0}{1}:".format(
+            func_name += "### {0}\n````python\ndef {0}{1}:\n````".format(
                                             (str(member[1]).split(" "))[1],
                                             str(inspect.signature(member[1]))
                                             )
-            func_doc = self.__getdoc(member[1])
+            func_doc = self.__format_docstring(self.__getdoc(member[1]))
 
-            self.__output += "{0}\n\n```\n{1}\n```\n\n".format(func_name,
+            self.__output += "{0}\n{1}\n".format(func_name,
                                                                func_doc
                                                                )
 
@@ -188,7 +197,7 @@ class DocString2MD(object):
         Call self.__create_doc()
 
         Args:
-            itms (obj): inspect obect
+            item (obj): inspect obect
             class_member (bool): False by default / if def in class -> True
 
         Returns:

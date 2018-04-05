@@ -47,7 +47,7 @@ export_docstring2md.py -i <inputmodule> [-o <outputfile>]`
 - [X] Write code and tests
 - [X] Test installation and requirements (setup.py and/or Makefile)
 - [X] Test code
-- [ ] Validate features
+- [X] Validate features
 - [ ] Write Doc/stringdoc
 - [ ] Run PEP8 validation
 - [ ] Clean & last check
