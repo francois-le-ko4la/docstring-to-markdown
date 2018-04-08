@@ -36,12 +36,10 @@ def main(argv):
             sys.path.append(module_pathsplit[0])
 
         module = DocString2MD(module_pathsplit[1].replace('.py',''), outputfile)
-        if module.check_module():
-            module.import_module()
-            module.extract_doc()
-            doc=module.get_doc()
-            if outputfile is None:
-                print(doc)
+        module.import_module()
+        doc=module.get_doc()
+        if outputfile is None:
+            print(doc)
     else:
         print("File not found !")
         exit(1)
