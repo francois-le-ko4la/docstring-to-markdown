@@ -66,4 +66,4 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 __version__ = '0.1_dev'
 
-from .docstring2md import DocString2MD
+from .docstring2md import *

@@ -18,38 +18,250 @@ from functools import wraps
 import re
 
 
-class DocString2MD(object):
-
+class ConvertMD(object):
     """
-    Class DocString2MD : export Google docstring to MD File.
+    Prepare MD string
     """
 
-    def __init__(self, module_name, export_file=None):
-        """Init the class
-        This function define default attributs.
+    def replace_string(old_string, new_string):
+        """
+        Decorator - search & replace a string by another string
+        Example : replace space by a HTML tag.
 
         Args:
-            module_name (str): /path/to/the/module/
-            export_file (str): /path/to/the/doc/file - None by default
-
-        Attributes:
-            self.__module_name
-            self.__module
-            self.__module_spec
-            self.__output
-            self.__first_member
+            old_string (str): string to search
+            new_string (str): new string
 
         Returns:
-            obj
+            decorated function
 
+        """
+        def tags_decorator(func):
+            """ decorator """
+            @wraps(func)
+            def func_wrapper(*args, **kwargs):
+                """ wrapper """
+                return (func(*args, **kwargs)).replace(old_string, new_string)
+            return func_wrapper
+        return tags_decorator
+
+    def replace_beginning_and_end(begin_regexp, end_regexp,
+                                  begin_tag, end_tag):
+        """
+        Decorator - replace the beggining and the end
+
+        Example:
+            All new lines must be provided with a specific tag
+            > 'Line' <br />
+
+        Args:
+            begin_regexp (str)
+            end_regexp (str)
+            begin_tag (str)
+            end_tag (str)
+
+        Returns:
+            decorated function
+        """
+        def tags_decorator(func):
+            """ decorator """
+            @wraps(func)
+            def func_wrapper(*args, **kwargs):
+                """ wrapper """
+                return re.sub(
+                    begin_regexp + '(.*)' + end_regexp,
+                    begin_tag + r'\1' + end_tag,
+                    func(*args, **kwargs),
+                    flags=re.MULTILINE
+                )
+            return func_wrapper
+        return tags_decorator
+
+    def md_tag(begin_tag, end_tag):
+        """
+        Decorator - add a tag
+
+        Example:
+            ('__', '__') => __ TXT __
+
+        Args:
+            begin_tag (str)
+            end_tag (str)
+
+        Returns:
+            decorated function
+        """
+        def tags_decorator(func):
+            """ decorator """
+            @wraps(func)
+            def func_wrapper(self, *args):
+                """ wrapper """
+                return "{0}{1}{2}".format(
+                    begin_tag, func(self, *args), end_tag)
+            return func_wrapper
+        return tags_decorator
+
+
+class TitleObj(object):
+    """
+    String to store and prepare MD title
+    This object will become an attribute.
+    """
+
+    def __init__(self, value, level):
+        """
+        Init => store the sting in value and level (H1/H2/H3/...)
+        """
+        self.value = value
+        self.level = level
+
+    def __repr__(self):
+        """
+        Provide the MD string according to the level
+        """
+        return "{} {}".format("#" * (self.level + 2),  self.value)
+
+    def __str__(self):
+        return repr(self)
+
+
+class PythonDefinitionObj(object):
+    """
+    String so store and prepare the object definition:
+    Example : def function_name(*args)
+    This object will become an attribute.
+    """
+
+    def __init__(self, value):
+        self.value = value
+
+    @ConvertMD.md_tag("\n````python\n", "\n````\n\n")
+    def __repr__(self):
+        """
+        Provide the definition string with MD tags.
+        """
+        return self.value
+
+    def __str__(self):
+        """
+        Call repr
+        """
+        return repr(self)
+
+
+class DocStringObj(object):
+    """
+    String to store and prepare the docstring.
+    This object will become an attribute.
+    """
+
+    def __init__(self, value):
+        """
+        Store the docstring
+        """
+        self.value = value
+
+    @ConvertMD.replace_beginning_and_end('^', '$', '> ', '<br />')
+    @ConvertMD.replace_beginning_and_end('^', ':$', '<b>', ':</b>')
+    @ConvertMD.replace_string('    ', '&nbsp;' * 15 + '  ')
+    @ConvertMD.md_tag("\n", "\n")
+    def __repr__(self):
+        """
+        Provide the new docstring with MD tags.
+        """
+        return self.value
+
+    def __str__(self):
+        """
+        Call repr
+        """
+        return repr(self)
+
+
+class MembersObj(object):
+    """
+    Dict() to store a python object's members.
+    This object will become an attribute.
+    """
+
+    def __init__(self):
+        self.__members = dict()
+
+    def __repr__(self):
+        return str(self.__members)
+
+    def __str__(self):
+        return repr(self)
+
+    def __setitem__(self, index, value):
+        self.__members[index] = value
+
+    def __getitem__(self, index):
+        return self.__members[index]
+
+    def __len__(self):
+        return len(self.__members)
+
+    def sortkeys(self):
+        return sorted(self.__members)
+
+    def items(self):
+        return self.__members
+
+
+class PythonObj(object):
+    """
+    Class in order to register object informations
+    __str__ is used to export with MD format.
+    """
+    def __init__(self, name, full_name, docstring, level):
+        self.__title = TitleObj(name, level)
+        self.__definition = PythonDefinitionObj(full_name)
+        self.__docstring = DocStringObj(docstring)
+        self.members = MembersObj()
+
+    def __repr__(self):
+        return "\n\n{}\n{}\n{}".format(self.__title, self.__definition, self.__docstring)
+
+    def __str__(self):
+        return repr(self)
+
+
+class ModuleObj(PythonObj):
+    """
+    Class in order to register module informations
+    __str__ is used to export with MD format.
+    """
+    def __init__(self, name, full_name, docstring, level=0):
+        PythonObj.__init__(self, name, full_name, docstring, level)
+        self.__module_docstring = docstring
+
+    def __repr__(self):
+        return "{}\n## Dev docstring\n".format(self.__module_docstring)
+
+    def getallstr(self, member=None):
+        if member is None:
+            member = self
+        output = str(member)
+        for idmember in member.members.sortkeys():
+            output += self.getallstr(member.members[idmember])
+        return output
+
+
+class ExtractPythonModule(object):
+    """
+    Object in order to extract Python functions, classes....
+    """
+
+    def __init__(self, module_name):
+        """
+        Init
         """
         sys.path.append(os.getcwd())
         self.__module_name = module_name
         self.__module = None
         self.__module_spec = None
-        self.__output = ""
-        self.__first_member = True
-        self.__exportfile = export_file
+        self.module = None
 
     def __check_module(func):
         """
@@ -100,6 +312,87 @@ class DocString2MD(object):
             return False
         return True
 
+    def extract(self):
+        """
+        Defines module object and extracts all members.
+
+        Args:
+            None
+
+        Returns:
+            None
+        """
+
+        self.module = ModuleObj(
+            self.__module_name, self.__module_name, inspect.getdoc(self.__module))
+        self.__extract(self.module, self.__module)
+
+    def __extract(self, my_pythonobj, inspectmembers, level=0):
+        """
+        Inspects classes & functions in a moddule.
+        Store information in a PythonObj object.
+
+        Args:
+            inspectmembers (obj): inspect obect
+            my_pythonobj (PythonObj): object to define a Python member
+
+        Returns:
+            None
+        """
+        if level >= 2:
+            return
+
+        level += 1
+
+        for member in inspect.getmembers(inspectmembers):
+            if inspect.isclass(member[1]) and member[0] != "__class__":
+                name = "{0}()".format(str(member[0]))
+                full_name = "class {0}:".format(name)
+                docstring = inspect.getdoc(member[1])
+                new_pythonobj = PythonObj(name, full_name, docstring, level)
+                my_pythonobj.members[name] = new_pythonobj
+                self.__extract(new_pythonobj, member[1], level)
+            if inspect.isfunction(member[1]):
+                name = "{0}{1}".format((str(member[1]).split(" "))[1],
+                                       str(inspect.signature(member[1])))
+                full_name = "def {0}:".format(name)
+                docstring = inspect.getdoc(member[1])
+                new_pythonobj = PythonObj(name, full_name, docstring, level)
+                my_pythonobj.members[name] = new_pythonobj
+
+
+class DocString2MD(object):
+
+    """
+    Class DocString2MD : export Google docstring to MD File.
+    """
+
+    def __init__(self, module_name, export_file=None):
+        """Init the class
+        This function define default attributs.
+
+        Args:
+            module_name (str): /path/to/the/module/
+            export_file (str): /path/to/the/doc/file - None by default
+
+        Attributes:
+            self.__export_file (str): /path/to/the/doc/file - None by default
+            self.__my_module
+            self.__output
+
+        Returns:
+            obj
+
+        """
+        self.__export_file = export_file
+        self.__my_module = ExtractPythonModule(module_name)
+        self.__output = ""
+
+    def import_module(self):
+        if self.__my_module.import_module():
+            self.__my_module.extract()
+            self.__output = self.__my_module.module.getallstr()
+
     def get_doc(self):
         """
 
@@ -113,9 +406,7 @@ class DocString2MD(object):
             str: self.__output
         """
 
-        self.__extract(self.__module)
-
-        if self.__exportfile is None:
+        if self.__export_file is None:
             return self.__output
         else:
             return self.__writedoc()
@@ -132,213 +423,15 @@ class DocString2MD(object):
 
         """
         try:
-            exportfile = open(self.__exportfile, "w")
+            export_file = open(self.__export_file, "w")
             try:
-                exportfile.write(self.__output)
+                export_file.write(self.__output)
             finally:
-                exportfile.close()
+                export_file.close()
         except IOError:
-            print("Unable to create {0} on disk.".format(self.__exportfile))
+            print("Unable to create {0} on disk.".format(self.__export_file))
             return False
 
         return True
 
-    def __replace_string(old_string, new_string):
-        """
-        Decorator - search & replace a string by another string
-        Example : replace space by a HTML tag.
-
-        Args:
-            old_string (str): string to search
-            new_string (str): new string
-
-        Returns:
-            decorated function
-
-        """
-        def tags_decorator(func):
-            """ decorator """
-            @wraps(func)
-            def func_wrapper(*args, **kwargs):
-                """ wrapper """
-                return (func(*args, **kwargs)).replace(old_string, new_string)
-            return func_wrapper
-        return tags_decorator
-
-    def __replace_beginning_and_end(begin_regexp, end_regexp,
-                                    begin_tag, end_tag):
-        """
-        Decorator - replace the beggining and the end
-
-        Example:
-            All new lines must be provided with a specific tag
-            > 'Line' <br />
-
-        Args:
-            begin_regexp (str)
-            end_regexp (str)
-            begin_tag (str)
-            end_tag (str)
-
-        Returns:
-            decorated function
-        """
-        def tags_decorator(func):
-            """ decorator """
-            @wraps(func)
-            def func_wrapper(*args, **kwargs):
-                """ wrapper """
-                return re.sub(
-                    begin_regexp+'(.*)'+end_regexp,
-                    begin_tag + r'\1' + end_tag,
-                    func(*args, **kwargs),
-                    flags=re.MULTILINE
-                    )
-            return func_wrapper
-        return tags_decorator
-
-    def __md_tag(begin_tag, end_tag):
-        """
-        Decorator - add a tag
-
-        Example:
-            ('__', '__') => __ TXT __
-
-        Args:
-            begin_tag (str)
-            end_tag (str)
-
-        Returns:
-            decorated function
-        """
-        def tags_decorator(func):
-            """ decorator """
-            @wraps(func)
-            def func_wrapper(*args, **kwargs):
-                """ wrapper """
-                return "{0}{1}{2}".format(
-                    begin_tag, func(*args, **kwargs), end_tag)
-            return func_wrapper
-        return tags_decorator
-
-    @__replace_beginning_and_end('^', '$', '> ', '<br />')
-    @__replace_beginning_and_end('^', ':$', '<b>', ':</b>')
-    @__replace_string('    ', '&nbsp;' * 15 + '  ')
-    @__md_tag("\n", "\n")
-    def __getdoc(self, member):
-        """
-        Use inspect.getdoc
-        If docstring is not usable returns an empty string.
-        This function is decorated to provide MD tags.
-
-        Args:
-            member: inspect object
-
-        Returns:
-            str: docstring
-
-        """
-        doc = inspect.getdoc(member[1])
-        if doc is None:
-            return ""
-        return doc
-
-    def __get_member_name(self, member):
-        """
-        Provide the member name
-
-        Example:
-            function -> name(args)
-            classe -> name()
-
-        Args:
-            member: inspect object
-
-        Returns:
-            str
-        """
-        if inspect.isclass(member[1]):
-            return "{0}()".format(str(member[0]))
-        else:
-            return "{0}{1}".format((str(member[1]).split(" "))[1],
-                                   str(inspect.signature(member[1])))
-
-    @__md_tag("\n\n", "\n")
-    def __get_member_title(self, member, level):
-        """
-        Provide the member title with MD TAG
-        """
-        return "#"*(level+2) + " " + self.__get_member_name(member)
-
-    @__md_tag("def ", ":")
-    def __get_function_def(self, member):
-        """
-        Provide the full function def.
-        Example:
-            'def name(args):'
-        """
-        return self.__get_member_name(member)
-
-    @__md_tag("class ", ":")
-    def __get_class_def(self, member):
-        """
-        Provide the full class def.
-        Example:
-            'class name():'
-        """
-        return self.__get_member_name(member)
-
-    @__md_tag("\n````python\n", "\n````\n\n")
-    def __get_member_def(self, member):
-        """
-        Provide the member def and add MD tag.
-        """
-        if inspect.isclass(member[1]):
-            return self.__get_class_def(member)
-        else:
-            return self.__get_function_def(member)
-
-    def __create_doc(self, member, level):
-        """
-        Updates self.__output according to args provided.
-
-        Args:
-            member (obj): inspect object
-            member_isclass (bool): False by default / if class -> True
-            class_member (bool): False by default / if def in class -> True
-
-        Returns:
-            None
-
-        """
-        if self.__first_member:
-            self.__first_member = False
-            self.__output += inspect.getdoc(self.__module)
-            self.__output += "\n\n## Dev docstring\n"
-
-        self.__output += self.__get_member_title(member, level)
-        self.__output += self.__get_member_def(member)
-        self.__output += self.__getdoc(member)
-
-    def __extract(self, item, level=0):
-        """
-        Inspects functions in a moddule.
-        Call self.__create_doc()
-
-        Args:
-            item (obj): inspect obect
-            class_member (bool): False by default / if def in class -> True
-
-        Returns:
-            None
-        """
-        if level >= 2:
-            return
-
-        level += 1
-        for member in inspect.getmembers(item):
-            if inspect.isclass(member[1]) and member[0] != "__class__":
-                self.__create_doc(member, level)
-                self.__extract(member[1], level)
-            if inspect.isfunction(member[1]):
-                self.__create_doc(member, level)
+"""test = DocString2MD("docstring2md")"""

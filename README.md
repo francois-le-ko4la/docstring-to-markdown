@@ -59,160 +59,26 @@ version 3 of the License, or (at your option) any later version.
 This script is provided in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-
 ## Dev docstring
 
 
-### DocString2MD()
+### ConvertMD()
 
 ````python
-class DocString2MD():
+class ConvertMD():
 ````
 
+
 > <br />
-> Class DocString2MD : export Google docstring to MD File.<br />
+> Prepare MD string<br />
 > <br />
 
-#### DocString2MD.__check_module(func)
+#### ConvertMD.md_tag(begin_tag, end_tag)
 
 ````python
-def DocString2MD.__check_module(func):
+def ConvertMD.md_tag(begin_tag, end_tag):
 ````
 
-> <br />
-> Decorator - Checks if module can be imported.<br />
-> Updates self.__module_spec in order to import the module.<br />
-> <br />
-> <b>Args:</b><br />
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  None<br />
-> <br />
-> <b>Retuns:</b><br />
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  bool: The return value. True for success, False otherwise.<br />
-> <br />
-
-#### DocString2MD.__create_doc(self, member, level)
-
-````python
-def DocString2MD.__create_doc(self, member, level):
-````
-
-> <br />
-> Updates self.__output according to args provided.<br />
-> <br />
-> <b>Args:</b><br />
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  member (obj): inspect object<br />
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  member_isclass (bool): False by default / if class -> True<br />
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  class_member (bool): False by default / if def in class -> True<br />
-> <br />
-> <b>Returns:</b><br />
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  None<br />
-> <br />
-
-#### DocString2MD.__extract(self, item, level=0)
-
-````python
-def DocString2MD.__extract(self, item, level=0):
-````
-
-> <br />
-> Inspects functions in a moddule.<br />
-> Call self.__create_doc()<br />
-> <br />
-> <b>Args:</b><br />
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  item (obj): inspect obect<br />
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  class_member (bool): False by default / if def in class -> True<br />
-> <br />
-> <b>Returns:</b><br />
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  None<br />
-> <br />
-
-#### DocString2MD.__get_class_def(self, member)
-
-````python
-def DocString2MD.__get_class_def(self, member):
-````
-
-> <br />
-> Provide the full class def.<br />
-> <b>Example:</b><br />
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  'class name():'<br />
-> <br />
-
-#### DocString2MD.__get_function_def(self, member)
-
-````python
-def DocString2MD.__get_function_def(self, member):
-````
-
-> <br />
-> Provide the full function def.<br />
-> <b>Example:</b><br />
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  'def name(args):'<br />
-> <br />
-
-#### DocString2MD.__get_member_def(self, member)
-
-````python
-def DocString2MD.__get_member_def(self, member):
-````
-
-> <br />
-> Provide the member def and add MD tag.<br />
-> <br />
-
-#### DocString2MD.__get_member_name(self, member)
-
-````python
-def DocString2MD.__get_member_name(self, member):
-````
-
-> <br />
-> Provide the member name<br />
-> <br />
-> <b>Example:</b><br />
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  function -> name(args)<br />
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  classe -> name()<br />
-> <br />
-> <b>Args:</b><br />
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  member: inspect object<br />
-> <br />
-> <b>Returns:</b><br />
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  str<br />
-> <br />
-
-#### DocString2MD.__get_member_title(self, member, level)
-
-````python
-def DocString2MD.__get_member_title(self, member, level):
-````
-
-> <br />
-> Provide the member title with MD TAG<br />
-> <br />
-
-#### DocString2MD.__getdoc(self, member)
-
-````python
-def DocString2MD.__getdoc(self, member):
-````
-
-> <br />
-> Use inspect.getdoc<br />
-> If docstring is not usable returns an empty string.<br />
-> This function is decorated to provide MD tags.<br />
-> <br />
-> <b>Args:</b><br />
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  member: inspect object<br />
-> <br />
-> <b>Returns:</b><br />
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  str: docstring<br />
-> <br />
-
-#### DocString2MD.__md_tag(begin_tag, end_tag)
-
-````python
-def DocString2MD.__md_tag(begin_tag, end_tag):
-````
 
 > <br />
 > Decorator - add a tag<br />
@@ -228,11 +94,12 @@ def DocString2MD.__md_tag(begin_tag, end_tag):
 > &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  decorated function<br />
 > <br />
 
-#### DocString2MD.__replace_beginning_and_end(begin_regexp, end_regexp, begin_tag, end_tag)
+#### ConvertMD.replace_beginning_and_end(begin_regexp, end_regexp, begin_tag, end_tag)
 
 ````python
-def DocString2MD.__replace_beginning_and_end(begin_regexp, end_regexp, begin_tag, end_tag):
+def ConvertMD.replace_beginning_and_end(begin_regexp, end_regexp, begin_tag, end_tag):
 ````
+
 
 > <br />
 > Decorator - replace the beggining and the end<br />
@@ -251,11 +118,12 @@ def DocString2MD.__replace_beginning_and_end(begin_regexp, end_regexp, begin_tag
 > &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  decorated function<br />
 > <br />
 
-#### DocString2MD.__replace_string(old_string, new_string)
+#### ConvertMD.replace_string(old_string, new_string)
 
 ````python
-def DocString2MD.__replace_string(old_string, new_string):
+def ConvertMD.replace_string(old_string, new_string):
 ````
+
 
 > <br />
 > Decorator - search & replace a string by another string<br />
@@ -269,11 +137,47 @@ def DocString2MD.__replace_string(old_string, new_string):
 > &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  decorated function<br />
 > <br />
 
+### DocString2MD()
+
+````python
+class DocString2MD():
+````
+
+
+> <br />
+> Class DocString2MD : export Google docstring to MD File.<br />
+> <br />
+
+#### DocString2MD.__init__(self, module_name, export_file=None)
+
+````python
+def DocString2MD.__init__(self, module_name, export_file=None):
+````
+
+
+> <br />
+> Init the class<br />
+> This function define default attributs.<br />
+> <br />
+> <b>Args:</b><br />
+> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  module_name (str): /path/to/the/module/<br />
+> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  export_file (str): /path/to/the/doc/file - None by default<br />
+> <br />
+> <b>Attributes:</b><br />
+> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  self.__export_file (str): /path/to/the/doc/file - None by default<br />
+> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  self.__my_module<br />
+> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  self.__output<br />
+> <br />
+> <b>Returns:</b><br />
+> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  obj<br />
+> <br />
+
 #### DocString2MD.__writedoc(self)
 
 ````python
 def DocString2MD.__writedoc(self):
 ````
+
 
 > <br />
 > Writes the content in the file<br />
@@ -285,36 +189,12 @@ def DocString2MD.__writedoc(self):
 > &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  bool: The return value. True for success, False otherwise.<br />
 > <br />
 
-#### DocString2MD.__init__(self, module_name, export_file=None)
-
-````python
-def DocString2MD.__init__(self, module_name, export_file=None):
-````
-
-> <br />
-> Init the class<br />
-> This function define default attributs.<br />
-> <br />
-> <b>Args:</b><br />
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  module_name (str): /path/to/the/module/<br />
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  export_file (str): /path/to/the/doc/file - None by default<br />
-> <br />
-> <b>Attributes:</b><br />
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  self.__module_name<br />
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  self.__module<br />
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  self.__module_spec<br />
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  self.__output<br />
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  self.__first_member<br />
-> <br />
-> <b>Returns:</b><br />
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  obj<br />
-> <br />
-
 #### DocString2MD.get_doc(self)
 
 ````python
 def DocString2MD.get_doc(self):
 ````
+
 
 > <br />
 > Extract the doc<br />
@@ -333,6 +213,139 @@ def DocString2MD.get_doc(self):
 def DocString2MD.import_module(self):
 ````
 
+
+> <br />
+> None<br />
+> <br />
+
+### DocStringObj()
+
+````python
+class DocStringObj():
+````
+
+
+> <br />
+> String to store and prepare the docstring.<br />
+> This object will become an attribute.<br />
+> <br />
+
+#### DocStringObj.__init__(self, value)
+
+````python
+def DocStringObj.__init__(self, value):
+````
+
+
+> <br />
+> Store the docstring<br />
+> <br />
+
+#### DocStringObj.__repr__(self)
+
+````python
+def DocStringObj.__repr__(self):
+````
+
+
+> <br />
+> Provide the new docstring with MD tags.<br />
+> <br />
+
+#### DocStringObj.__str__(self)
+
+````python
+def DocStringObj.__str__(self):
+````
+
+
+> <br />
+> Call repr<br />
+> <br />
+
+### ExtractPythonModule()
+
+````python
+class ExtractPythonModule():
+````
+
+
+> <br />
+> Object in order to extract Python functions, classes....<br />
+> <br />
+
+#### ExtractPythonModule.__check_module(func)
+
+````python
+def ExtractPythonModule.__check_module(func):
+````
+
+
+> <br />
+> Decorator - Checks if module can be imported.<br />
+> Updates self.__module_spec in order to import the module.<br />
+> <br />
+> <b>Args:</b><br />
+> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  None<br />
+> <br />
+> <b>Retuns:</b><br />
+> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  bool: The return value. True for success, False otherwise.<br />
+> <br />
+
+#### ExtractPythonModule.__extract(self, my_pythonobj, inspectmembers, level=0)
+
+````python
+def ExtractPythonModule.__extract(self, my_pythonobj, inspectmembers, level=0):
+````
+
+
+> <br />
+> Inspects classes & functions in a moddule.<br />
+> Store information in a PythonObj object.<br />
+> <br />
+> <b>Args:</b><br />
+> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  inspectmembers (obj): inspect obect<br />
+> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  my_pythonobj (PythonObj): object to define a Python member<br />
+> <br />
+> <b>Returns:</b><br />
+> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  None<br />
+> <br />
+
+#### ExtractPythonModule.__init__(self, module_name)
+
+````python
+def ExtractPythonModule.__init__(self, module_name):
+````
+
+
+> <br />
+> Init<br />
+> <br />
+
+#### ExtractPythonModule.extract(self)
+
+````python
+def ExtractPythonModule.extract(self):
+````
+
+
+> <br />
+> Defines module object and extracts all members.<br />
+> <br />
+> <b>Args:</b><br />
+> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  None<br />
+> <br />
+> <b>Returns:</b><br />
+> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  None<br />
+> <br />
+
+#### ExtractPythonModule.import_module(self)
+
+````python
+def ExtractPythonModule.import_module(self):
+````
+
+
 > <br />
 > Check module<br />
 > Import the module via the passed in module specification<br />
@@ -343,4 +356,313 @@ def DocString2MD.import_module(self):
 > <br />
 > <b>Returns:</b><br />
 > &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  bool: The return value. True for success, False otherwise.<br />
+> <br />
+
+### MembersObj()
+
+````python
+class MembersObj():
+````
+
+
+> <br />
+> Dict() to store a python object's members.<br />
+> This object will become an attribute.<br />
+> <br />
+
+#### MembersObj.__getitem__(self, index)
+
+````python
+def MembersObj.__getitem__(self, index):
+````
+
+
+> <br />
+> None<br />
+> <br />
+
+#### MembersObj.__init__(self)
+
+````python
+def MembersObj.__init__(self):
+````
+
+
+> <br />
+> Initialize self.  See help(type(self)) for accurate signature.<br />
+> <br />
+
+#### MembersObj.__len__(self)
+
+````python
+def MembersObj.__len__(self):
+````
+
+
+> <br />
+> None<br />
+> <br />
+
+#### MembersObj.__repr__(self)
+
+````python
+def MembersObj.__repr__(self):
+````
+
+
+> <br />
+> Return repr(self).<br />
+> <br />
+
+#### MembersObj.__setitem__(self, index, value)
+
+````python
+def MembersObj.__setitem__(self, index, value):
+````
+
+
+> <br />
+> None<br />
+> <br />
+
+#### MembersObj.__str__(self)
+
+````python
+def MembersObj.__str__(self):
+````
+
+
+> <br />
+> Return str(self).<br />
+> <br />
+
+#### MembersObj.items(self)
+
+````python
+def MembersObj.items(self):
+````
+
+
+> <br />
+> None<br />
+> <br />
+
+#### MembersObj.sortkeys(self)
+
+````python
+def MembersObj.sortkeys(self):
+````
+
+
+> <br />
+> None<br />
+> <br />
+
+### ModuleObj()
+
+````python
+class ModuleObj():
+````
+
+
+> <br />
+> Class in order to register module informations<br />
+> __str__ is used to export with MD format.<br />
+> <br />
+
+#### ModuleObj.__init__(self, name, full_name, docstring, level=0)
+
+````python
+def ModuleObj.__init__(self, name, full_name, docstring, level=0):
+````
+
+
+> <br />
+> Initialize self.  See help(type(self)) for accurate signature.<br />
+> <br />
+
+#### ModuleObj.__repr__(self)
+
+````python
+def ModuleObj.__repr__(self):
+````
+
+
+> <br />
+> Return repr(self).<br />
+> <br />
+
+#### ModuleObj.getallstr(self, member=None)
+
+````python
+def ModuleObj.getallstr(self, member=None):
+````
+
+
+> <br />
+> None<br />
+> <br />
+
+#### PythonObj.__str__(self)
+
+````python
+def PythonObj.__str__(self):
+````
+
+
+> <br />
+> Return str(self).<br />
+> <br />
+
+### PythonDefinitionObj()
+
+````python
+class PythonDefinitionObj():
+````
+
+
+> <br />
+> <b>String so store and prepare the object definition:</b><br />
+> Example : def function_name(*args)<br />
+> This object will become an attribute.<br />
+> <br />
+
+#### PythonDefinitionObj.__init__(self, value)
+
+````python
+def PythonDefinitionObj.__init__(self, value):
+````
+
+
+> <br />
+> Initialize self.  See help(type(self)) for accurate signature.<br />
+> <br />
+
+#### PythonDefinitionObj.__repr__(self)
+
+````python
+def PythonDefinitionObj.__repr__(self):
+````
+
+
+> <br />
+> Provide the definition string with MD tags.<br />
+> <br />
+
+#### PythonDefinitionObj.__str__(self)
+
+````python
+def PythonDefinitionObj.__str__(self):
+````
+
+
+> <br />
+> Call repr<br />
+> <br />
+
+### PythonObj()
+
+````python
+class PythonObj():
+````
+
+
+> <br />
+> Class in order to register object informations<br />
+> __str__ is used to export with MD format.<br />
+> <br />
+
+#### PythonObj.__init__(self, name, full_name, docstring, level)
+
+````python
+def PythonObj.__init__(self, name, full_name, docstring, level):
+````
+
+
+> <br />
+> Initialize self.  See help(type(self)) for accurate signature.<br />
+> <br />
+
+#### PythonObj.__repr__(self)
+
+````python
+def PythonObj.__repr__(self):
+````
+
+
+> <br />
+> Return repr(self).<br />
+> <br />
+
+#### PythonObj.__str__(self)
+
+````python
+def PythonObj.__str__(self):
+````
+
+
+> <br />
+> Return str(self).<br />
+> <br />
+
+### TitleObj()
+
+````python
+class TitleObj():
+````
+
+
+> <br />
+> String to store and prepare MD title<br />
+> This object will become an attribute.<br />
+> <br />
+
+#### TitleObj.__init__(self, value, level)
+
+````python
+def TitleObj.__init__(self, value, level):
+````
+
+
+> <br />
+> Init => store the sting in value and level (H1/H2/H3/...)<br />
+> <br />
+
+#### TitleObj.__repr__(self)
+
+````python
+def TitleObj.__repr__(self):
+````
+
+
+> <br />
+> Provide the MD string according to the level<br />
+> <br />
+
+#### TitleObj.__str__(self)
+
+````python
+def TitleObj.__str__(self):
+````
+
+
+> <br />
+> Return str(self).<br />
+> <br />
+
+### wraps(wrapped, assigned=('__module__', '__name__', '__qualname__', '__doc__', '__annotations__'), updated=('__dict__',))
+
+````python
+def wraps(wrapped, assigned=('__module__', '__name__', '__qualname__', '__doc__', '__annotations__'), updated=('__dict__',)):
+````
+
+
+> <br />
+> Decorator factory to apply update_wrapper() to a wrapper function<br />
+> <br />
+> Returns a decorator that invokes update_wrapper() with the decorated<br />
+> function as the wrapper argument and the arguments to wraps() as the<br />
+> remaining arguments. Default arguments are as for update_wrapper().<br />
+> This is a convenience function to simplify applying partial() to<br />
+> update_wrapper().<br />
 > <br />
