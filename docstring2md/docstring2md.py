@@ -221,7 +221,10 @@ class PythonObj(object):
         self.members = MembersObj()
 
     def __repr__(self):
-        return "\n\n{}\n{}\n{}".format(self.__title, self.__definition, self.__docstring)
+        return "\n\n{}\n{}\n{}".format(self.__title,
+                                       self.__definition,
+                                       self.__docstring
+                                       )
 
     def __str__(self):
         return repr(self)
@@ -323,8 +326,9 @@ class ExtractPythonModule(object):
             None
         """
 
-        self.module = ModuleObj(
-            self.__module_name, self.__module_name, inspect.getdoc(self.__module))
+        self.module = ModuleObj(self.__module_name,
+                                self.__module_name,
+                                inspect.getdoc(self.__module))
         self.__extract(self.module, self.__module)
 
     def __extract(self, my_pythonobj, inspectmembers, level=0):
@@ -433,5 +437,3 @@ class DocString2MD(object):
             return False
 
         return True
-
-"""test = DocString2MD("docstring2md")"""

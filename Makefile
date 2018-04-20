@@ -43,10 +43,6 @@ publish:
 	@git push
 
 test:
-	@echo 'Pep 8 - in progress...'
-	@for python_file in $$(ls $(PACKAGE_DIR)); do echo $$python_file; pep8 $(PACKAGE_DIR)/$$python_file; done
-	@echo 'Pep 8 - OK !'
-	@pep8 setup.py
 	@sudo ./setup.py test
 
 .PHONY: default install uninstall clean test doc publish
