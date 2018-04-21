@@ -396,6 +396,9 @@ class DocString2MD(object):
         if self.__my_module.import_module():
             self.__my_module.extract()
             self.__output = self.__my_module.module.getallstr()
+            return True
+        else:
+            return False
 
     def get_doc(self):
         """
