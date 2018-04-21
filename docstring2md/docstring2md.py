@@ -10,8 +10,7 @@ ____                 _        _             ____  __  __ ____
                                        |___/
 
 """
-import os
-import sys
+
 import inspect
 import importlib.util
 from functools import wraps
@@ -260,7 +259,6 @@ class ExtractPythonModule(object):
         """
         Init
         """
-        sys.path.append(os.getcwd())
         self.__module_name = module_name
         self.__module = None
         self.__module_spec = None
