@@ -39,6 +39,7 @@ release:
 
 publish:
 	@$(MAKE) test
+	@pipreqs .
 	@git add .
 	@git commit
 	@git push
