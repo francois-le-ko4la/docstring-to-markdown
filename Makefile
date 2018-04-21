@@ -38,6 +38,7 @@ release:
 	@$(MAKE) doc
 
 publish:
+	@$(MAKE) test
 	@git add .
 	@git commit
 	@git push

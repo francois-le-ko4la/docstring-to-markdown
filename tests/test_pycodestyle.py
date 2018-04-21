@@ -12,24 +12,16 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 """
 
 import pathlib
-from subprocess import Popen, PIPE
+import pycodestyle
 import unittest
 
 
 class RunPyCodeStyle(unittest.TestCase):
     def run_pycodesyle(self, current_file):
-        proc = Popen('pycodestyle %s' % current_file,
-                     stdout=PIPE,
-                     stderr=PIPE,
-                     shell=True
-                     )
-        out, err = proc.communicate()
-        exitcode = proc.returncode
-        if exitcode is not 0:
-            print(out.decode('UTF-8'))
-            print(err.decode('UTF-8'))
-            self.assertTrue(False)
-        self.assertTrue(True)
+
+        style = pycodestyle.StyleGuide()
+        result = style.check_files([current_file])
+        self.assertEqual(result.total_errors, 0),
 
 
 path = pathlib.Path(
