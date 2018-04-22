@@ -45,6 +45,26 @@ class TestDocstring2MD(unittest.TestCase):
         doc = module.get_doc()
         self.assertTrue(doc is not "")
 
+    def test_cls_4_filenotfound(self):
+        try:
+            module = DocString2MD("dxocstring2md")
+            self.assertTrue(module.import_module())
+        except OSError as error:
+            self.assertTrue(True)
+
+    def test_cls_5_fileisnotmodule(self):
+        try:
+            module_name = pathlib.Path(
+                pathlib.PurePath(
+                    pathlib.Path(__file__).resolve().parent,
+                    '../README.md'
+                )
+            ).resolve()
+            module = DocString2MD(module_name)
+            module.import_module()
+        except Exception as error:
+            self.assertTrue(True)
+
     def test_script(self):
         script = pathlib.Path(
             pathlib.PurePath(
