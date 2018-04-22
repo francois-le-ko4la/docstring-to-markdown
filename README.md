@@ -65,7 +65,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 ### ConvertMD()
 
 ````python
-class ConvertMD():
+class ConvertMD(object):
 ````
 
 
@@ -140,7 +140,7 @@ def ConvertMD.replace_string(old_string, new_string):
 ### DocString2MD()
 
 ````python
-class DocString2MD():
+class DocString2MD(object):
 ````
 
 
@@ -221,7 +221,7 @@ def DocString2MD.import_module(self):
 ### DocStringObj()
 
 ````python
-class DocStringObj():
+class DocStringObj(object):
 ````
 
 
@@ -244,6 +244,10 @@ def DocStringObj.__init__(self, value):
 #### DocStringObj.__repr__(self)
 
 ````python
+@ConvertMD.replace_beginning_and_end('^', '$', '> ', '<br />')
+@ConvertMD.replace_beginning_and_end('^', ':$', '<b>', ':</b>')
+@ConvertMD.replace_string('    ', '&nbsp;' * 15 + '  ')
+@ConvertMD.md_tag("\n", "\n")
 def DocStringObj.__repr__(self):
 ````
 
@@ -266,7 +270,7 @@ def DocStringObj.__str__(self):
 ### ExtractPythonModule()
 
 ````python
-class ExtractPythonModule():
+class ExtractPythonModule(object):
 ````
 
 
@@ -292,10 +296,10 @@ def ExtractPythonModule.__check_module(func):
 > &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  bool: The return value. True for success, False otherwise.<br />
 > <br />
 
-#### ExtractPythonModule.__extract(self, my_pythonobj, inspectmembers, level=0)
+#### ExtractPythonModule.__extract(self, my_pythonobj, inspectmembers, level=0, decorator=None)
 
 ````python
-def ExtractPythonModule.__extract(self, my_pythonobj, inspectmembers, level=0):
+def ExtractPythonModule.__extract(self, my_pythonobj, inspectmembers, level=0, decorator=None):
 ````
 
 
@@ -309,6 +313,17 @@ def ExtractPythonModule.__extract(self, my_pythonobj, inspectmembers, level=0):
 > <br />
 > <b>Returns:</b><br />
 > &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  None<br />
+> <br />
+
+#### ExtractPythonModule.__extractdecorator(self, member)
+
+````python
+def ExtractPythonModule.__extractdecorator(self, member):
+````
+
+
+> <br />
+> None<br />
 > <br />
 
 #### ExtractPythonModule.__init__(self, module_name)
@@ -342,6 +357,7 @@ def ExtractPythonModule.extract(self):
 #### ExtractPythonModule.import_module(self)
 
 ````python
+@__check_module
 def ExtractPythonModule.import_module(self):
 ````
 
@@ -361,7 +377,7 @@ def ExtractPythonModule.import_module(self):
 ### MembersObj()
 
 ````python
-class MembersObj():
+class MembersObj(object):
 ````
 
 
@@ -461,7 +477,7 @@ def MembersObj.sortkeys(self):
 ### ModuleObj()
 
 ````python
-class ModuleObj():
+class ModuleObj(PythonObj):
 ````
 
 
@@ -517,7 +533,7 @@ def PythonObj.__str__(self):
 ### PythonDefinitionObj()
 
 ````python
-class PythonDefinitionObj():
+class PythonDefinitionObj(object):
 ````
 
 
@@ -541,6 +557,7 @@ def PythonDefinitionObj.__init__(self, value):
 #### PythonDefinitionObj.__repr__(self)
 
 ````python
+@ConvertMD.md_tag("\n````python\n", "\n````\n\n")
 def PythonDefinitionObj.__repr__(self):
 ````
 
@@ -563,7 +580,7 @@ def PythonDefinitionObj.__str__(self):
 ### PythonObj()
 
 ````python
-class PythonObj():
+class PythonObj(object):
 ````
 
 
@@ -608,7 +625,7 @@ def PythonObj.__str__(self):
 ### TitleObj()
 
 ````python
-class TitleObj():
+class TitleObj(object):
 ````
 
 

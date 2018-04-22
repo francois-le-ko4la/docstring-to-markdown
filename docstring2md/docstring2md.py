@@ -15,6 +15,8 @@ import inspect
 import importlib.util
 from functools import wraps
 import re
+import pathlib
+import sys
 
 
 class ConvertMD(object):
@@ -280,14 +282,11 @@ class ExtractPythonModule(object):
         @wraps(func)
         def wrapper(self, *args, **kwargs):
             """ wrapper """
-            try:
-                self.__module_spec = importlib.util.find_spec(
-                    self.__module_name)
-                if self.__module_spec is None:
-                    return False
-            except Exception as e:
-                print("This file is not a module.")
-                return False
+            self.__module_spec = importlib.util.find_spec(
+                self.__module_name)
+            if self.__module_spec is None:
+                raise Exception("This file is not a module: {}".format(
+                    self.__module_name))
             return func(self, *args, **kwargs)
         return wrapper
 
@@ -309,8 +308,7 @@ class ExtractPythonModule(object):
             self.__module = importlib.util.module_from_spec(self.__module_spec)
             self.__module_spec.loader.exec_module(self.__module)
         except Exception as e:
-            print("Import error")
-            return False
+            raise Exception("Import error")
         return True
 
     def extract(self):
@@ -329,7 +327,23 @@ class ExtractPythonModule(object):
                                 inspect.getdoc(self.__module))
         self.__extract(self.module, self.__module)
 
-    def __extract(self, my_pythonobj, inspectmembers, level=0):
+    def __extractdecorator(self, member):
+        sourcelines = inspect.getsourcelines(member[1])[0]
+        decorator = ""
+        result = dict()
+        for i, line in enumerate(sourcelines):
+            line = line.strip()
+            pos = line.find('@')
+            if pos is 0:
+                decorator += "{}\n".format(line)
+            pos = line.find('def ')
+            if pos is 0 and decorator is not "":
+                line = line.replace('def ', "def {}.".format(member[0]))
+                result[line] = decorator
+                decorator = ""
+        return result
+
+    def __extract(self, my_pythonobj, inspectmembers, level=0, decorator=None):
         """
         Inspects classes & functions in a moddule.
         Store information in a PythonObj object.
@@ -349,15 +363,21 @@ class ExtractPythonModule(object):
         for member in inspect.getmembers(inspectmembers):
             if inspect.isclass(member[1]) and member[0] != "__class__":
                 name = "{0}()".format(str(member[0]))
-                full_name = "class {0}:".format(name)
+                full_name = inspect.getsourcelines(
+                        member[1])[0][0].replace('\n', '')
                 docstring = inspect.getdoc(member[1])
                 new_pythonobj = PythonObj(name, full_name, docstring, level)
                 my_pythonobj.members[name] = new_pythonobj
-                self.__extract(new_pythonobj, member[1], level)
+                self.__extract(new_pythonobj,
+                               member[1],
+                               level,
+                               self.__extractdecorator(member))
             if inspect.isfunction(member[1]):
                 name = "{0}{1}".format((str(member[1]).split(" "))[1],
                                        str(inspect.signature(member[1])))
                 full_name = "def {0}:".format(name)
+                if decorator is not None and full_name in decorator:
+                    full_name = "{}{}".format(decorator[full_name], full_name)
                 docstring = inspect.getdoc(member[1])
                 new_pythonobj = PythonObj(name, full_name, docstring, level)
                 my_pythonobj.members[name] = new_pythonobj
@@ -387,8 +407,42 @@ class DocString2MD(object):
 
         """
         self.__export_file = export_file
-        self.__my_module = ExtractPythonModule(module_name)
+        self.module_name = module_name
+        self.__my_module = ExtractPythonModule(self.module_name)
         self.__output = ""
+
+    @property
+    def module_name(self):
+        """
+        return /path/to/the/json/file
+
+        Args:
+            None
+
+        Returns:
+            None
+
+        """
+        return self.__module_name
+
+    @module_name.setter
+    def module_name(self, module_name):
+        """
+        check the path to the module
+        Store the path
+
+        Args:
+            module_name(str): /path/to/the/module
+
+        Returns:
+            None
+        """
+        module_name = pathlib.Path(module_name).resolve()
+        if pathlib.Path(module_name).exists():
+            sys.path.append(module_name.parents[0])
+            self.__module_name = module_name.stem
+        else:
+            raise IOError("Module not found ! ({})".format(module_name))
 
     def import_module(self):
         if self.__my_module.import_module():

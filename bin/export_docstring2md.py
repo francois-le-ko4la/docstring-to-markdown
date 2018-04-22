@@ -31,17 +31,11 @@ def main(argv):
         printusage()
         exit(1)
 
-    inputmodule = pathlib.Path(inputmodule).resolve()
-    if inputmodule.exists():
-        sys.path.append(inputmodule.parents[0])
-        module = DocString2MD(inputmodule.stem, outputfile)
-        module.import_module()
-        doc = module.get_doc()
-        if outputfile is None:
-            print(doc)
-    else:
-        print("File not found !")
-        exit(1)
+    module = DocString2MD(inputmodule, outputfile)
+    module.import_module()
+    doc = module.get_doc()
+    if outputfile is None:
+        print(doc)
 
 
 if __name__ == '__main__':

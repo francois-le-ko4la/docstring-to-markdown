@@ -18,8 +18,14 @@ default:
 	@echo '    make test       test'
 	@echo
 
+init:
+	@pip3 install -r requirements.txt
+
+dev:
+	@sudo python3 setup.py develop
+
 uninstall:
-	sudo -H pip3 uninstall -y $(PACKAGE_NAME)
+	@sudo -H pip3 uninstall -y $(PACKAGE_NAME)
 
 install:
 	@sudo ./setup.py install
@@ -47,4 +53,4 @@ publish:
 test:
 	@sudo ./setup.py test
 
-.PHONY: default install uninstall clean test doc publish
+.PHONY: default init dev install uninstall clean test doc publish release
