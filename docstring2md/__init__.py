@@ -15,7 +15,7 @@ the GNU General Public License (GPL), version 3.
 * `setup.cfg`: The setuptools setup file.
 
 The package contents itself are in the `docstring2md` directory:
-* `__ init __.py` Initialization file for the Python package.
+* `__init__.py` Initialization file for the Python package.
 * `docstring2md/docstring2md.py`: The code of interest.
 
 The script is in the `bin` directory:
@@ -48,8 +48,10 @@ export_docstring2md.py -i <inputmodule> [-o <outputfile>]`
 - [X] Test installation and requirements (setup.py and/or Makefile)
 - [X] Test code
 - [X] Validate features
+- [X] Add-on : decorator
+- [X] Add-on : class properties
 - [ ] Write Doc/stringdoc
-- [ ] Run PEP8 validation
+- [X] Run PEP8 validation
 - [ ] Clean & last check
 - [ ] Release
 

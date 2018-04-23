@@ -343,6 +343,26 @@ class ExtractPythonModule(object):
                 decorator = ""
         return result
 
+    def __extractproperties(self, my_pythonobj, inspectmembers,
+                            level, decorator, cls_name):
+        if level >= 2 or len(inspectmembers) is 0:
+            return
+
+        level += 1
+
+        for current_property, inspect_obj in inspectmembers:
+            full_name = ""
+            name = ""
+            for current_func in decorator.keys():
+                if "def {}.{}(".format(cls_name,
+                                       current_property) in current_func:
+                    full_name += "{}{}\n".format(decorator[current_func],
+                                                 current_func
+                                                 )
+            name = "@Property: {}".format(current_property)
+            new_pythonobj = PythonObj(name, full_name, "Property", level)
+            my_pythonobj.members[name] = new_pythonobj
+
     def __extract(self, my_pythonobj, inspectmembers, level=0, decorator=None):
         """
         Inspects classes & functions in a moddule.
@@ -362,16 +382,28 @@ class ExtractPythonModule(object):
 
         for member in inspect.getmembers(inspectmembers):
             if inspect.isclass(member[1]) and member[0] != "__class__":
+                decorator = self.__extractdecorator(member)
+                properties = inspect.getmembers(member[1],
+                                                lambda o: isinstance(o,
+                                                                     property
+                                                                     )
+                                                )
                 name = "{0}()".format(str(member[0]))
                 full_name = inspect.getsourcelines(
                         member[1])[0][0].replace('\n', '')
                 docstring = inspect.getdoc(member[1])
                 new_pythonobj = PythonObj(name, full_name, docstring, level)
                 my_pythonobj.members[name] = new_pythonobj
+
+                self.__extractproperties(new_pythonobj,
+                                         properties,
+                                         level,
+                                         decorator,
+                                         str(member[0]))
                 self.__extract(new_pythonobj,
                                member[1],
                                level,
-                               self.__extractdecorator(member))
+                               decorator)
             if inspect.isfunction(member[1]):
                 name = "{0}{1}".format((str(member[1]).split(" "))[1],
                                        str(inspect.signature(member[1])))

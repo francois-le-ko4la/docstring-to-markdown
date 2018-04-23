@@ -12,7 +12,7 @@ the GNU General Public License (GPL), version 3.
 * `setup.cfg`: The setuptools setup file.
 
 The package contents itself are in the `docstring2md` directory:
-* `__ init __.py` Initialization file for the Python package.
+* `__init__.py` Initialization file for the Python package.
 * `docstring2md/docstring2md.py`: The code of interest.
 
 The script is in the `bin` directory:
@@ -45,8 +45,10 @@ export_docstring2md.py -i <inputmodule> [-o <outputfile>]`
 - [X] Test installation and requirements (setup.py and/or Makefile)
 - [X] Test code
 - [X] Validate features
+- [X] Add-on : decorator
+- [X] Add-on : class properties
 - [ ] Write Doc/stringdoc
-- [ ] Run PEP8 validation
+- [X] Run PEP8 validation
 - [ ] Clean & last check
 - [ ] Release
 
@@ -146,6 +148,21 @@ class DocString2MD(object):
 
 > <br />
 > Class DocString2MD : export Google docstring to MD File.<br />
+> <br />
+
+#### @Property: module_name
+
+````python
+@property
+def DocString2MD.module_name(self):
+@module_name.setter
+def DocString2MD.module_name(self, module_name):
+
+````
+
+
+> <br />
+> Property<br />
 > <br />
 
 #### DocString2MD.__init__(self, module_name, export_file=None)
@@ -319,6 +336,17 @@ def ExtractPythonModule.__extract(self, my_pythonobj, inspectmembers, level=0, d
 
 ````python
 def ExtractPythonModule.__extractdecorator(self, member):
+````
+
+
+> <br />
+> None<br />
+> <br />
+
+#### ExtractPythonModule.__extractproperties(self, my_pythonobj, inspectmembers, level, decorator, cls_name)
+
+````python
+def ExtractPythonModule.__extractproperties(self, my_pythonobj, inspectmembers, level, decorator, cls_name):
 ````
 
 
