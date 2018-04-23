@@ -64,10 +64,10 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 ## Dev docstring
 
 
-### ConvertMD()
+### ConvMD()
 
 ````python
-class ConvertMD(object):
+class ConvMD(object):
 ````
 
 
@@ -75,10 +75,10 @@ class ConvertMD(object):
 > Prepare MD string<br />
 > <br />
 
-#### ConvertMD.md_tag(begin_tag, end_tag)
+#### ConvMD.add_tag(begin_tag, end_tag)
 
 ````python
-def ConvertMD.md_tag(begin_tag, end_tag):
+def ConvMD.add_tag(begin_tag, end_tag):
 ````
 
 
@@ -89,17 +89,17 @@ def ConvertMD.md_tag(begin_tag, end_tag):
 > &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  ('__', '__') => __ TXT __<br />
 > <br />
 > <b>Args:</b><br />
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  begin_tag (str)<br />
+> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  beg_tag (str)<br />
 > &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  end_tag (str)<br />
 > <br />
 > <b>Returns:</b><br />
 > &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  decorated function<br />
 > <br />
 
-#### ConvertMD.replace_beginning_and_end(begin_regexp, end_regexp, begin_tag, end_tag)
+#### ConvMD.repl_beg_end(begin_regexp, end_regexp, begin_tag, end_tag)
 
 ````python
-def ConvertMD.replace_beginning_and_end(begin_regexp, end_regexp, begin_tag, end_tag):
+def ConvMD.repl_beg_end(begin_regexp, end_regexp, begin_tag, end_tag):
 ````
 
 
@@ -120,10 +120,10 @@ def ConvertMD.replace_beginning_and_end(begin_regexp, end_regexp, begin_tag, end
 > &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  decorated function<br />
 > <br />
 
-#### ConvertMD.replace_string(old_string, new_string)
+#### ConvMD.repl_str(old_string, new_string)
 
 ````python
-def ConvertMD.replace_string(old_string, new_string):
+def ConvMD.repl_str(old_string, new_string):
 ````
 
 
@@ -162,7 +162,7 @@ def DocString2MD.module_name(self, module_name):
 
 
 > <br />
-> Property<br />
+> @Property<br />
 > <br />
 
 #### DocString2MD.__init__(self, module_name, export_file=None)
@@ -232,7 +232,7 @@ def DocString2MD.import_module(self):
 
 
 > <br />
-> None<br />
+> <b>- docstring empty -</b><br />
 > <br />
 
 ### DocStringObj()
@@ -245,6 +245,21 @@ class DocStringObj(object):
 > <br />
 > String to store and prepare the docstring.<br />
 > This object will become an attribute.<br />
+> <br />
+
+#### @Property: value
+
+````python
+@property
+def DocStringObj.value(self):
+@value.setter
+def DocStringObj.value(self, value):
+
+````
+
+
+> <br />
+> @Property<br />
 > <br />
 
 #### DocStringObj.__init__(self, value)
@@ -261,10 +276,10 @@ def DocStringObj.__init__(self, value):
 #### DocStringObj.__repr__(self)
 
 ````python
-@ConvertMD.replace_beginning_and_end('^', '$', '> ', '<br />')
-@ConvertMD.replace_beginning_and_end('^', ':$', '<b>', ':</b>')
-@ConvertMD.replace_string('    ', '&nbsp;' * 15 + '  ')
-@ConvertMD.md_tag("\n", "\n")
+@ConvMD.repl_beg_end(Tag.beg_str, Tag.end_str, Tag.quote, Tag.html_cr)
+@ConvMD.repl_beg_end(Tag.beg_str, Tag.end_strh, Tag.beg_b, Tag.end_bh)
+@ConvMD.repl_str(Tag.tab, Tag.html_tab)
+@ConvMD.add_tag(Tag.cr, Tag.cr)
 def DocStringObj.__repr__(self):
 ````
 
@@ -340,7 +355,7 @@ def ExtractPythonModule.__extractdecorator(self, member):
 
 
 > <br />
-> None<br />
+> <b>- docstring empty -</b><br />
 > <br />
 
 #### ExtractPythonModule.__extractproperties(self, my_pythonobj, inspectmembers, level, decorator, cls_name)
@@ -351,7 +366,18 @@ def ExtractPythonModule.__extractproperties(self, my_pythonobj, inspectmembers, 
 
 
 > <br />
-> None<br />
+> <b>- docstring empty -</b><br />
+> <br />
+
+#### ExtractPythonModule.__findinline(self, line, search_item)
+
+````python
+def ExtractPythonModule.__findinline(self, line, search_item):
+````
+
+
+> <br />
+> <b>- docstring empty -</b><br />
 > <br />
 
 #### ExtractPythonModule.__init__(self, module_name)
@@ -363,6 +389,17 @@ def ExtractPythonModule.__init__(self, module_name):
 
 > <br />
 > Init<br />
+> <br />
+
+#### ExtractPythonModule.__linetype(self, line)
+
+````python
+def ExtractPythonModule.__linetype(self, line):
+````
+
+
+> <br />
+> <b>- docstring empty -</b><br />
 > <br />
 
 #### ExtractPythonModule.extract(self)
@@ -402,6 +439,17 @@ def ExtractPythonModule.import_module(self):
 > &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  bool: The return value. True for success, False otherwise.<br />
 > <br />
 
+### LineType()
+
+````python
+class LineType:
+````
+
+
+> <br />
+> <b>- docstring empty -</b><br />
+> <br />
+
 ### MembersObj()
 
 ````python
@@ -422,7 +470,7 @@ def MembersObj.__getitem__(self, index):
 
 
 > <br />
-> None<br />
+> <b>- docstring empty -</b><br />
 > <br />
 
 #### MembersObj.__init__(self)
@@ -444,7 +492,7 @@ def MembersObj.__len__(self):
 
 
 > <br />
-> None<br />
+> <b>- docstring empty -</b><br />
 > <br />
 
 #### MembersObj.__repr__(self)
@@ -466,7 +514,7 @@ def MembersObj.__setitem__(self, index, value):
 
 
 > <br />
-> None<br />
+> <b>- docstring empty -</b><br />
 > <br />
 
 #### MembersObj.__str__(self)
@@ -488,7 +536,7 @@ def MembersObj.items(self):
 
 
 > <br />
-> None<br />
+> <b>- docstring empty -</b><br />
 > <br />
 
 #### MembersObj.sortkeys(self)
@@ -499,7 +547,7 @@ def MembersObj.sortkeys(self):
 
 
 > <br />
-> None<br />
+> <b>- docstring empty -</b><br />
 > <br />
 
 ### ModuleObj()
@@ -544,7 +592,7 @@ def ModuleObj.getallstr(self, member=None):
 
 
 > <br />
-> None<br />
+> <b>- docstring empty -</b><br />
 > <br />
 
 #### PythonObj.__str__(self)
@@ -558,6 +606,17 @@ def PythonObj.__str__(self):
 > Return str(self).<br />
 > <br />
 
+### MyConst()
+
+````python
+class MyConst:
+````
+
+
+> <br />
+> <b>- docstring empty -</b><br />
+> <br />
+
 ### PythonDefinitionObj()
 
 ````python
@@ -569,6 +628,21 @@ class PythonDefinitionObj(object):
 > <b>String so store and prepare the object definition:</b><br />
 > Example : def function_name(*args)<br />
 > This object will become an attribute.<br />
+> <br />
+
+#### @Property: value
+
+````python
+@property
+def PythonDefinitionObj.value(self):
+@value.setter
+def PythonDefinitionObj.value(self, value):
+
+````
+
+
+> <br />
+> @Property<br />
 > <br />
 
 #### PythonDefinitionObj.__init__(self, value)
@@ -585,7 +659,7 @@ def PythonDefinitionObj.__init__(self, value):
 #### PythonDefinitionObj.__repr__(self)
 
 ````python
-@ConvertMD.md_tag("\n````python\n", "\n````\n\n")
+@ConvMD.add_tag(Tag.beg_py, Tag.end_py)
 def PythonDefinitionObj.__repr__(self):
 ````
 
@@ -650,6 +724,17 @@ def PythonObj.__str__(self):
 > Return str(self).<br />
 > <br />
 
+### Tag()
+
+````python
+class Tag:
+````
+
+
+> <br />
+> <b>- docstring empty -</b><br />
+> <br />
+
 ### TitleObj()
 
 ````python
@@ -662,10 +747,40 @@ class TitleObj(object):
 > This object will become an attribute.<br />
 > <br />
 
-#### TitleObj.__init__(self, value, level)
+#### @Property: level
 
 ````python
-def TitleObj.__init__(self, value, level):
+@property
+def TitleObj.level(self):
+@level.setter
+def TitleObj.level(self, level):
+
+````
+
+
+> <br />
+> @Property<br />
+> <br />
+
+#### @Property: title
+
+````python
+@property
+def TitleObj.title(self):
+@title.setter
+def TitleObj.title(self, title):
+
+````
+
+
+> <br />
+> @Property<br />
+> <br />
+
+#### TitleObj.__init__(self, title, level)
+
+````python
+def TitleObj.__init__(self, title, level):
 ````
 
 

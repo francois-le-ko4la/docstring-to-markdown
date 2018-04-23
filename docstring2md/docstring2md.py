@@ -19,12 +19,43 @@ import pathlib
 import sys
 
 
-class ConvertMD(object):
+class MyConst:
+    docstring_empty = "<b>- docstring empty -</b>"
+    head_tag = "#"
+    dev_head = "## Dev docstring"
+    decorator_tag = '@'
+    function_tag = 'def '
+    property_tag = '@Property'
+
+
+class LineType:
+    decorator = 1
+    function = 2
+    other = 3
+
+
+class Tag:
+    beg_py = "\n````python\n"
+    end_py = "\n````\n\n"
+    beg_str = "^"
+    end_str = "$"
+    end_strh = ":$"
+    beg_b = "<b>"
+    end_b = "</b>"
+    end_bh = ":</b>"
+    tab = "    "
+    html_tab = "&nbsp;" * 15 + "  "
+    cr = "\n"
+    html_cr = "<br />"
+    quote = "> "
+
+
+class ConvMD(object):
     """
     Prepare MD string
     """
 
-    def replace_string(old_string, new_string):
+    def repl_str(old_string, new_string):
         """
         Decorator - search & replace a string by another string
         Example : replace space by a HTML tag.
@@ -46,8 +77,7 @@ class ConvertMD(object):
             return func_wrapper
         return tags_decorator
 
-    def replace_beginning_and_end(begin_regexp, end_regexp,
-                                  begin_tag, end_tag):
+    def repl_beg_end(begin_regexp, end_regexp, begin_tag, end_tag):
         """
         Decorator - replace the beggining and the end
 
@@ -78,7 +108,7 @@ class ConvertMD(object):
             return func_wrapper
         return tags_decorator
 
-    def md_tag(begin_tag, end_tag):
+    def add_tag(begin_tag, end_tag):
         """
         Decorator - add a tag
 
@@ -86,7 +116,7 @@ class ConvertMD(object):
             ('__', '__') => __ TXT __
 
         Args:
-            begin_tag (str)
+            beg_tag (str)
             end_tag (str)
 
         Returns:
@@ -109,18 +139,41 @@ class TitleObj(object):
     This object will become an attribute.
     """
 
-    def __init__(self, value, level):
+    def __init__(self, title, level):
         """
         Init => store the sting in value and level (H1/H2/H3/...)
         """
-        self.value = value
+        self.title = title
         self.level = level
+
+    @property
+    def title(self):
+        return self.__title
+
+    @title.setter
+    def title(self, title):
+        if isinstance(title, str):
+            self.__title = title
+        else:
+            raise ValueError("TitleObj: Title type is string")
+
+    @property
+    def level(self):
+        return self.__level
+
+    @level.setter
+    def level(self, level):
+        if isinstance(level, int):
+            self.__level = level
+        else:
+            raise ValueError("TitleObj: level type is int")
 
     def __repr__(self):
         """
         Provide the MD string according to the level
         """
-        return "{} {}".format("#" * (self.level + 2),  self.value)
+        return "{} {}".format(MyConst.head_tag * (self.__level + 2),
+                              self.__title)
 
     def __str__(self):
         return repr(self)
@@ -136,12 +189,23 @@ class PythonDefinitionObj(object):
     def __init__(self, value):
         self.value = value
 
-    @ConvertMD.md_tag("\n````python\n", "\n````\n\n")
+    @property
+    def value(self):
+        return self.__value
+
+    @value.setter
+    def value(self, value):
+        if isinstance(value, str) and value is not "":
+            self.__value = value
+        else:
+            raise ValueError("PythonDefinitionObj: bad value")
+
+    @ConvMD.add_tag(Tag.beg_py, Tag.end_py)
     def __repr__(self):
         """
         Provide the definition string with MD tags.
         """
-        return self.value
+        return self.__value
 
     def __str__(self):
         """
@@ -162,10 +226,23 @@ class DocStringObj(object):
         """
         self.value = value
 
-    @ConvertMD.replace_beginning_and_end('^', '$', '> ', '<br />')
-    @ConvertMD.replace_beginning_and_end('^', ':$', '<b>', ':</b>')
-    @ConvertMD.replace_string('    ', '&nbsp;' * 15 + '  ')
-    @ConvertMD.md_tag("\n", "\n")
+    @property
+    def value(self):
+        return self.__value
+
+    @value.setter
+    def value(self, value):
+        if value is None:
+            value = MyConst.docstring_empty
+        if isinstance(value, str):
+            self.__value = value
+        else:
+            raise ValueError("DocStringObj: bad value")
+
+    @ConvMD.repl_beg_end(Tag.beg_str, Tag.end_str, Tag.quote, Tag.html_cr)
+    @ConvMD.repl_beg_end(Tag.beg_str, Tag.end_strh, Tag.beg_b, Tag.end_bh)
+    @ConvMD.repl_str(Tag.tab, Tag.html_tab)
+    @ConvMD.add_tag(Tag.cr, Tag.cr)
     def __repr__(self):
         """
         Provide the new docstring with MD tags.
@@ -241,7 +318,7 @@ class ModuleObj(PythonObj):
         self.__module_docstring = docstring
 
     def __repr__(self):
-        return "{}\n## Dev docstring\n".format(self.__module_docstring)
+        return "{}\n{}\n".format(self.__module_docstring, MyConst.dev_head)
 
     def getallstr(self, member=None):
         if member is None:
@@ -327,20 +404,39 @@ class ExtractPythonModule(object):
                                 inspect.getdoc(self.__module))
         self.__extract(self.module, self.__module)
 
+    def __findinline(self, line, search_item):
+        if line.find(search_item) is 0:
+            return True
+        return False
+
+    def __linetype(self, line):
+        if self.__findinline(line, MyConst.decorator_tag):
+            return LineType.decorator
+        if self.__findinline(line, MyConst.function_tag):
+            return LineType.function
+        return LineType.other
+
     def __extractdecorator(self, member):
         sourcelines = inspect.getsourcelines(member[1])[0]
         decorator = ""
         result = dict()
+        add_decorator = False
         for i, line in enumerate(sourcelines):
             line = line.strip()
-            pos = line.find('@')
-            if pos is 0:
-                decorator += "{}\n".format(line)
-            pos = line.find('def ')
-            if pos is 0 and decorator is not "":
-                line = line.replace('def ', "def {}.".format(member[0]))
-                result[line] = decorator
+            line_type = self.__linetype(line)
+
+            if line_type is LineType.other:
                 decorator = ""
+                add_decorator = False
+            if line_type is LineType.decorator:
+                decorator += "{}\n".format(line)
+                add_decorator = True
+            if line_type is LineType.function:
+                if add_decorator:
+                    line = line.replace(MyConst.function_tag,
+                                        "{}{}.".format(MyConst.function_tag,
+                                                       member[0]))
+                    result[line] = decorator
         return result
 
     def __extractproperties(self, my_pythonobj, inspectmembers,
@@ -354,13 +450,17 @@ class ExtractPythonModule(object):
             full_name = ""
             name = ""
             for current_func in decorator.keys():
-                if "def {}.{}(".format(cls_name,
-                                       current_property) in current_func:
+                if "{}{}.{}(".format(MyConst.function_tag,
+                                     cls_name,
+                                     current_property) in current_func:
                     full_name += "{}{}\n".format(decorator[current_func],
                                                  current_func
                                                  )
-            name = "@Property: {}".format(current_property)
-            new_pythonobj = PythonObj(name, full_name, "Property", level)
+            name = "{}: {}".format(MyConst.property_tag, current_property)
+            new_pythonobj = PythonObj(name,
+                                      full_name,
+                                      MyConst.property_tag,
+                                      level)
             my_pythonobj.members[name] = new_pythonobj
 
     def __extract(self, my_pythonobj, inspectmembers, level=0, decorator=None):
@@ -407,7 +507,7 @@ class ExtractPythonModule(object):
             if inspect.isfunction(member[1]):
                 name = "{0}{1}".format((str(member[1]).split(" "))[1],
                                        str(inspect.signature(member[1])))
-                full_name = "def {0}:".format(name)
+                full_name = "{}{}:".format(MyConst.function_tag, name)
                 if decorator is not None and full_name in decorator:
                     full_name = "{}{}".format(decorator[full_name], full_name)
                 docstring = inspect.getdoc(member[1])
