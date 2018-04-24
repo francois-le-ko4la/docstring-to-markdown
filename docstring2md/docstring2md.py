@@ -22,7 +22,9 @@ import sys
 class MyConst:
     docstring_empty = "<b>- docstring empty -</b>"
     head_tag = "#"
-    dev_head = "## Dev docstring"
+    dev_head = "## Dev notes"
+    dev_runtime = "### Runtime"
+    dev_requirement = "### Requirements"
     decorator_tag = '@'
     function_tag = 'def '
     property_tag = '@Property'
@@ -35,8 +37,10 @@ class LineType:
 
 
 class Tag:
-    beg_py = "\n````python\n"
-    end_py = "\n````\n\n"
+    beg_co = "\n```\n"
+    end_co = "\n```\n"
+    beg_py = "\n```python\n"
+    end_py = "\n```\n"
     beg_str = "^"
     end_str = "$"
     end_strh = ":$"
@@ -308,6 +312,63 @@ class PythonObj(object):
         return repr(self)
 
 
+class ReadFile(object):
+    def __init__(self, filename):
+        self.filename = filename
+
+    @property
+    def filename(self):
+        return self.__filename
+
+    @filename.setter
+    def filename(self, filename):
+        """
+        check the path to the json file
+        Store the path
+
+        Args:
+            filename(str): /path/to/the/file
+
+        Returns:
+            None
+
+        Raises:
+            IOError: File not found
+            IOError: File not readable
+
+        """
+        if filename is None:
+            self.__filename = None
+            return
+        if pathlib.Path(filename).exists():
+            self.__filename = filename
+        else:
+            raise IOError("File not found ! ({})".format(filename))
+
+    def isdefined(self):
+        if self.__filename is None:
+            return False
+        return True
+
+    def get(self):
+        """
+        open & read the file
+        Returns the content
+        """
+        current_file = open(self.__filename, "r")
+        if current_file.mode == 'r':
+            result = current_file.read()
+        else:
+            raise IOError("File not readable ! ({})".format(filename))
+        return result
+
+    def __repr__(self):
+        return self.get()
+
+    def __str__(self):
+        return repr(self)
+
+
 class ModuleObj(PythonObj):
     """
     Class in order to register module informations
@@ -320,10 +381,17 @@ class ModuleObj(PythonObj):
     def __repr__(self):
         return "{}\n{}\n".format(self.__module_docstring, MyConst.dev_head)
 
+    def __str__(self):
+        return repr(self)
+
     def getallstr(self, member=None):
+        output = ""
         if member is None:
+            """ First member (Module) """
             member = self
-        output = str(member)
+        else:
+            """ Children => take the str() """
+            output = str(member)
         for idmember in member.members.sortkeys():
             output += self.getallstr(member.members[idmember])
         return output
@@ -521,7 +589,8 @@ class DocString2MD(object):
     Class DocString2MD : export Google docstring to MD File.
     """
 
-    def __init__(self, module_name, export_file=None):
+    def __init__(self, module_name, export_file=None, runtime_file=None,
+                 requirements_file=None):
         """Init the class
         This function define default attributs.
 
@@ -538,6 +607,8 @@ class DocString2MD(object):
             obj
 
         """
+        self.__runtime = ReadFile(runtime_file)
+        self.__requirements = ReadFile(requirements_file)
         self.__export_file = export_file
         self.module_name = module_name
         self.__my_module = ExtractPythonModule(self.module_name)
@@ -579,7 +650,25 @@ class DocString2MD(object):
     def import_module(self):
         if self.__my_module.import_module():
             self.__my_module.extract()
-            self.__output = self.__my_module.module.getallstr()
+            self.__output = ""
+            """ module / README """
+            self.__output += str(self.__my_module.module)
+            """ runtime """
+            if self.__runtime.isdefined():
+                self.__output += "{}\n{}{}{}".format(MyConst.dev_runtime,
+                                                     Tag.beg_co,
+                                                     self.__runtime,
+                                                     Tag.end_co
+                                                     )
+            """ requirements """
+            if self.__requirements.isdefined():
+                self.__output += "{}\n{}{}{}".format(MyConst.dev_requirement,
+                                                     Tag.beg_co,
+                                                     self.__requirements,
+                                                     Tag.end_co
+                                                     )
+            """ children """
+            self.__output += self.__my_module.module.getallstr()
             return True
         else:
             return False

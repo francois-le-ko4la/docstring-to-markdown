@@ -36,7 +36,7 @@ clean:
 	@sudo find -type f -name '*.pyc' -delete
 
 doc:
-	@export_docstring2md.py -i $(PACKAGE_DIR) -o README.md
+	@export_docstring2md.py -i $(PACKAGE_DIR) -o README.md -r requirements.txt -t runtime.txt
 
 release:
 	@$(MAKE) clean

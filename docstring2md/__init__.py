@@ -22,18 +22,18 @@ The script is in the `bin` directory:
 * `export_docstring2md.py`: The script to run
 
 ## Setup:
-````shell
+```shell
 git clone https://github.com/francois-le-ko4la/docstring2md.git
 cd config-from-json
 make install
-````
+```
 
 ## Test:
 
 This module has been tested and validated on Ubuntu.
-````shell
+```shell
 make test
-````
+```
 
 ## Use:
 Use the script:
@@ -50,6 +50,7 @@ export_docstring2md.py -i <inputmodule> [-o <outputfile>]`
 - [X] Validate features
 - [X] Add-on : decorator
 - [X] Add-on : class properties
+- [X] Add-on : runtime & requirements
 - [ ] Write Doc/stringdoc
 - [X] Run PEP8 validation
 - [ ] Clean & last check
