@@ -64,6 +64,12 @@ class ArgsManagement(object):
             metavar='FILE',
             help="requirements.txt file"
         )
+        self._optional.add_argument(
+            "-uml",
+            "--uml-diagramm",
+            metavar='FILE',
+            help="UML file (PNG)"
+        )
         self.args = self.parser.parse_args()
 
     def get(self):
@@ -76,7 +82,8 @@ def main(argv):
     module = DocString2MD(module_name=current_args.input,
                           export_file=current_args.output,
                           runtime_file=current_args.runtime,
-                          requirements_file=current_args.requirements
+                          requirements_file=current_args.requirements,
+                          uml_file=current_args.uml_diagramm
                           )
     module.import_module()
     doc = module.get_doc()

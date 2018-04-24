@@ -25,6 +25,7 @@ class MyConst:
     dev_head = "## Dev notes"
     dev_runtime = "### Runtime"
     dev_requirement = "### Requirements"
+    dev_uml = "### UML Diagram"
     decorator_tag = '@'
     function_tag = 'def '
     property_tag = '@Property'
@@ -325,17 +326,13 @@ class ReadFile(object):
         """
         check the path to the json file
         Store the path
-
         Args:
             filename(str): /path/to/the/file
-
         Returns:
             None
-
         Raises:
             IOError: File not found
             IOError: File not readable
-
         """
         if filename is None:
             self.__filename = None
@@ -590,7 +587,7 @@ class DocString2MD(object):
     """
 
     def __init__(self, module_name, export_file=None, runtime_file=None,
-                 requirements_file=None):
+                 requirements_file=None, uml_file=None):
         """Init the class
         This function define default attributs.
 
@@ -609,6 +606,7 @@ class DocString2MD(object):
         """
         self.__runtime = ReadFile(runtime_file)
         self.__requirements = ReadFile(requirements_file)
+        self.__uml = ReadFile(uml_file)
         self.__export_file = export_file
         self.module_name = module_name
         self.__my_module = ExtractPythonModule(self.module_name)
@@ -667,6 +665,12 @@ class DocString2MD(object):
                                                      self.__requirements,
                                                      Tag.end_co
                                                      )
+            """ UML """
+            if self.__uml.isdefined():
+                self.__output += "{}\n![alt text]({})\n".format(
+                        MyConst.dev_uml,
+                        self.__uml.filename)
+
             """ children """
             self.__output += self.__my_module.module.getallstr()
             return True

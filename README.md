@@ -72,6 +72,7 @@ Enjoy...
 - [X] Add-on : decorator
 - [X] Add-on : class properties
 - [X] Add-on : runtime & requirements
+- [X] Add-on : UML
 - [ ] Write Doc/stringdoc
 - [X] Run PEP8 validation
 - [ ] Clean & last check
@@ -100,6 +101,8 @@ setuptools==36.2.7
 pycodestyle==2.3.1
 
 ```
+### UML Diagram
+![alt text](pictures/classes_docstring2md.png)
 
 
 ### ConvMD()
@@ -197,10 +200,10 @@ def DocString2MD.module_name(self, module_name):
 > @Property<br />
 > <br />
 
-#### DocString2MD.__init__(self, module_name, export_file=None, runtime_file=None, requirements_file=None)
+#### DocString2MD.__init__(self, module_name, export_file=None, runtime_file=None, requirements_file=None, uml_file=None)
 
 ```python
-def DocString2MD.__init__(self, module_name, export_file=None, runtime_file=None, requirements_file=None):
+def DocString2MD.__init__(self, module_name, export_file=None, runtime_file=None, requirements_file=None, uml_file=None):
 ```
 
 > <br />

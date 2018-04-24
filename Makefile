@@ -24,11 +24,12 @@ init:
 dev:
 	@sudo python3 setup.py develop
 
+install:
+	@$(MAKE) init
+	@sudo ./setup.py install
+
 uninstall:
 	@sudo -H pip3 uninstall -y $(PACKAGE_NAME)
-
-install:
-	@sudo ./setup.py install
 
 clean:
 	@sudo rm -Rf *.egg *.egg-info .cache .coverage .tox build dist docs/build htmlcov .pytest_cache
@@ -36,7 +37,9 @@ clean:
 	@sudo find -type f -name '*.pyc' -delete
 
 doc:
-	@export_docstring2md.py -i $(PACKAGE_DIR) -o README.md -r requirements.txt -t runtime.txt
+	@pyreverse $(PACKAGE_NAME) -f ALL -o png -p $(PACKAGE_NAME)
+	@mv *.png pictures/
+	@export_docstring2md.py -i $(PACKAGE_DIR) -o README.md -r requirements.txt -t runtime.txt -u pictures/classes_$(PACKAGE_NAME).png
 
 release:
 	@$(MAKE) clean
