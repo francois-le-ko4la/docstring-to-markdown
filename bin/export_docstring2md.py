@@ -7,14 +7,21 @@ import argparse
 from docstring2md import DocString2MD
 
 
+version = "docstring2md-0.1"
+description = """
+This script is provided by docstring2md package.
+It exports google docstrings from python module to a Markdown file in order to
+generate README.
+"""
+
+
 class ArgsManagement(object):
 
     def __init__(self, argv):
-        self.description = "Description"
         self.parser = argparse.ArgumentParser(
             prog=pathlib.Path(__file__).name,
             formatter_class=argparse.RawDescriptionHelpFormatter,
-            description=self.description,
+            description=description,
             epilog="Enjoy...",
             add_help=False
         )
@@ -29,7 +36,7 @@ class ArgsManagement(object):
             '-v',
             '--version',
             action='version',
-            version='docstring2md 0.1'
+            version=version
         )
         self.required = self.parser.add_argument_group('required arguments')
         self.required.add_argument(

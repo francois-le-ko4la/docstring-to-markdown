@@ -33,9 +33,33 @@ make test
 ```
 
 ## Use:
+
 Use the script:
 ```shell
-export_docstring2md.py -i <inputmodule> [-o <outputfile>]`
+$ export_docstring2md.py -h
+usage: export_docstring2md.py [-h] [-v] -i INPUT [-o FILE] [-t FILE] [-r FILE]
+
+This script is provided by docstring2md package.
+It exports google docstrings from python module to a Markdown file in order to
+generate README.
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -v, --version         show program's version number and exit
+
+required arguments:
+  -i INPUT, --input INPUT
+                        Input file name
+
+optional arguments:
+  -o FILE, --output FILE
+                        Output file
+  -t FILE, --runtime FILE
+                        Runtime file
+  -r FILE, --requirements FILE
+                        requirements.txt file
+
+Enjoy...
 ```
 
 ## Todo:
