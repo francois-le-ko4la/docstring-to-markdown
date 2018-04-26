@@ -23,8 +23,8 @@ The script is in the `bin` directory:
 
 ## Setup:
 ```shell
-git clone https://github.com/francois-le-ko4la/docstring2md.git
-cd config-from-json
+git clone https://github.com/francois-le-ko4la/docstring-to-markdown.git
+cd docstring-to-markdown
 make install
 ```
 
