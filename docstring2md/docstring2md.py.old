@@ -16,6 +16,7 @@ import importlib.util
 from functools import wraps
 import re
 import pathlib
+import hashlib
 import sys
 
 
@@ -26,7 +27,6 @@ class MyConst:
     dev_runtime = "### Runtime"
     dev_requirement = "### Requirements"
     dev_uml = "### UML Diagram"
-    dev_obj = "### Objects"
     decorator_tag = '@'
     function_tag = 'def '
     property_tag = '@Property'
@@ -41,8 +41,8 @@ class LineType:
 class Tag:
     beg_co = "\n```\n"
     end_co = "\n```\n"
-    beg_py = "```python\n"
-    end_py = "\n```"
+    beg_py = "\n```python\n"
+    end_py = "\n```\n"
     beg_str = "^"
     end_str = "$"
     end_strh = ":$"
@@ -177,18 +177,15 @@ class TitleObj(object):
             raise ValueError("TitleObj: level type is int")
 
     def getanchor(self):
-        anchor = str(self.__title)
-        anchor = re.sub(r"__([a-zA-Z_]*)__\(", r"\1(", anchor)
-        anchor = re.sub(
-                r"[^\w\- ]+", "", (anchor.replace(' ', '-')).lower())
-        return anchor
+        return hashlib.sha1(self.__title.encode('utf-8')).hexdigest()
 
     def __repr__(self):
         """
         Provide the MD string according to the level
         """
-        return "{} {}".format(
-            MyConst.head_tag * (self.__level + 3),
+        return "{} <a id=\"{}\"></a> {}".format(
+            MyConst.head_tag * (self.__level + 2),
+            self.getanchor(),
             self.__title)
 
     def __str__(self):
@@ -624,7 +621,7 @@ class DocString2MD(object):
     """
 
     def __init__(self, module_name, export_file=None, runtime_file=None,
-                 requirements_file=None, uml_file=None, toc=True):
+                 requirements_file=None, uml_file=None):
         """Init the class
         This function define default attributs.
 
@@ -647,7 +644,6 @@ class DocString2MD(object):
         self.__export_file = export_file
         self.module_name = module_name
         self.__my_module = ExtractPythonModule(self.module_name)
-        self.__toc = toc
         self.__output = ""
 
     @property
@@ -705,20 +701,13 @@ class DocString2MD(object):
                                                      )
             """ UML """
             if self.__uml.isdefined():
-                self.__output += "{}\n![alt text]({})\n\n".format(
+                self.__output += "{}\n![alt text]({})".format(
                     MyConst.dev_uml,
                     self.__uml.filename)
 
             """ children """
-            self.__output += "{}\n".format(MyConst.dev_obj)
-
-            if self.__toc:
-                self.__output += "{}\n".format(
-                    self.__my_module.module.gettoc())
-
-            self.__output += "{}\n".format(
-                    self.__my_module.module.getallstr())
-
+            self.__output += self.__my_module.module.gettoc()
+            self.__output += self.__my_module.module.getallstr()
             return True
         else:
             return False

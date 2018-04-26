@@ -70,6 +70,20 @@ class ArgsManagement(object):
             metavar='FILE',
             help="UML file (PNG)"
         )
+        self._toc = self.parser.add_mutually_exclusive_group(required=False)
+        self._toc.add_argument(
+            '--toc',
+            dest='toc',
+            action='store_true',
+            help="Enable the table of contents (DEFAULT)"
+        )
+        self._toc.add_argument(
+            '--no-toc',
+            dest='toc',
+            action='store_false',
+            help="Disable the table of contents"
+        )
+        self._toc.set_defaults(toc=True)
         self.args = self.parser.parse_args()
 
     def get(self):
@@ -83,13 +97,19 @@ def main(argv):
                           export_file=current_args.output,
                           runtime_file=current_args.runtime,
                           requirements_file=current_args.requirements,
-                          uml_file=current_args.uml_diagramm
+                          uml_file=current_args.uml_diagramm,
+                          toc=current_args.toc
                           )
     module.import_module()
+
     doc = module.get_doc()
     if current_args.output is None:
         print(doc)
 
 
 if __name__ == '__main__':
+
+    import time
+    start_time = time.time()
     main(sys.argv[1:])
+    print("--- %s seconds ---" % (time.time() - start_time))

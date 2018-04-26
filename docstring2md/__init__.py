@@ -75,6 +75,7 @@ Enjoy...
 - [X] Add-on : decorator
 - [X] Add-on : class properties
 - [X] Add-on : runtime & requirements
+- [X] Add-on : toc
 - [ ] Write Doc/stringdoc
 - [X] Run PEP8 validation
 - [ ] Clean & last check

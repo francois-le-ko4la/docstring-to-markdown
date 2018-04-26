@@ -20,6 +20,7 @@ default:
 
 init:
 	@pip3 install -r requirements.txt
+	@sudo apt-get install python3-pycodestyle graphviz
 
 dev:
 	@sudo python3 setup.py develop
