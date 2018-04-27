@@ -30,7 +30,7 @@ make install
 
 ## Test:
 
-This module has been tested and validated on Ubuntu.
+This module has been tested and validated on Ubuntu 17.10/18.04.
 ```shell
 make test
 ```
