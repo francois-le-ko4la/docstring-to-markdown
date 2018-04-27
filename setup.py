@@ -22,7 +22,9 @@ Note:
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 """
 
+
 from setuptools import setup
+import docstring2md.__about__
 
 
 def readme():
@@ -34,8 +36,8 @@ def readme():
 
 setup(
     name='docstring2md',
-    version='0.1',
-    description='Docstring extractor to generate readme.',
+    version=docstring2md.__about__.__version__,
+    description=docstring2md.__about__.__description__,
     long_description=readme(),
     python_requires='>=3.6',
     classifiers=[
@@ -43,9 +45,9 @@ setup(
         'Environment :: Console',
         'Programming Language :: Python :: 3.6',
         ],
-    url='https://github.com/francois-le-ko4la/docstring2md.git',
-    author='Ko4lA',
-    author_email='francois@le.ko4la.fr',
+    url=docstring2md.__about__.__url__,
+    author=docstring2md.__about__.__author__,
+    author_email=docstring2md.__about__.__description__,
     license='',
     packages=['docstring2md'],
     setup_requires=['pytest-runner'],

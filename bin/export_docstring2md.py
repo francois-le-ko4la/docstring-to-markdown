@@ -4,15 +4,7 @@
 import pathlib
 import sys
 import argparse
-from docstring2md import DocString2MD
-
-
-version = "docstring2md-0.1"
-description = """
-This script is provided by docstring2md package.
-It exports google docstrings from python module to a Markdown file in order to
-generate README.
-"""
+from docstring2md import *
 
 
 class ArgsManagement(object):
@@ -21,7 +13,7 @@ class ArgsManagement(object):
         self.parser = argparse.ArgumentParser(
             prog=pathlib.Path(__file__).name,
             formatter_class=argparse.RawDescriptionHelpFormatter,
-            description=description,
+            description=docstring2md.__about__.__script_description__,
             epilog="Enjoy...",
             add_help=False
         )
@@ -36,7 +28,7 @@ class ArgsManagement(object):
             '-v',
             '--version',
             action='version',
-            version=version
+            version=docstring2md.__about__.__version__
         )
         self.required = self.parser.add_argument_group('required arguments')
         self.required.add_argument(
@@ -93,13 +85,14 @@ class ArgsManagement(object):
 def main(argv):
     args = ArgsManagement(argv)
     current_args = args.get()
-    module = DocString2MD(module_name=current_args.input,
-                          export_file=current_args.output,
-                          runtime_file=current_args.runtime,
-                          requirements_file=current_args.requirements,
-                          uml_file=current_args.uml_diagramm,
-                          toc=current_args.toc
-                          )
+    module = DocString2MD(
+        module_name=current_args.input,
+        export_file=current_args.output,
+        runtime_file=current_args.runtime,
+        requirements_file=current_args.requirements,
+        uml_file=current_args.uml_diagramm,
+        toc=current_args.toc
+    )
     module.import_module()
 
     doc = module.get_doc()

@@ -92,6 +92,5 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 """
 
-__version__ = '0.1_dev'
-
-from .docstring2md import *
+import docstring2md.__about__
+from docstring2md.doc2md import *
