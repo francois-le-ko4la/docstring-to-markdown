@@ -47,6 +47,9 @@ release:
 	@$(MAKE) install
 	@$(MAKE) doc
 
+requirements:
+	@pipreqs . --force
+
 publish:
 	@$(MAKE) test
 	@pipreqs .

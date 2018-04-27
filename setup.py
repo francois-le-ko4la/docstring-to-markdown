@@ -47,7 +47,7 @@ setup(
         ],
     url=docstring2md.__about__.__url__,
     author=docstring2md.__about__.__author__,
-    author_email=docstring2md.__about__.__description__,
+    author_email=docstring2md.__about__.__email__,
     license='',
     packages=['docstring2md'],
     setup_requires=['pytest-runner'],
