@@ -485,6 +485,10 @@ class ExtractPythonModule(object):
         try:
             self.__module = importlib.util.module_from_spec(self.__module_spec)
             self.__module_spec.loader.exec_module(self.__module)
+            if self.__module_name in sys.modules:
+                return True
+            """ add module in sys.modules """
+            importlib.import_module(self.__module_name)
         except Exception as e:
             raise Exception("Import error")
         return True
