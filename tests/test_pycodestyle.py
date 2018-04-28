@@ -29,12 +29,15 @@ path = pathlib.Path(
                             pathlib.Path(__file__).resolve().parent, '../')
                     ).resolve()
 for current_file in list(path.glob('**/*.py')):
-    def ch(current_file):
-        return lambda self: self.run_pycodesyle(current_file)
-    setattr(RunPyCodeStyle,
-            "test_{}".format(current_file),
-            ch(current_file)
-            )
+    if '.eggs' in str(current_file):
+        pass
+    else:
+        def ch(current_file):
+            return lambda self: self.run_pycodesyle(current_file)
+        setattr(RunPyCodeStyle,
+                "test_{}".format(current_file),
+                ch(current_file)
+                )
 
 
 if __name__ == "__main__":
