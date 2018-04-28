@@ -29,7 +29,7 @@ path = pathlib.Path(
                             pathlib.Path(__file__).resolve().parent, '../')
                     ).resolve()
 for current_file in list(path.glob('**/*.py')):
-    if '.eggs' in str(current_file):
+    if '.eggs' in str(current_file) or '/build/' in str(current_file):
         pass
     else:
         def ch(current_file):
