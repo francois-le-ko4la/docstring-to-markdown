@@ -588,6 +588,10 @@ class ExtractPythonModule(object):
 
         for member in inspect.getmembers(inspectmembers):
             if inspect.isclass(member[1]) and member[0] != "__class__":
+                """ If external class -> stop """
+                if self.__module_name not in str(member[1]):
+                    return
+
                 decorator = self.__extractdecorator(member)
                 properties = inspect.getmembers(member[1],
                                                 lambda o: isinstance(o,

@@ -24,7 +24,7 @@ Note:
 
 
 from setuptools import setup
-import docstring2md.__about__
+from docstring2md import __about__
 
 
 def readme():
@@ -36,8 +36,8 @@ def readme():
 
 setup(
     name='docstring2md',
-    version=docstring2md.__about__.__version__,
-    description=docstring2md.__about__.__description__,
+    version=__about__.__version__,
+    description=__about__.__description__,
     long_description=readme(),
     python_requires='>=3.6',
     classifiers=[
@@ -45,9 +45,9 @@ setup(
         'Environment :: Console',
         'Programming Language :: Python :: 3.6',
         ],
-    url=docstring2md.__about__.__url__,
-    author=docstring2md.__about__.__author__,
-    author_email=docstring2md.__about__.__email__,
+    url=__about__.__url__,
+    author=__about__.__author__,
+    author_email=__about__.__email__,
     license='',
     packages=['docstring2md'],
     setup_requires=['pytest-runner'],
