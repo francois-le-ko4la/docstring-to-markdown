@@ -58,6 +58,12 @@ class Tag:
     quote = "> "
 
 
+class PythonObjType:
+    mod = 0
+    cla = 1
+    fun = 2
+
+
 class ConvMD(object):
 
     """
@@ -240,11 +246,12 @@ class DocStringObj(object):
     This object will become an attribute.
     """
 
-    def __init__(self, value):
+    def __init__(self, value, obj_type):
         """
         Store the docstring
         """
         self.value = value
+        self.__obj_type = obj_type
 
     @property
     def value(self):
@@ -263,11 +270,26 @@ class DocStringObj(object):
     @ConvMD.repl_beg_end(Tag.beg_str, Tag.end_strh, Tag.beg_b, Tag.end_bh)
     @ConvMD.repl_str(Tag.tab, Tag.html_tab)
     @ConvMD.add_tag(Tag.cr, Tag.cr)
-    def __repr__(self):
+    def __repr_fun(self):
         """
-        Provide the new docstring with MD tags.
+        Provide a function docstring with MD tags.
         """
         return self.value
+
+    @ConvMD.add_tag(Tag.beg_co, Tag.end_co)
+    def __repr_cla(self):
+        """
+        Provide a class docstring with MD tags.
+        """
+        return self.value
+
+    def __repr__(self):
+        if self.__obj_type is PythonObjType.fun:
+            return self.__repr_fun()
+        elif self.__obj_type is PythonObjType.cla:
+            return self.__repr_cla()
+        else:
+            return self.value
 
     def __str__(self):
         """
@@ -315,10 +337,10 @@ class PythonObj(object):
     __str__ is used to export with MD format.
     """
 
-    def __init__(self, name, full_name, docstring, level):
+    def __init__(self, name, full_name, docstring, level, obj_type):
         self.__title = TitleObj(name, level)
         self.__definition = PythonDefinitionObj(full_name)
-        self.__docstring = DocStringObj(docstring)
+        self.__docstring = DocStringObj(docstring, obj_type)
         self.members = MembersObj()
 
     def getlink(self):
@@ -397,7 +419,8 @@ class ModuleObj(PythonObj):
     """
 
     def __init__(self, name, full_name, docstring, level=0):
-        PythonObj.__init__(self, name, full_name, docstring, level)
+        PythonObj.__init__(self, name, full_name, docstring, level,
+                           PythonObjType.mod)
         self.__module_docstring = docstring
 
     def __repr__(self):
@@ -568,7 +591,8 @@ class ExtractPythonModule(object):
             new_pythonobj = PythonObj(name,
                                       full_name,
                                       MyConst.property_tag,
-                                      level)
+                                      level,
+                                      PythonObjType.fun)
             my_pythonobj.members[name] = new_pythonobj
 
     def __extract(self, my_pythonobj, inspectmembers, level=0, decorator=None):
@@ -604,7 +628,8 @@ class ExtractPythonModule(object):
                 full_name = inspect.getsourcelines(
                     member[1])[0][0].replace('\n', '')
                 docstring = inspect.getdoc(member[1])
-                new_pythonobj = PythonObj(name, full_name, docstring, level)
+                new_pythonobj = PythonObj(name, full_name, docstring, level,
+                                          PythonObjType.cla)
                 my_pythonobj.members[name] = new_pythonobj
 
                 self.__extractproperties(new_pythonobj,
@@ -623,7 +648,8 @@ class ExtractPythonModule(object):
                 if decorator is not None and full_name in decorator:
                     full_name = "{}{}".format(decorator[full_name], full_name)
                 docstring = inspect.getdoc(member[1])
-                new_pythonobj = PythonObj(name, full_name, docstring, level)
+                new_pythonobj = PythonObj(name, full_name, docstring, level,
+                                          PythonObjType.fun)
                 my_pythonobj.members[name] = new_pythonobj
 
 

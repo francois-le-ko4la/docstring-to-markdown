@@ -126,8 +126,10 @@ pylint>=1.8.4
 [DocString2MD.import_module(self)](#docstring2mdimport_moduleself)<br />
 [DocStringObj()](#docstringobj)<br />
 [@Property: DocStringObj.value](#property-docstringobjvalue)<br />
-[DocStringObj.__init__(self, value)](#docstringobjinitself-value)<br />
+[DocStringObj.__init__(self, value, obj_type)](#docstringobjinitself-value-obj_type)<br />
 [DocStringObj.__repr__(self)](#docstringobjreprself)<br />
+[DocStringObj.__repr_cla(self)](#docstringobj__repr_claself)<br />
+[DocStringObj.__repr_fun(self)](#docstringobj__repr_funself)<br />
 [DocStringObj.__str__(self)](#docstringobjstrself)<br />
 [ExtractPythonModule()](#extractpythonmodule)<br />
 [ExtractPythonModule.__check_module(func)](#extractpythonmodule__check_modulefunc)<br />
@@ -163,10 +165,11 @@ pylint>=1.8.4
 [PythonDefinitionObj.__repr__(self)](#pythondefinitionobjreprself)<br />
 [PythonDefinitionObj.__str__(self)](#pythondefinitionobjstrself)<br />
 [PythonObj()](#pythonobj)<br />
-[PythonObj.__init__(self, name, full_name, docstring, level)](#pythonobjinitself-name-full_name-docstring-level)<br />
+[PythonObj.__init__(self, name, full_name, docstring, level, obj_type)](#pythonobjinitself-name-full_name-docstring-level-obj_type)<br />
 [PythonObj.__repr__(self)](#pythonobjreprself)<br />
 [PythonObj.__str__(self)](#pythonobjstrself)<br />
 [PythonObj.getlink(self)](#pythonobjgetlinkself)<br />
+[PythonObjType()](#pythonobjtype)<br />
 [ReadFile()](#readfile)<br />
 [@Property: ReadFile.filename](#property-readfilefilename)<br />
 [ReadFile.__init__(self, filename)](#readfileinitself-filename)<br />
@@ -189,9 +192,11 @@ pylint>=1.8.4
 ```python
 class ConvMD(object):
 ```
-> <br />
-> Prepare MD string<br />
-> <br />
+
+```
+Prepare MD string
+```
+
 ##### ConvMD.add_tag(begin_tag, end_tag)
 ```python
 def ConvMD.add_tag(begin_tag, end_tag):
@@ -248,9 +253,11 @@ def ConvMD.repl_str(old_string, new_string):
 ```python
 class DocString2MD(object):
 ```
-> <br />
-> Class DocString2MD : export Google docstring to MD File.<br />
-> <br />
+
+```
+Class DocString2MD : export Google docstring to MD File.
+```
+
 ##### @Property: DocString2MD.module_name
 ```python
 @property
@@ -320,10 +327,12 @@ def DocString2MD.import_module(self):
 ```python
 class DocStringObj(object):
 ```
-> <br />
-> String to store and prepare the docstring.<br />
-> This object will become an attribute.<br />
-> <br />
+
+```
+String to store and prepare the docstring.
+This object will become an attribute.
+```
+
 ##### @Property: DocStringObj.value
 ```python
 @property
@@ -335,23 +344,38 @@ def DocStringObj.value(self, value):
 > <br />
 > @Property<br />
 > <br />
-##### DocStringObj.__init__(self, value)
+##### DocStringObj.__init__(self, value, obj_type)
 ```python
-def DocStringObj.__init__(self, value):
+def DocStringObj.__init__(self, value, obj_type):
 ```
 > <br />
 > Store the docstring<br />
 > <br />
 ##### DocStringObj.__repr__(self)
 ```python
+def DocStringObj.__repr__(self):
+```
+> <br />
+> Return repr(self).<br />
+> <br />
+##### DocStringObj.__repr_cla(self)
+```python
+@ConvMD.add_tag(Tag.beg_co, Tag.end_co)
+def DocStringObj.__repr_cla(self):
+```
+> <br />
+> Provide a class docstring with MD tags.<br />
+> <br />
+##### DocStringObj.__repr_fun(self)
+```python
 @ConvMD.repl_beg_end(Tag.beg_str, Tag.end_str, Tag.quote, Tag.html_cr)
 @ConvMD.repl_beg_end(Tag.beg_str, Tag.end_strh, Tag.beg_b, Tag.end_bh)
 @ConvMD.repl_str(Tag.tab, Tag.html_tab)
 @ConvMD.add_tag(Tag.cr, Tag.cr)
-def DocStringObj.__repr__(self):
+def DocStringObj.__repr_fun(self):
 ```
 > <br />
-> Provide the new docstring with MD tags.<br />
+> Provide a function docstring with MD tags.<br />
 > <br />
 ##### DocStringObj.__str__(self)
 ```python
@@ -364,9 +388,11 @@ def DocStringObj.__str__(self):
 ```python
 class ExtractPythonModule(object):
 ```
-> <br />
-> Object in order to extract Python functions, classes....<br />
-> <br />
+
+```
+Object in order to extract Python functions, classes....
+```
+
 ##### ExtractPythonModule.__check_module(func)
 ```python
 def ExtractPythonModule.__check_module(func):
@@ -464,17 +490,21 @@ def ExtractPythonModule.import_module(self):
 ```python
 class LineType:
 ```
-> <br />
-> <b>- docstring empty -</b><br />
-> <br />
+
+```
+<b>- docstring empty -</b>
+```
+
 #### MembersObj()
 ```python
 class MembersObj(object):
 ```
-> <br />
-> Dict() to store a python object's members.<br />
-> This object will become an attribute.<br />
-> <br />
+
+```
+Dict() to store a python object's members.
+This object will become an attribute.
+```
+
 ##### MembersObj.__getitem__(self, index)
 ```python
 def MembersObj.__getitem__(self, index):
@@ -535,10 +565,12 @@ def MembersObj.sortkeys(self):
 ```python
 class ModuleObj(PythonObj):
 ```
-> <br />
-> Class in order to register module informations<br />
-> __str__ is used to export with MD format.<br />
-> <br />
+
+```
+Class in order to register module informations
+__str__ is used to export with MD format.
+```
+
 ##### ModuleObj.__init__(self, name, full_name, docstring, level=0)
 ```python
 def ModuleObj.__init__(self, name, full_name, docstring, level=0):
@@ -585,18 +617,22 @@ def PythonObj.getlink(self):
 ```python
 class MyConst:
 ```
-> <br />
-> <b>- docstring empty -</b><br />
-> <br />
+
+```
+<b>- docstring empty -</b>
+```
+
 #### PythonDefinitionObj()
 ```python
 class PythonDefinitionObj(object):
 ```
-> <br />
-> <b>String so store and prepare the object definition:</b><br />
-> Example : def function_name(*args)<br />
-> This object will become an attribute.<br />
-> <br />
+
+```
+String so store and prepare the object definition:
+Example : def function_name(*args)
+This object will become an attribute.
+```
+
 ##### @Property: PythonDefinitionObj.value
 ```python
 @property
@@ -634,13 +670,15 @@ def PythonDefinitionObj.__str__(self):
 ```python
 class PythonObj(object):
 ```
-> <br />
-> Class in order to register object informations<br />
-> __str__ is used to export with MD format.<br />
-> <br />
-##### PythonObj.__init__(self, name, full_name, docstring, level)
+
+```
+Class in order to register object informations
+__str__ is used to export with MD format.
+```
+
+##### PythonObj.__init__(self, name, full_name, docstring, level, obj_type)
 ```python
-def PythonObj.__init__(self, name, full_name, docstring, level):
+def PythonObj.__init__(self, name, full_name, docstring, level, obj_type):
 ```
 > <br />
 > Initialize self.  See help(type(self)) for accurate signature.<br />
@@ -666,13 +704,24 @@ def PythonObj.getlink(self):
 > <br />
 > <b>- docstring empty -</b><br />
 > <br />
+#### PythonObjType()
+```python
+class PythonObjType:
+```
+
+```
+<b>- docstring empty -</b>
+```
+
 #### ReadFile()
 ```python
 class ReadFile(object):
 ```
-> <br />
-> <b>- docstring empty -</b><br />
-> <br />
+
+```
+<b>- docstring empty -</b>
+```
+
 ##### @Property: ReadFile.filename
 ```python
 @property
@@ -724,17 +773,21 @@ def ReadFile.isdefined(self):
 ```python
 class Tag:
 ```
-> <br />
-> <b>- docstring empty -</b><br />
-> <br />
+
+```
+<b>- docstring empty -</b>
+```
+
 #### TitleObj()
 ```python
 class TitleObj(object):
 ```
-> <br />
-> String to store and prepare MD title<br />
-> This object will become an attribute.<br />
-> <br />
+
+```
+String to store and prepare MD title
+This object will become an attribute.
+```
+
 ##### @Property: TitleObj.level
 ```python
 @property
