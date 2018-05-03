@@ -321,7 +321,7 @@ def DocString2MD.get_doc(self):
 def DocString2MD.import_module(self):
 ```
 > <br />
-> <b>- docstring empty -</b><br />
+> Docstring empty<br />
 > <br />
 #### DocStringObj()
 ```python
@@ -427,21 +427,21 @@ def ExtractPythonModule.__extract(self, my_pythonobj, inspectmembers, level=0, d
 def ExtractPythonModule.__extractdecorator(self, member):
 ```
 > <br />
-> <b>- docstring empty -</b><br />
+> Docstring empty<br />
 > <br />
 ##### ExtractPythonModule.__extractproperties(self, my_pythonobj, inspectmembers, level, decorator, cls_name)
 ```python
 def ExtractPythonModule.__extractproperties(self, my_pythonobj, inspectmembers, level, decorator, cls_name):
 ```
 > <br />
-> <b>- docstring empty -</b><br />
+> Docstring empty<br />
 > <br />
 ##### ExtractPythonModule.__findinline(self, line, search_item)
 ```python
 def ExtractPythonModule.__findinline(self, line, search_item):
 ```
 > <br />
-> <b>- docstring empty -</b><br />
+> Docstring empty<br />
 > <br />
 ##### ExtractPythonModule.__init__(self, module_name)
 ```python
@@ -455,7 +455,7 @@ def ExtractPythonModule.__init__(self, module_name):
 def ExtractPythonModule.__linetype(self, line):
 ```
 > <br />
-> <b>- docstring empty -</b><br />
+> Docstring empty<br />
 > <br />
 ##### ExtractPythonModule.extract(self)
 ```python
@@ -492,7 +492,7 @@ class LineType:
 ```
 
 ```
-<b>- docstring empty -</b>
+Docstring empty
 ```
 
 #### MembersObj()
@@ -510,7 +510,7 @@ This object will become an attribute.
 def MembersObj.__getitem__(self, index):
 ```
 > <br />
-> <b>- docstring empty -</b><br />
+> Docstring empty<br />
 > <br />
 ##### MembersObj.__init__(self)
 ```python
@@ -524,7 +524,7 @@ def MembersObj.__init__(self):
 def MembersObj.__len__(self):
 ```
 > <br />
-> <b>- docstring empty -</b><br />
+> Docstring empty<br />
 > <br />
 ##### MembersObj.__repr__(self)
 ```python
@@ -538,7 +538,7 @@ def MembersObj.__repr__(self):
 def MembersObj.__setitem__(self, index, value):
 ```
 > <br />
-> <b>- docstring empty -</b><br />
+> Docstring empty<br />
 > <br />
 ##### MembersObj.__str__(self)
 ```python
@@ -552,14 +552,14 @@ def MembersObj.__str__(self):
 def MembersObj.items(self):
 ```
 > <br />
-> <b>- docstring empty -</b><br />
+> Docstring empty<br />
 > <br />
 ##### MembersObj.sortkeys(self)
 ```python
 def MembersObj.sortkeys(self):
 ```
 > <br />
-> <b>- docstring empty -</b><br />
+> Docstring empty<br />
 > <br />
 #### ModuleObj()
 ```python
@@ -597,21 +597,21 @@ def ModuleObj.__str__(self):
 def ModuleObj.getallstr(self, member=None):
 ```
 > <br />
-> <b>- docstring empty -</b><br />
+> Docstring empty<br />
 > <br />
 ##### ModuleObj.gettoc(self, member=None)
 ```python
 def ModuleObj.gettoc(self, member=None):
 ```
 > <br />
-> <b>- docstring empty -</b><br />
+> Docstring empty<br />
 > <br />
 ##### PythonObj.getlink(self)
 ```python
 def PythonObj.getlink(self):
 ```
 > <br />
-> <b>- docstring empty -</b><br />
+> Docstring empty<br />
 > <br />
 #### MyConst()
 ```python
@@ -619,7 +619,7 @@ class MyConst:
 ```
 
 ```
-<b>- docstring empty -</b>
+Docstring empty
 ```
 
 #### PythonDefinitionObj()
@@ -702,7 +702,7 @@ def PythonObj.__str__(self):
 def PythonObj.getlink(self):
 ```
 > <br />
-> <b>- docstring empty -</b><br />
+> Docstring empty<br />
 > <br />
 #### PythonObjType()
 ```python
@@ -710,7 +710,7 @@ class PythonObjType:
 ```
 
 ```
-<b>- docstring empty -</b>
+Docstring empty
 ```
 
 #### ReadFile()
@@ -719,7 +719,7 @@ class ReadFile(object):
 ```
 
 ```
-<b>- docstring empty -</b>
+Docstring empty
 ```
 
 ##### @Property: ReadFile.filename
@@ -767,7 +767,7 @@ def ReadFile.get(self):
 def ReadFile.isdefined(self):
 ```
 > <br />
-> <b>- docstring empty -</b><br />
+> Docstring empty<br />
 > <br />
 #### Tag()
 ```python
@@ -775,7 +775,7 @@ class Tag:
 ```
 
 ```
-<b>- docstring empty -</b>
+Docstring empty
 ```
 
 #### TitleObj()
@@ -836,7 +836,7 @@ def TitleObj.__str__(self):
 def TitleObj.getanchor(self):
 ```
 > <br />
-> <b>- docstring empty -</b><br />
+> Docstring empty<br />
 > <br />
 #### wraps(wrapped, assigned=('__module__', '__name__', '__qualname__', '__doc__', '__annotations__'), updated=('__dict__',))
 ```python

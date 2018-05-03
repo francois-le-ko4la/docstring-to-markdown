@@ -22,7 +22,7 @@ import sys
 
 
 class MyConst:
-    docstring_empty = "<b>- docstring empty -</b>"
+    docstring_empty = "Docstring empty"
     head_tag = "#"
     dev_head = "## Dev notes"
     dev_runtime = "### Runtime"
