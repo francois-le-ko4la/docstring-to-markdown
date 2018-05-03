@@ -13,7 +13,8 @@ the GNU General Public License (GPL), version 3.
 
 The package contents itself are in the `docstring2md` directory:
 * `__init__.py` Initialization file for the Python package.
-* `docstring2md/docstring2md.py`: The code of interest.
+* `__about__.py` Global parameters
+* `doc2md.py`: The code of interest.
 
 The script is in the `bin` directory:
 * `export_docstring2md.py`: The script to run
@@ -38,10 +39,15 @@ Use the script:
 ```shell
 $ export_docstring2md.py -h
 usage: export_docstring2md.py [-h] [-v] -i INPUT [-o FILE] [-t FILE] [-r FILE]
+                              [-uml FILE] [--toc | --no-toc]
 
 This script is provided by docstring2md package.
 It exports google docstrings from python module to a Markdown file in order to
 generate README.
+
+optional arguments:
+  --toc                 Enable the table of contents (DEFAULT)
+  --no-toc              Disable the table of contents
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -58,6 +64,8 @@ optional arguments:
                         Runtime file
   -r FILE, --requirements FILE
                         requirements.txt file
+  -uml FILE, --uml-diagramm FILE
+                        UML file (PNG)
 
 Enjoy...
 ```
@@ -97,8 +105,9 @@ python-3.6.x
 ### Requirements
 
 ```
-setuptools==36.2.7
-pycodestyle==2.3.1
+setuptools>=36.2.7
+pycodestyle>=2.3.1
+pylint>=1.8.4
 
 ```
 ### UML Diagram
