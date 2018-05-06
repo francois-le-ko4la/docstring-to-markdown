@@ -153,6 +153,17 @@ class TitleObj(object):
     """
     String to store and prepare MD title
     This object will become an attribute.
+
+    Use:
+        >>> title = TitleObj(3, "oups")
+        Traceback (most recent call last):
+        ...
+        ValueError: TitleObj: Title type is string
+        >>> title = TitleObj("Test_def(self, var, indx)", 3)
+        >>> print(title)
+        ###### Test_def(self, var, indx)
+        >>> print(title.getanchor())
+        test_defself-var-indx
     """
 
     def __init__(self, title, level):
@@ -209,6 +220,22 @@ class PythonDefinitionObj(object):
     String so store and prepare the object definition:
     Example : def function_name(*args)
     This object will become an attribute.
+
+    Use:
+        >>> obj = PythonDefinitionObj(1)
+        Traceback (most recent call last):
+        ...
+        ValueError: PythonDefinitionObj: bad value
+        >>> obj = PythonDefinitionObj("")
+        Traceback (most recent call last):
+        ...
+        ValueError: PythonDefinitionObj: bad value
+        >>> obj = PythonDefinitionObj("MyOBJ")
+        >>> print(obj)
+        ```python
+        MyOBJ
+        ```
+
     """
 
     def __init__(self, value):
@@ -243,7 +270,26 @@ class DocStringObj(object):
 
     """
     String to store and prepare the docstring.
-    This object will become an attribute.
+    This object will become an attribut.
+
+    Use:
+        >>> docstring = DocStringObj("My docstring", PythonObjType.fun)
+        >>> print(docstring)
+        > <br />
+        > My docstring<br />
+        > <br />
+        >>> docstring = DocStringObj("", PythonObjType.fun)
+        >>> print(docstring)
+        > <br />
+        > <br />
+        > <br />
+        >>> docstring = DocStringObj("My docstring", PythonObjType.cla)
+        >>> print(docstring)
+        <BLANKLINE>
+        ```
+        My docstring
+        ```
+        <BLANKLINE>
     """
 
     def __init__(self, value, obj_type):
@@ -335,6 +381,30 @@ class PythonObj(object):
     """
     Class in order to register object informations
     __str__ is used to export with MD format.
+
+    Use:
+        >>> obj = PythonObj("Mc", "def Mc()", "Doc", 1, PythonObjType.fun)
+        >>> print(obj)
+        <BLANKLINE>
+        #### Mc
+        ```python
+        def Mc()
+        ```
+        > <br />
+        > Doc<br />
+        > <br />
+        >>> obj = PythonObj("Mc", "class Mc():", "Doc", 1, PythonObjType.cla)
+        >>> print(obj)
+        <BLANKLINE>
+        #### Mc
+        ```python
+        class Mc():
+        ```
+        <BLANKLINE>
+        ```
+        Doc
+        ```
+        <BLANKLINE>
     """
 
     def __init__(self, name, full_name, docstring, level, obj_type):
@@ -358,7 +428,20 @@ class PythonObj(object):
 
 
 class ReadFile(object):
+    """
+    This class check if file exists and read the content
 
+    Use:
+        >>> myfile = ReadFile("oups")
+        Traceback (most recent call last):
+        ...
+        OSError: File not found ! (oups)
+        >>> myfile = ReadFile("/etc/fstab")
+        >>> print(myfile.isdefined())
+        True
+        >>>
+
+    """
     def __init__(self, filename):
         self.filename = filename
 
@@ -416,6 +499,13 @@ class ModuleObj(PythonObj):
     """
     Class in order to register module informations
     __str__ is used to export with MD format.
+
+    Use:
+        >>> obj = ModuleObj("Mod", "module", "mod doc")
+        >>> print(obj)
+        mod doc
+        ## Dev notes
+        <BLANKLINE>
     """
 
     def __init__(self, name, full_name, docstring, level=0):
@@ -458,6 +548,18 @@ class ExtractPythonModule(object):
 
     """
     Object in order to extract Python functions, classes....
+
+    Use:
+        >>> mod = ExtractPythonModule("oups...")
+        >>> mod.import_module()
+        Traceback (most recent call last):
+        ...
+        ModuleNotFoundError: No module named 'oups'
+        >>> mod = ExtractPythonModule("json")
+        >>> mod.import_module()
+        True
+        >>> mod.extract()
+
     """
 
     def __init__(self, module_name):
@@ -579,6 +681,7 @@ class ExtractPythonModule(object):
         for current_property, inspect_obj in inspectmembers:
             full_name = ""
             name = ""
+            docstring = None
             for current_func in decorator.keys():
                 if "{}{}.{}(".format(MyConst.function_tag,
                                      cls_name,
@@ -586,11 +689,13 @@ class ExtractPythonModule(object):
                     full_name += "{}{}\n".format(decorator[current_func],
                                                  current_func
                                                  )
+                    if docstring is None:
+                        docstring = inspect.getdoc(inspect_obj)
             name = "{}: {}.{}".format(
                 MyConst.property_tag, cls_name, current_property)
             new_pythonobj = PythonObj(name,
                                       full_name,
-                                      MyConst.property_tag,
+                                      docstring or MyConst.property_tag,
                                       level,
                                       PythonObjType.fun)
             my_pythonobj.members[name] = new_pythonobj
@@ -657,6 +762,15 @@ class DocString2MD(object):
 
     """
     Class DocString2MD : export Google docstring to MD File.
+
+    Use:
+        >>> doc = DocString2MD("docstring2md")
+        >>> doc.import_module()
+        True
+        >>> result = doc.get_doc()
+        >>> result = result.split("\\n")
+        >>> print(result[0])
+        # docstring2md
     """
 
     def __init__(self, module_name, export_file=None, runtime_file=None,

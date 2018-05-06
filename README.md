@@ -3,34 +3,18 @@
 
 This package Export Google DocString to Markdown from Python module.
 
-The following files comprise the `docstring2md` package:
-* `LICENSE`: The license file. `docstring2md` is released under the terms of
-the GNU General Public License (GPL), version 3.
-* `README.md`: This readme file.
-* `Makefile`: Generic management tasks.
-* `setup.py`: Package and distribution management.
-* `setup.cfg`: The setuptools setup file.
-
-The package contents itself are in the `docstring2md` directory:
-* `__init__.py` Initialization file for the Python package.
-* `__about__.py` Global parameters
-* `doc2md.py`: The code of interest.
-
-The script is in the `bin` directory:
-* `export_docstring2md.py`: The script to run
-
 ## Setup:
 ```shell
-git clone https://github.com/francois-le-ko4la/docstring-to-markdown.git
-cd docstring-to-markdown
-make install
+$ git clone https://github.com/francois-le-ko4la/docstring-to-markdown.git
+$ cd docstring-to-markdown
+$ make install
 ```
 
 ## Test:
 
 This module has been tested and validated on Ubuntu 17.10/18.04.
 ```shell
-make test
+$ make test
 ```
 
 ## Use:
@@ -70,6 +54,34 @@ optional arguments:
 Enjoy...
 ```
 
+## Project structure
+
+```
+.
+├── bin
+│   └── export_docstring2md.py
+├── docstring2md
+│   ├── __about__.py
+│   ├── doc2md.py
+│   ├── __init__.py
+│   └── main.py
+├── LICENSE
+├── Makefile
+├── MANIFEST.in
+├── pictures
+│   ├── classes_docstring2md.png
+│   └── packages_docstring2md.png
+├── README.md
+├── requirements.txt
+├── runtime.txt
+├── setup.cfg
+├── setup.py
+└── tests
+    ├── test_docstring2md.py
+    ├── test_doctest.py
+    └── test_pycodestyle.py
+```
+
 ## Todo:
 
 - [X] Create the project
@@ -86,15 +98,9 @@ Enjoy...
 - [ ] Clean & last check
 - [ ] Release
 
-## Note:
-This script is free software; you can redistribute it and/or
-modify it under the terms of the GNU Lesser General Public
-License as published by the Free Software Foundation; either
-version 3 of the License, or (at your option) any later version.
+## License
 
-This script is provided in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+pytping is distributed under the [GPLv3 license](./LICENSE)
 ## Dev notes
 ### Runtime
 
@@ -107,7 +113,6 @@ python-3.6.x
 ```
 setuptools>=36.2.7
 pycodestyle>=2.3.1
-pylint>=1.8.4
 
 ```
 ### UML Diagram
@@ -256,6 +261,15 @@ class DocString2MD(object):
 
 ```
 Class DocString2MD : export Google docstring to MD File.
+
+Use:
+    >>> doc = DocString2MD("docstring2md")
+    >>> doc.import_module()
+    True
+    >>> result = doc.get_doc()
+    >>> result = result.split("\n")
+    >>> print(result[0])
+    # docstring2md
 ```
 
 ##### @Property: DocString2MD.module_name
@@ -267,7 +281,13 @@ def DocString2MD.module_name(self, module_name):
 
 ```
 > <br />
-> @Property<br />
+> return /path/to/the/json/file<br />
+> <br />
+> <b>Args:</b><br />
+> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  None<br />
+> <br />
+> <b>Returns:</b><br />
+> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  None<br />
 > <br />
 ##### DocString2MD.__init__(self, module_name, export_file=None, runtime_file=None, requirements_file=None, uml_file=None, toc=True)
 ```python
@@ -330,7 +350,26 @@ class DocStringObj(object):
 
 ```
 String to store and prepare the docstring.
-This object will become an attribute.
+This object will become an attribut.
+
+Use:
+    >>> docstring = DocStringObj("My docstring", PythonObjType.fun)
+    >>> print(docstring)
+    > <br />
+    > My docstring<br />
+    > <br />
+    >>> docstring = DocStringObj("", PythonObjType.fun)
+    >>> print(docstring)
+    > <br />
+    > <br />
+    > <br />
+    >>> docstring = DocStringObj("My docstring", PythonObjType.cla)
+    >>> print(docstring)
+    <BLANKLINE>
+    ```
+    My docstring
+    ```
+    <BLANKLINE>
 ```
 
 ##### @Property: DocStringObj.value
@@ -391,6 +430,17 @@ class ExtractPythonModule(object):
 
 ```
 Object in order to extract Python functions, classes....
+
+Use:
+    >>> mod = ExtractPythonModule("oups...")
+    >>> mod.import_module()
+    Traceback (most recent call last):
+    ...
+    ModuleNotFoundError: No module named 'oups'
+    >>> mod = ExtractPythonModule("json")
+    >>> mod.import_module()
+    True
+    >>> mod.extract()
 ```
 
 ##### ExtractPythonModule.__check_module(func)
@@ -569,6 +619,13 @@ class ModuleObj(PythonObj):
 ```
 Class in order to register module informations
 __str__ is used to export with MD format.
+
+Use:
+    >>> obj = ModuleObj("Mod", "module", "mod doc")
+    >>> print(obj)
+    mod doc
+    ## Dev notes
+    <BLANKLINE>
 ```
 
 ##### ModuleObj.__init__(self, name, full_name, docstring, level=0)
@@ -631,6 +688,21 @@ class PythonDefinitionObj(object):
 String so store and prepare the object definition:
 Example : def function_name(*args)
 This object will become an attribute.
+
+Use:
+    >>> obj = PythonDefinitionObj(1)
+    Traceback (most recent call last):
+    ...
+    ValueError: PythonDefinitionObj: bad value
+    >>> obj = PythonDefinitionObj("")
+    Traceback (most recent call last):
+    ...
+    ValueError: PythonDefinitionObj: bad value
+    >>> obj = PythonDefinitionObj("MyOBJ")
+    >>> print(obj)
+    ```python
+    MyOBJ
+    ```
 ```
 
 ##### @Property: PythonDefinitionObj.value
@@ -674,6 +746,30 @@ class PythonObj(object):
 ```
 Class in order to register object informations
 __str__ is used to export with MD format.
+
+Use:
+    >>> obj = PythonObj("Mc", "def Mc()", "Doc", 1, PythonObjType.fun)
+    >>> print(obj)
+    <BLANKLINE>
+    #### Mc
+    ```python
+    def Mc()
+    ```
+    > <br />
+    > Doc<br />
+    > <br />
+    >>> obj = PythonObj("Mc", "class Mc():", "Doc", 1, PythonObjType.cla)
+    >>> print(obj)
+    <BLANKLINE>
+    #### Mc
+    ```python
+    class Mc():
+    ```
+    <BLANKLINE>
+    ```
+    Doc
+    ```
+    <BLANKLINE>
 ```
 
 ##### PythonObj.__init__(self, name, full_name, docstring, level, obj_type)
@@ -719,7 +815,17 @@ class ReadFile(object):
 ```
 
 ```
-Docstring empty
+This class check if file exists and read the content
+
+Use:
+    >>> myfile = ReadFile("oups")
+    Traceback (most recent call last):
+    ...
+    OSError: File not found ! (oups)
+    >>> myfile = ReadFile("/etc/fstab")
+    >>> print(myfile.isdefined())
+    True
+    >>>
 ```
 
 ##### @Property: ReadFile.filename
@@ -786,6 +892,17 @@ class TitleObj(object):
 ```
 String to store and prepare MD title
 This object will become an attribute.
+
+Use:
+    >>> title = TitleObj(3, "oups")
+    Traceback (most recent call last):
+    ...
+    ValueError: TitleObj: Title type is string
+    >>> title = TitleObj("Test_def(self, var, indx)", 3)
+    >>> print(title)
+    ###### Test_def(self, var, indx)
+    >>> print(title.getanchor())
+    test_defself-var-indx
 ```
 
 ##### @Property: TitleObj.level
