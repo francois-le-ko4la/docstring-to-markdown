@@ -1,0 +1,38 @@
+running pytest
+Searching for pytest
+Best match: pytest 3.5.1
+Processing pytest-3.5.1-py3.6.egg
+
+Using /home/ko4la/GIT/docstring-to-markdown/.eggs/pytest-3.5.1-py3.6.egg
+running egg_info
+writing docstring2md.egg-info/PKG-INFO
+writing dependency_links to docstring2md.egg-info/dependency_links.txt
+writing top-level names to docstring2md.egg-info/top_level.txt
+reading manifest file 'docstring2md.egg-info/SOURCES.txt'
+reading manifest template 'MANIFEST.in'
+writing manifest file 'docstring2md.egg-info/SOURCES.txt'
+running build_ext
+============================= test session starts ==============================
+platform linux -- Python 3.6.5, pytest-3.5.1, py-1.5.3, pluggy-0.6.0 -- /usr/bin/python3
+cachedir: .pytest_cache
+rootdir: /home/ko4la/GIT/docstring-to-markdown, inifile: setup.cfg
+collecting ... collected 16 items
+
+tests/test_docstring2md.py::TestDocstring2MD::test_cls_1_importfile PASSED [  6%]
+tests/test_docstring2md.py::TestDocstring2MD::test_cls_2_importmodule PASSED [ 12%]
+tests/test_docstring2md.py::TestDocstring2MD::test_cls_3_export PASSED   [ 18%]
+tests/test_docstring2md.py::TestDocstring2MD::test_cls_4_filenotfound PASSED [ 25%]
+tests/test_docstring2md.py::TestDocstring2MD::test_cls_5_fileisnotmodule PASSED [ 31%]
+tests/test_docstring2md.py::TestDocstring2MD::test_script PASSED         [ 37%]
+tests/test_doctest.py::RunDocTest::test_mod_doc2md.py PASSED             [ 43%]
+tests/test_pycodestyle.py::RunPyCodeStyle::test_/home/ko4la/GIT/docstring-to-markdown/bin/export_docstring2md.py PASSED [ 50%]
+tests/test_pycodestyle.py::RunPyCodeStyle::test_/home/ko4la/GIT/docstring-to-markdown/docstring2md/__about__.py PASSED [ 56%]
+tests/test_pycodestyle.py::RunPyCodeStyle::test_/home/ko4la/GIT/docstring-to-markdown/docstring2md/__init__.py PASSED [ 62%]
+tests/test_pycodestyle.py::RunPyCodeStyle::test_/home/ko4la/GIT/docstring-to-markdown/docstring2md/doc2md.py PASSED [ 68%]
+tests/test_pycodestyle.py::RunPyCodeStyle::test_/home/ko4la/GIT/docstring-to-markdown/docstring2md/main.py PASSED [ 75%]
+tests/test_pycodestyle.py::RunPyCodeStyle::test_/home/ko4la/GIT/docstring-to-markdown/setup.py PASSED [ 81%]
+tests/test_pycodestyle.py::RunPyCodeStyle::test_/home/ko4la/GIT/docstring-to-markdown/tests/test_docstring2md.py PASSED [ 87%]
+tests/test_pycodestyle.py::RunPyCodeStyle::test_/home/ko4la/GIT/docstring-to-markdown/tests/test_doctest.py PASSED [ 93%]
+tests/test_pycodestyle.py::RunPyCodeStyle::test_/home/ko4la/GIT/docstring-to-markdown/tests/test_pycodestyle.py PASSED [100%]
+
+========================== 16 passed in 0.62 seconds ===========================
