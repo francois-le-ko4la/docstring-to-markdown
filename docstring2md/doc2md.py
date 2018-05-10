@@ -250,7 +250,7 @@ class PythonDefinitionObj(object):
         if isinstance(value, str) and value is not "":
             self.__value = value
         else:
-            raise ValueError("PythonDefinitionObj: bad value")
+            raise ValueError("PythonDefinitionObj: bad value ")
 
     @ConvMD.add_tag(Tag.beg_py, Tag.end_py)
     def __repr__(self):
@@ -693,12 +693,16 @@ class ExtractPythonModule(object):
                         docstring = inspect.getdoc(inspect_obj)
             name = "{}: {}.{}".format(
                 MyConst.property_tag, cls_name, current_property)
-            new_pythonobj = PythonObj(name,
+            if full_name is not "":
+                """
+                not inheritance
+                """
+                new_pythonobj = PythonObj(name,
                                       full_name,
                                       docstring or MyConst.property_tag,
                                       level,
                                       PythonObjType.fun)
-            my_pythonobj.members[name] = new_pythonobj
+                my_pythonobj.members[name] = new_pythonobj
 
     def __extract(self, my_pythonobj, inspectmembers, level=0, decorator=None):
         """
