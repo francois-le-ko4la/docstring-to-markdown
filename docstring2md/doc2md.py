@@ -225,11 +225,11 @@ class PythonDefinitionObj(object):
         >>> obj = PythonDefinitionObj(1)
         Traceback (most recent call last):
         ...
-        ValueError: PythonDefinitionObj: bad value
+        ValueError: PytDefObj: bad value
         >>> obj = PythonDefinitionObj("")
         Traceback (most recent call last):
         ...
-        ValueError: PythonDefinitionObj: bad value
+        ValueError: PytDefObj: bad value
         >>> obj = PythonDefinitionObj("MyOBJ")
         >>> print(obj)
         ```python
@@ -250,7 +250,7 @@ class PythonDefinitionObj(object):
         if isinstance(value, str) and value is not "":
             self.__value = value
         else:
-            raise ValueError("PythonDefinitionObj: bad value ")
+            raise ValueError("PytDefObj: bad value")
 
     @ConvMD.add_tag(Tag.beg_py, Tag.end_py)
     def __repr__(self):
@@ -562,7 +562,7 @@ class ExtractPythonModule(object):
 
     """
 
-    def __init__(self, module_name):
+    def __init__(self, module_name, priv=False):
         """
         Init
         """
@@ -570,6 +570,7 @@ class ExtractPythonModule(object):
         self.__module = None
         self.__module_spec = None
         self.module = None
+        self.__priv = priv
 
     def __check_module(func):
         """
@@ -697,11 +698,13 @@ class ExtractPythonModule(object):
                 """
                 not inheritance
                 """
-                new_pythonobj = PythonObj(name,
-                                      full_name,
-                                      docstring or MyConst.property_tag,
-                                      level,
-                                      PythonObjType.fun)
+                new_pythonobj = PythonObj(
+                        name,
+                        full_name,
+                        docstring or MyConst.property_tag,
+                        level,
+                        PythonObjType.fun
+                    )
                 my_pythonobj.members[name] = new_pythonobj
 
     def __extract(self, my_pythonobj, inspectmembers, level=0, decorator=None):
@@ -751,15 +754,19 @@ class ExtractPythonModule(object):
                                level,
                                decorator)
             if inspect.isfunction(member[1]):
-                name = "{0}{1}".format((str(member[1]).split(" "))[1],
+                fun = (str(member[1]).split(" "))[1]
+                funisprivate = "__" in fun
+                if self.__priv is True or funisprivate is not True:
+                    name = "{0}{1}".format((str(member[1]).split(" "))[1],
                                        str(inspect.signature(member[1])))
-                full_name = "{}{}:".format(MyConst.function_tag, name)
-                if decorator is not None and full_name in decorator:
-                    full_name = "{}{}".format(decorator[full_name], full_name)
-                docstring = inspect.getdoc(member[1])
-                new_pythonobj = PythonObj(name, full_name, docstring, level,
-                                          PythonObjType.fun)
-                my_pythonobj.members[name] = new_pythonobj
+
+                    full_name = "{}{}:".format(MyConst.function_tag, name)
+                    if decorator is not None and full_name in decorator:
+                        full_name = "{}{}".format(decorator[full_name], full_name)
+                    docstring = inspect.getdoc(member[1])
+                    new_pythonobj = PythonObj(name, full_name, docstring, level,
+                                              PythonObjType.fun)
+                    my_pythonobj.members[name] = new_pythonobj
 
 
 class DocString2MD(object):
@@ -778,7 +785,7 @@ class DocString2MD(object):
     """
 
     def __init__(self, module_name, export_file=None, runtime_file=None,
-                 requirements_file=None, uml_file=None, toc=True):
+                 requirements_file=None, uml_file=None, toc=True, priv=False):
         """Init the class
         This function define default attributs.
 
@@ -800,7 +807,7 @@ class DocString2MD(object):
         self.__uml = ReadFile(uml_file)
         self.__export_file = export_file
         self.module_name = module_name
-        self.__my_module = ExtractPythonModule(self.module_name)
+        self.__my_module = ExtractPythonModule(self.module_name, priv)
         self.__toc = toc
         self.__output = ""
 

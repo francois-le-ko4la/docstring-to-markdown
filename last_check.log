@@ -35,4 +35,4 @@ tests/test_pycodestyle.py::RunPyCodeStyle::test_/home/ko4la/GIT/docstring-to-mar
 tests/test_pycodestyle.py::RunPyCodeStyle::test_/home/ko4la/GIT/docstring-to-markdown/tests/test_doctest.py PASSED [ 93%]
 tests/test_pycodestyle.py::RunPyCodeStyle::test_/home/ko4la/GIT/docstring-to-markdown/tests/test_pycodestyle.py PASSED [100%]
 
-========================== 16 passed in 0.68 seconds ===========================
+========================== 16 passed in 0.66 seconds ===========================

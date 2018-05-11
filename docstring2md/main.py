@@ -1,8 +1,18 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+"""
+
+ #####  #         ###
+#     # #          #
+#       #          #
+#       #          #
+#       #          #
+#     # #          #
+ #####  #######   ### runner
+
+"""
 
 import pathlib
-import sys
 import argparse
 from docstring2md import __about__
 from docstring2md.doc2md import DocString2MD
@@ -74,7 +84,21 @@ TOC.add_argument(
     help="Disable the table of contents"
 )
 TOC.set_defaults(toc=True)
-args = PARSER.parse_args()
+PRIV = PARSER.add_mutually_exclusive_group(required=False)
+PRIV.add_argument(
+    '--private-def',
+    dest='priv',
+    action='store_true',
+    help="Enable the table of contents (DEFAULT)"
+)
+PRIV.add_argument(
+    '--no-private-def',
+    dest='priv',
+    action='store_false',
+    help="Disable the table of contents"
+)
+PRIV.set_defaults(priv=False)
+ARGS = PARSER.parse_args()
 
 
 def run():
@@ -85,7 +109,8 @@ def run():
         runtime_file=current_args.runtime,
         requirements_file=current_args.requirements,
         uml_file=current_args.uml_diagramm,
-        toc=current_args.toc
+        toc=current_args.toc,
+        priv=current_args.priv
     )
     module.import_module()
 
