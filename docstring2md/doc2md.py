@@ -758,14 +758,22 @@ class ExtractPythonModule(object):
                 funisprivate = "__" in fun
                 if self.__priv is True or funisprivate is not True:
                     name = "{0}{1}".format((str(member[1]).split(" "))[1],
-                                       str(inspect.signature(member[1])))
+                                           str(inspect.signature(member[1])))
 
                     full_name = "{}{}:".format(MyConst.function_tag, name)
                     if decorator is not None and full_name in decorator:
-                        full_name = "{}{}".format(decorator[full_name], full_name)
+                        full_name = "{}{}".format(
+                                decorator[full_name],
+                                full_name
+                            )
                     docstring = inspect.getdoc(member[1])
-                    new_pythonobj = PythonObj(name, full_name, docstring, level,
-                                              PythonObjType.fun)
+                    new_pythonobj = PythonObj(
+                            name,
+                            full_name,
+                            docstring,
+                            level,
+                            PythonObjType.fun
+                        )
                     my_pythonobj.members[name] = new_pythonobj
 
 

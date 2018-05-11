@@ -47,7 +47,7 @@ for current_file in modulelist:
         return lambda self: self.run_doctest(current_file)
     setattr(RunDocTest,
             "test_mod_{}".format(current_file),
-            ch(__about__.__name__ + "/" + current_file)
+            ch(__about__.__pkg_name__ + "/" + current_file)
             )
 
 

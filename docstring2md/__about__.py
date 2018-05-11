@@ -12,7 +12,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 """
 
 __version__ = '0.2.4'
-__name__ = 'docstring2md'
+__pkg_name__ = 'docstring2md'
 __author__ = 'Ko4lA'
 __email__ = 'francois@le.ko4la.fr'
 __description__ = 'Docstring extractor to generate readme.'
