@@ -22,8 +22,8 @@ $ make test
 Use the script:
 ```shell
 $ export_docstring2md.py -h
-usage: export_docstring2md.py [-h] [-v] -i INPUT [-o FILE] [-t FILE] [-r FILE]
-                              [-uml FILE] [--toc | --no-toc]
+usage: main.py [-h] [-v] -i INPUT [-o FILE] [-t FILE] [-r FILE] [-uml FILE]
+               [--toc | --no-toc] [--private-def | --no-private-def]
 
 This script is provided by docstring2md package.
 It exports google docstrings from python module to a Markdown file in order to
@@ -32,6 +32,8 @@ generate README.
 optional arguments:
   --toc                 Enable the table of contents (DEFAULT)
   --no-toc              Disable the table of contents
+  --private-def         Show private objects
+  --no-private-def      Don't show private objects
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -116,7 +118,7 @@ pycodestyle>=2.3.1
 
 ```
 ### UML Diagram
-![alt text](pictures/classes_docstring2md.png)
+![alt text](/home/ko4la/GIT/docstring-to-markdown/pictures/classes_docstring2md.png)
 
 ### Objects
 [ConvMD()](#convmd)<br />
@@ -132,7 +134,6 @@ pycodestyle>=2.3.1
 [ExtractPythonModule()](#extractpythonmodule)<br />
 [ExtractPythonModule.extract(self)](#extractpythonmoduleextractself)<br />
 [ExtractPythonModule.import_module(self)](#extractpythonmoduleimport_moduleself)<br />
-[LineType()](#linetype)<br />
 [MembersObj()](#membersobj)<br />
 [MembersObj.items(self)](#membersobjitemsself)<br />
 [MembersObj.sortkeys(self)](#membersobjsortkeysself)<br />
@@ -140,22 +141,18 @@ pycodestyle>=2.3.1
 [ModuleObj.getallstr(self, member=None)](#moduleobjgetallstrself-membernone)<br />
 [ModuleObj.gettoc(self, member=None)](#moduleobjgettocself-membernone)<br />
 [PythonObj.getlink(self)](#pythonobjgetlinkself)<br />
-[MyConst()](#myconst)<br />
+[PytFile()](#pytfile)<br />
+[@Property: PytFile.filename](#property-pytfilefilename)<br />
+[@Property: PytFile.isdefined](#property-pytfileisdefined)<br />
+[PytFile.read(self)](#pytfilereadself)<br />
 [PythonDefinitionObj()](#pythondefinitionobj)<br />
 [@Property: PythonDefinitionObj.value](#property-pythondefinitionobjvalue)<br />
 [PythonObj()](#pythonobj)<br />
 [PythonObj.getlink(self)](#pythonobjgetlinkself)<br />
-[PythonObjType()](#pythonobjtype)<br />
-[ReadFile()](#readfile)<br />
-[@Property: ReadFile.filename](#property-readfilefilename)<br />
-[ReadFile.get(self)](#readfilegetself)<br />
-[ReadFile.isdefined(self)](#readfileisdefinedself)<br />
-[Tag()](#tag)<br />
 [TitleObj()](#titleobj)<br />
 [@Property: TitleObj.level](#property-titleobjlevel)<br />
 [@Property: TitleObj.title](#property-titleobjtitle)<br />
 [TitleObj.getanchor(self)](#titleobjgetanchorself)<br />
-[wraps(wrapped, assigned=('__module__', '__name__', '__qualname__', '__doc__', '__annotations__'), updated=('__dict__',))](#wrapswrapped-assigned__module__-__name__-__qualname__-__doc__-__annotations__-updated__dict__)<br />
 
 
 #### ConvMD()
@@ -364,15 +361,6 @@ def ExtractPythonModule.import_module(self):
 > <b>Returns:</b><br />
 > &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  bool: The return value. True for success, False otherwise.<br />
 > <br />
-#### LineType()
-```python
-class LineType:
-```
-
-```
-Docstring empty
-```
-
 #### MembersObj()
 ```python
 class MembersObj(object):
@@ -435,15 +423,53 @@ def PythonObj.getlink(self):
 > <br />
 > Docstring empty<br />
 > <br />
-#### MyConst()
+#### PytFile()
 ```python
-class MyConst:
+class PytFile(object):
 ```
 
 ```
-Docstring empty
+>>> fstab = PytFile("/etc/fstab")
+>>> print(fstab.filename.stem)
+fstab
+>>> print(fstab)
+/etc/fstab
+>>> # pathlib to run the test everywhere
+>>> import pathlib
+>>> path = str(pathlib.Path(__file__).resolve().parent) + "/"
+>>> license = PytFile(path + "../LICENSE")
+>>> print(license.filename.stem)
+LICENSE
+>>> #print(license.read())
 ```
 
+##### @Property: PytFile.filename
+```python
+@property
+def PytFile.filename(self):
+@filename.setter
+def PytFile.filename(self, value):
+
+```
+> <br />
+> @Property<br />
+> <br />
+##### @Property: PytFile.isdefined
+```python
+@property
+def PytFile.isdefined(self):
+
+```
+> <br />
+> @Property<br />
+> <br />
+##### PytFile.read(self)
+```python
+def PytFile.read(self):
+```
+> <br />
+> Docstring empty<br />
+> <br />
 #### PythonDefinitionObj()
 ```python
 class PythonDefinitionObj(object):
@@ -522,69 +548,6 @@ def PythonObj.getlink(self):
 > <br />
 > Docstring empty<br />
 > <br />
-#### PythonObjType()
-```python
-class PythonObjType:
-```
-
-```
-Docstring empty
-```
-
-#### ReadFile()
-```python
-class ReadFile(object):
-```
-
-```
-This class check if file exists and read the content
-
-Use:
-    >>> myfile = ReadFile("oups")
-    Traceback (most recent call last):
-    ...
-    OSError: File not found ! (oups)
-    >>> myfile = ReadFile("/etc/fstab")
-    >>> print(myfile.isdefined())
-    True
-    >>>
-```
-
-##### @Property: ReadFile.filename
-```python
-@property
-def ReadFile.filename(self):
-@filename.setter
-def ReadFile.filename(self, filename):
-
-```
-> <br />
-> @Property<br />
-> <br />
-##### ReadFile.get(self)
-```python
-def ReadFile.get(self):
-```
-> <br />
-> open & read the file<br />
-> Returns the content<br />
-> <br />
-##### ReadFile.isdefined(self)
-```python
-def ReadFile.isdefined(self):
-```
-> <br />
-> Docstring empty<br />
-> <br />
-#### Tag()
-```python
-class Tag:
-```
-
-```
-Docstring empty
-```
-
 #### TitleObj()
 ```python
 class TitleObj(object):
@@ -634,17 +597,4 @@ def TitleObj.getanchor(self):
 ```
 > <br />
 > Docstring empty<br />
-> <br />
-#### wraps(wrapped, assigned=('__module__', '__name__', '__qualname__', '__doc__', '__annotations__'), updated=('__dict__',))
-```python
-def wraps(wrapped, assigned=('__module__', '__name__', '__qualname__', '__doc__', '__annotations__'), updated=('__dict__',)):
-```
-> <br />
-> Decorator factory to apply update_wrapper() to a wrapper function<br />
-> <br />
-> Returns a decorator that invokes update_wrapper() with the decorated<br />
-> function as the wrapper argument and the arguments to wraps() as the<br />
-> remaining arguments. Default arguments are as for update_wrapper().<br />
-> This is a convenience function to simplify applying partial() to<br />
-> update_wrapper().<br />
 > <br />

@@ -25,8 +25,8 @@ $ make test
 Use the script:
 ```shell
 $ export_docstring2md.py -h
-usage: export_docstring2md.py [-h] [-v] -i INPUT [-o FILE] [-t FILE] [-r FILE]
-                              [-uml FILE] [--toc | --no-toc]
+usage: main.py [-h] [-v] -i INPUT [-o FILE] [-t FILE] [-r FILE] [-uml FILE]
+               [--toc | --no-toc] [--private-def | --no-private-def]
 
 This script is provided by docstring2md package.
 It exports google docstrings from python module to a Markdown file in order to
@@ -35,6 +35,8 @@ generate README.
 optional arguments:
   --toc                 Enable the table of contents (DEFAULT)
   --no-toc              Disable the table of contents
+  --private-def         Show private objects
+  --no-private-def      Don't show private objects
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -108,4 +110,13 @@ This package is distributed under the [GPLv3 license](./LICENSE)
 """
 
 import docstring2md.__about__
-from docstring2md.doc2md import *
+from docstring2md.convmd import ConvMD
+from docstring2md.objdef import PythonObj
+from docstring2md.objdef import ModuleObj
+from docstring2md.objdef import TitleObj
+from docstring2md.objdef import PythonDefinitionObj
+from docstring2md.objdef import DocStringObj
+from docstring2md.objdef import MembersObj
+from docstring2md.file import PytFile
+from docstring2md.module import ExtractPythonModule
+from docstring2md.doc2md import DocString2MD

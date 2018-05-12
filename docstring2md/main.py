@@ -89,13 +89,13 @@ PRIV.add_argument(
     '--private-def',
     dest='priv',
     action='store_true',
-    help="Enable the table of contents (DEFAULT)"
+    help="Show private objects"
 )
 PRIV.add_argument(
     '--no-private-def',
     dest='priv',
     action='store_false',
-    help="Disable the table of contents"
+    help="Don't show private objects"
 )
 PRIV.set_defaults(priv=False)
 ARGS = PARSER.parse_args()

@@ -32,10 +32,12 @@ for current_file in list(path.glob('**/*.py')):
     if '.eggs' in str(current_file) or '/build/' in str(current_file):
         pass
     else:
+        current_file = pathlib.Path(current_file)
+
         def ch(current_file):
             return lambda self: self.run_pycodesyle(current_file)
         setattr(RunPyCodeStyle,
-                "test_{}".format(current_file),
+                "test_{}".format(current_file.name),
                 ch(current_file)
                 )
 
