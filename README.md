@@ -124,7 +124,7 @@ pycodestyle>=2.3.1
 
 ```
 ### UML Diagram
-![alt text](/home/ko4la/GIT/docstring-to-markdown/pictures/classes_docstring2md.png)
+![alt text](pictures/classes_docstring2md.png)
 
 ### Objects
 [ConvMD()](#convmd)<br />

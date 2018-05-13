@@ -56,7 +56,7 @@ class DocString2MD(object):
         """
         self.__runtime = PytFile(runtime_file)
         self.__requirements = PytFile(requirements_file)
-        self.__uml = PytFile(uml_file)
+        self.__uml = PytFile(uml_file, resolve=False)
         self.__export_file = export_file
         self.module_name = module_name
         self.__my_module = ExtractPythonModule(self.module_name, priv)

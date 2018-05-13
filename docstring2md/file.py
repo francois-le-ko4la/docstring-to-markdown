@@ -41,9 +41,10 @@ class PytFile(object):
 
     """
 
-    def __init__(self, filename):
+    def __init__(self, filename, resolve=True):
         self.__filename = pathlib.Path()
         self.__exists = False
+        self.__resolve = resolve
         self.filename = filename
 
     @property
@@ -61,7 +62,10 @@ class PytFile(object):
         if value is None:
             return
         if pathlib.Path(str(value)).exists():
-            self.__filename = pathlib.Path(str(value)).resolve()
+            if self.__resolve:
+                self.__filename = pathlib.Path(str(value)).resolve()
+            else:
+                self.__filename = pathlib.Path(str(value))
         else:
             self.__exists = False
             raise IOError("File not found !")
