@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+# pylint: disable=R0903
 """
 
                          #####
@@ -40,11 +41,16 @@ class TitleObj(object):
         """
         Init => store the sting in value and level (H1/H2/H3/...)
         """
+        self.__title = None
+        self.__level = None
         self.title = title
         self.level = level
 
     @property
     def title(self):
+        """
+        Store the title
+        """
         return self.__title
 
     @title.setter
@@ -56,6 +62,9 @@ class TitleObj(object):
 
     @property
     def level(self):
+        """
+        Store the level
+        """
         return self.__level
 
     @level.setter
@@ -66,10 +75,13 @@ class TitleObj(object):
             raise ValueError("TitleObj: level type is int")
 
     def getanchor(self):
+        """
+        provide a link to prepare the toc.
+        """
         anchor = str(self.__title)
         anchor = re.sub(r"__([a-zA-Z_]*)__\(", r"\1(", anchor)
         anchor = re.sub(
-                r"[^\w\- ]+", "", (anchor.replace(' ', '-')).lower())
+            r"[^\w\- ]+", "", (anchor.replace(' ', '-')).lower())
         return anchor
 
     def __repr__(self):
@@ -109,10 +121,14 @@ class PythonDefinitionObj(object):
     """
 
     def __init__(self, value):
+        self.__value = None
         self.value = value
 
     @property
     def value(self):
+        """
+        Store the value
+        """
         return self.__value
 
     @value.setter
@@ -163,14 +179,15 @@ class DocStringObj(object):
     """
 
     def __init__(self, value, obj_type):
-        """
-        Store the docstring
-        """
+        self.__value = None
         self.value = value
         self.__obj_type = obj_type
 
     @property
     def value(self):
+        """
+        Store the docstring
+        """
         return self.__value
 
     @value.setter
@@ -240,9 +257,15 @@ class MembersObj(object):
         return len(self.__members)
 
     def sortkeys(self):
+        """
+        sort the key before using the list
+        """
         return sorted(self.__members)
 
     def items(self):
+        """
+        get items
+        """
         return self.__members
 
 
@@ -284,14 +307,18 @@ class PythonObj(object):
         self.members = MembersObj()
 
     def getlink(self):
+        """
+        MD Link format
+        """
         return "[{}](#{})<br />\n".format(self.__title.title,
                                           self.__title.getanchor())
 
     def __repr__(self):
-        return "\n{}\n{}\n{}".format(self.__title,
-                                     self.__definition,
-                                     self.__docstring
-                                     )
+        return "\n{}\n{}\n{}".format(
+            self.__title,
+            self.__definition,
+            self.__docstring
+        )
 
     def __str__(self):
         return repr(self)
@@ -323,6 +350,9 @@ class ModuleObj(PythonObj):
         return repr(self)
 
     def gettoc(self, member=None):
+        """
+        Get all link and provide a toc
+        """
         toc = ""
         if member is None:
             member = self
@@ -334,6 +364,9 @@ class ModuleObj(PythonObj):
         return toc
 
     def getallstr(self, member=None):
+        """
+        get all definitions and docstring
+        """
         output = ""
         if member is None:
             """ First member (Module) """

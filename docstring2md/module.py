@@ -1,12 +1,19 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+# pylint: disable=W0105
 """
+
+ #    #   ####   #####   #    #  #       ######
+ ##  ##  #    #  #    #  #    #  #       #
+ # ## #  #    #  #    #  #    #  #       #####
+ #    #  #    #  #    #  #    #  #       #
+ #    #  #    #  #    #  #    #  #       #
+ #    #   ####   #####    ####   ######  ######
 
 """
 
 import inspect
 import importlib.util
-import pathlib
 from functools import wraps
 import sys
 from docstring2md.objdef import PythonObj, ModuleObj
@@ -86,7 +93,7 @@ class ExtractPythonModule(object):
                 return True
             """ add module in sys.modules """
             importlib.import_module(self.__module_name)
-        except Exception as e:
+        except Exception:
             raise Exception("Import error")
         return True
 
@@ -102,13 +109,14 @@ class ExtractPythonModule(object):
         """
 
         self.module = ModuleObj(
-                self.__module_name,
-                self.__module_name,
-                inspect.getdoc(self.__module)
-            )
+            self.__module_name,
+            self.__module_name,
+            inspect.getdoc(self.__module)
+        )
         self.__extract(self.module, self.__module)
 
-    def __findinline(self, line, search_item):
+    @staticmethod
+    def __findinline(line, search_item):
         if line.find(search_item) is 0:
             return True
         return False
@@ -138,13 +146,14 @@ class ExtractPythonModule(object):
             if line_type is LineType.function:
                 if add_decorator:
                     line = line.replace(
-                            MyConst.function_tag,
-                            "{}{}.".format(MyConst.function_tag, member[0])
-                        )
+                        MyConst.function_tag,
+                        "{}{}.".format(MyConst.function_tag, member[0])
+                    )
                     result[line] = decorator
         return result
 
-    def __extractproperties(self, my_pythonobj, inspectmembers,
+    @staticmethod
+    def __extractproperties(my_pythonobj, inspectmembers,
                             level, decorator, cls_name):
         if level >= 2 or len(inspectmembers) is 0:
             return
@@ -159,9 +168,10 @@ class ExtractPythonModule(object):
                 if "{}{}.{}(".format(MyConst.function_tag,
                                      cls_name,
                                      current_property) in current_func:
-                    full_name += "{}{}\n".format(decorator[current_func],
-                                                 current_func
-                                                 )
+                    full_name += "{}{}\n".format(
+                        decorator[current_func],
+                        current_func
+                    )
                     if docstring is None:
                         docstring = inspect.getdoc(inspect_obj)
             name = "{}: {}.{}".format(
@@ -171,12 +181,12 @@ class ExtractPythonModule(object):
                 not inheritance
                 """
                 new_pythonobj = PythonObj(
-                        name,
-                        full_name,
-                        docstring or MyConst.property_tag,
-                        level,
-                        PythonObjType.fun
-                    )
+                    name,
+                    full_name,
+                    docstring or MyConst.property_tag,
+                    level,
+                    PythonObjType.fun
+                )
                 my_pythonobj.members[name] = new_pythonobj
 
     def __extract(self, my_pythonobj, inspectmembers, level=0, decorator=None):
@@ -204,9 +214,9 @@ class ExtractPythonModule(object):
 
                 decorator = self.__extractdecorator(member)
                 properties = inspect.getmembers(
-                        member[1],
-                        lambda o: isinstance(o, property)
-                    )
+                    member[1],
+                    lambda o: isinstance(o, property)
+                )
                 name = "{0}()".format(str(member[0]))
                 full_name = inspect.getsourcelines(
                     member[1])[0][0].replace('\n', '')
@@ -216,18 +226,18 @@ class ExtractPythonModule(object):
                 my_pythonobj.members[name] = new_pythonobj
 
                 self.__extractproperties(
-                        new_pythonobj,
-                        properties,
-                        level,
-                        decorator,
-                        str(member[0])
-                    )
+                    new_pythonobj,
+                    properties,
+                    level,
+                    decorator,
+                    str(member[0])
+                )
                 self.__extract(
-                        new_pythonobj,
-                        member[1],
-                        level,
-                        decorator
-                    )
+                    new_pythonobj,
+                    member[1],
+                    level,
+                    decorator
+                )
             if inspect.isfunction(member[1]):
                 fun = (str(member[1]).split(" "))[1]
                 funisprivate = "__" in fun
@@ -238,17 +248,17 @@ class ExtractPythonModule(object):
                     full_name = "{}{}:".format(MyConst.function_tag, name)
                     if decorator is not None and full_name in decorator:
                         full_name = "{}{}".format(
-                                decorator[full_name],
-                                full_name
-                            )
+                            decorator[full_name],
+                            full_name
+                        )
                     docstring = inspect.getdoc(member[1])
                     new_pythonobj = PythonObj(
-                            name,
-                            full_name,
-                            docstring,
-                            level,
-                            PythonObjType.fun
-                        )
+                        name,
+                        full_name,
+                        docstring,
+                        level,
+                        PythonObjType.fun
+                    )
                     my_pythonobj.members[name] = new_pythonobj
 
 

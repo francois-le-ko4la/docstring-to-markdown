@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+# pylint: disable=W0105
 """
 
                          #####
@@ -17,7 +18,7 @@ import pathlib
 import sys
 from docstring2md.file import PytFile
 from docstring2md.module import ExtractPythonModule
-from docstring2md.__config__ import MyConst, LineType, Tag
+from docstring2md.__config__ import MyConst, Tag
 
 
 class DocString2MD(object):
@@ -96,13 +97,16 @@ class DocString2MD(object):
             raise IOError("Module not found ! ({})".format(module_name))
 
     def import_module(self):
+        """
+        import all infos
+        """
         if self.__my_module.import_module():
             self.__my_module.extract()
             self.__output = ""
             """ module / README """
             self.__output += str(self.__my_module.module)
             """ runtime """
-            if self.__runtime.isdefined:
+            if self.__runtime.exists():
                 self.__output += "{}\n{}{}{}".format(
                     MyConst.dev_runtime,
                     Tag.beg_co,
@@ -110,7 +114,7 @@ class DocString2MD(object):
                     Tag.end_co
                 )
             """ requirements """
-            if self.__requirements.isdefined:
+            if self.__requirements.exists():
                 self.__output += "{}\n{}{}{}".format(
                     MyConst.dev_requirement,
                     Tag.beg_co,
@@ -118,7 +122,7 @@ class DocString2MD(object):
                     Tag.end_co
                 )
             """ UML """
-            if self.__uml.isdefined:
+            if self.__uml.exists:
                 self.__output += "{}\n![alt text]({})\n\n".format(
                     MyConst.dev_uml,
                     self.__uml.filename)

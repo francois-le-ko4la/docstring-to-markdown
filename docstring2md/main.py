@@ -102,6 +102,9 @@ ARGS = PARSER.parse_args()
 
 
 def run():
+    """
+    Main function
+    """
     current_args = PARSER.parse_args()
     module = DocString2MD(
         module_name=current_args.input,

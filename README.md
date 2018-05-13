@@ -149,7 +149,7 @@ pycodestyle>=2.3.1
 [PythonObj.getlink(self)](#pythonobjgetlinkself)<br />
 [PytFile()](#pytfile)<br />
 [@Property: PytFile.filename](#property-pytfilefilename)<br />
-[@Property: PytFile.isdefined](#property-pytfileisdefined)<br />
+[PytFile.exists(self)](#pytfileexistsself)<br />
 [PytFile.read(self)](#pytfilereadself)<br />
 [PythonDefinitionObj()](#pythondefinitionobj)<br />
 [@Property: PythonDefinitionObj.value](#property-pythondefinitionobjvalue)<br />
@@ -276,7 +276,7 @@ def DocString2MD.get_doc(self):
 def DocString2MD.import_module(self):
 ```
 > <br />
-> Docstring empty<br />
+> import all infos<br />
 > <br />
 #### DocStringObj()
 ```python
@@ -316,7 +316,7 @@ def DocStringObj.value(self, value):
 
 ```
 > <br />
-> @Property<br />
+> Store the docstring<br />
 > <br />
 #### ExtractPythonModule()
 ```python
@@ -382,14 +382,14 @@ This object will become an attribute.
 def MembersObj.items(self):
 ```
 > <br />
-> Docstring empty<br />
+> get items<br />
 > <br />
 ##### MembersObj.sortkeys(self)
 ```python
 def MembersObj.sortkeys(self):
 ```
 > <br />
-> Docstring empty<br />
+> sort the key before using the list<br />
 > <br />
 #### ModuleObj()
 ```python
@@ -413,21 +413,21 @@ Use:
 def ModuleObj.getallstr(self, member=None):
 ```
 > <br />
-> Docstring empty<br />
+> get all definitions and docstring<br />
 > <br />
 ##### ModuleObj.gettoc(self, member=None)
 ```python
 def ModuleObj.gettoc(self, member=None):
 ```
 > <br />
-> Docstring empty<br />
+> Get all link and provide a toc<br />
 > <br />
 ##### PythonObj.getlink(self)
 ```python
 def PythonObj.getlink(self):
 ```
 > <br />
-> Docstring empty<br />
+> MD Link format<br />
 > <br />
 #### PytFile()
 ```python
@@ -435,17 +435,26 @@ class PytFile(object):
 ```
 
 ```
+>>> data_file = PytFile("lorem")
+Traceback (most recent call last):
+...
+OSError: File not found !
+>>> data_file = PytFile(None)
+>>> data_file.exists()
+False
 >>> fstab = PytFile("/etc/fstab")
->>> print(fstab.filename.stem)
-fstab
->>> print(fstab)
+>>> fstab.filename.stem
+'fstab'
+>>> fstab
 /etc/fstab
 >>> # pathlib to run the test everywhere
 >>> import pathlib
 >>> path = str(pathlib.Path(__file__).resolve().parent) + "/"
 >>> license = PytFile(path + "../LICENSE")
->>> print(license.filename.stem)
-LICENSE
+>>> license.filename.stem
+'LICENSE'
+>>> license.exists()
+True
 >>> #print(license.read())
 ```
 
@@ -458,23 +467,21 @@ def PytFile.filename(self, value):
 
 ```
 > <br />
-> @Property<br />
+> path to the module<br />
 > <br />
-##### @Property: PytFile.isdefined
+##### PytFile.exists(self)
 ```python
-@property
-def PytFile.isdefined(self):
-
+def PytFile.exists(self):
 ```
 > <br />
-> @Property<br />
+> file exists<br />
 > <br />
 ##### PytFile.read(self)
 ```python
 def PytFile.read(self):
 ```
 > <br />
-> Docstring empty<br />
+> read the text<br />
 > <br />
 #### PythonDefinitionObj()
 ```python
@@ -511,7 +518,7 @@ def PythonDefinitionObj.value(self, value):
 
 ```
 > <br />
-> @Property<br />
+> Store the value<br />
 > <br />
 #### PythonObj()
 ```python
@@ -552,7 +559,7 @@ Use:
 def PythonObj.getlink(self):
 ```
 > <br />
-> Docstring empty<br />
+> MD Link format<br />
 > <br />
 #### TitleObj()
 ```python
@@ -584,7 +591,7 @@ def TitleObj.level(self, level):
 
 ```
 > <br />
-> @Property<br />
+> Store the level<br />
 > <br />
 ##### @Property: TitleObj.title
 ```python
@@ -595,12 +602,12 @@ def TitleObj.title(self, title):
 
 ```
 > <br />
-> @Property<br />
+> Store the title<br />
 > <br />
 ##### TitleObj.getanchor(self)
 ```python
 def TitleObj.getanchor(self):
 ```
 > <br />
-> Docstring empty<br />
+> provide a link to prepare the toc.<br />
 > <br />
