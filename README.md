@@ -101,10 +101,10 @@ Enjoy...
 - [X] Add-on : class properties
 - [X] Add-on : runtime & requirements
 - [X] Add-on : toc
-- [ ] Write Doc/stringdoc
+- [X] Write Doc/stringdoc
 - [X] Run PEP8 validation
-- [ ] Clean & last check
-- [ ] Release
+- [X] Clean & last check
+- [X] Release
 
 ## License
 

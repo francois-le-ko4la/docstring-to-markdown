@@ -39,7 +39,7 @@ class TitleObj(object):
 
     def __init__(self, title, level):
         """
-        Init => store the sting in value and level (H1/H2/H3/...)
+        Init => store the string in value and level (H1/H2/H3/...)
         """
         self.__title = None
         self.__level = None
