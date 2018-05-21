@@ -192,11 +192,15 @@ class ObjVisitor(ast.NodeVisitor):
         return ast.get_docstring(node)
 
     def __get_func_title(self, node):
-        fullname = "{}()".format(self.__get_fullname(node))
-        self.__add_toc(fullname)
+        fullname = self.__get_fullname(node)
+        if "@property" in self.__get_decorator(node):
+            printname = "@Property {}".format(fullname)
+        else:
+            printname = "{}()".format(fullname)
+        self.__add_toc("{}".format(printname))
         return "{} {}".format(
             "#" * (int(node.level) + 4),
-            fullname
+            printname
         )
 
     @ConvMD.add_tag(TAG["beg_py"], TAG["end_py"])

@@ -151,15 +151,15 @@ pycodestyle>=2.3.1
 [DocString2MD.import_module()](#docstring2mdimport_module)<br />
 [DocString2MD.get_doc()](#docstring2mdget_doc)<br />
 [PytFile()](#pytfile)<br />
-[PytFile.filename()](#pytfilefilename)<br />
+[@Property PytFile.filename](#property-pytfilefilename)<br />
 [PytFile.exists()](#pytfileexists)<br />
 [PytFile.read()](#pytfileread)<br />
 [run()](#run)<br />
 [PytMod()](#pytmod)<br />
-[PytMod.module()](#pytmodmodule)<br />
-[PytMod.docstring()](#pytmoddocstring)<br />
-[PytMod.pkg_main_docstring()](#pytmodpkg_main_docstring)<br />
-[PytMod.toc()](#pytmodtoc)<br />
+[@Property PytMod.module](#property-pytmodmodule)<br />
+[@Property PytMod.docstring](#property-pytmoddocstring)<br />
+[@Property PytMod.pkg_main_docstring](#property-pytmodpkg_main_docstring)<br />
+[@Property PytMod.toc](#property-pytmodtoc)<br />
 [PytMod.ismodule()](#pytmodismodule)<br />
 [PytMod.read()](#pytmodread)<br />
 
@@ -428,7 +428,7 @@ True
 '                    GNU GENERAL PUBLIC LICENSE'
 ```
 
-##### PytFile.filename()
+##### @Property PytFile.filename
 ```python
 @property
 def PytFile.filename(self):
@@ -486,7 +486,7 @@ Use:
     >>> # print(mod.docstring)
 ```
 
-##### PytMod.module()
+##### @Property PytMod.module
 ```python
 @property
 def PytMod.module(self):
@@ -497,7 +497,7 @@ def PytMod.module(self):
 > &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  /path/to/the/mod<br />
 > &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  ./path/to/the/mod<br />
 > <br />
-##### PytMod.docstring()
+##### @Property PytMod.docstring
 ```python
 @property
 def PytMod.docstring(self):
@@ -505,7 +505,7 @@ def PytMod.docstring(self):
 > <br />
 > returns all the docstrings.<br />
 > <br />
-##### PytMod.pkg_main_docstring()
+##### @Property PytMod.pkg_main_docstring
 ```python
 @property
 def PytMod.pkg_main_docstring(self):
@@ -514,7 +514,7 @@ def PytMod.pkg_main_docstring(self):
 > PKG only.<br />
 > Returns the main docstring.<br />
 > <br />
-##### PytMod.toc()
+##### @Property PytMod.toc
 ```python
 @property
 def PytMod.toc(self):
