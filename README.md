@@ -3,6 +3,12 @@
 
 This package Export Google DocString to Markdown from Python module.
 
+## Why ?:
+
+We can find a lot of tools to generate docs from code but we want something
+quick and easy to setup.
+This tool can be used on python file or python package.
+
 ## Setup:
 ```shell
 $ git clone https://github.com/francois-le-ko4la/docstring-to-markdown.git
@@ -64,14 +70,14 @@ Enjoy...
 │   └── export_docstring2md.py
 ├── docstring2md
 │   ├── __about__.py
+│   ├── ast_engine.py
 │   ├── __config__.py
 │   ├── convmd.py
 │   ├── doc2md.py
 │   ├── file.py
 │   ├── __init__.py
 │   ├── main.py
-│   ├── module.py
-│   └── objdef.py
+│   └── mod.py
 ├── last_check.log
 ├── LICENSE
 ├── Makefile
@@ -101,6 +107,8 @@ Enjoy...
 - [X] Add-on : class properties
 - [X] Add-on : runtime & requirements
 - [X] Add-on : toc
+- [X] Add-on : remove inspect library and use AST
+- [X] Add-on : improve global performance (x3)
 - [X] Write Doc/stringdoc
 - [X] Run PEP8 validation
 - [X] Clean & last check
@@ -109,7 +117,7 @@ Enjoy...
 ## License
 
 This package is distributed under the [GPLv3 license](./LICENSE)
-## Dev notes
+
 ### Runtime
 
 ```
@@ -127,40 +135,136 @@ pycodestyle>=2.3.1
 ![alt text](pictures/classes_docstring2md.png)
 
 ### Objects
+[ObjVisitor()](#objvisitor)<br />
+[ObjVisitor.get_tree()](#objvisitorget_tree)<br />
+[ObjVisitor.visit_Module()](#objvisitorvisit_module)<br />
+[ObjVisitor.visit_ClassDef()](#objvisitorvisit_classdef)<br />
+[ObjVisitor.visit_FunctionDef()](#objvisitorvisit_functiondef)<br />
 [ConvMD()](#convmd)<br />
-[ConvMD.add_tag(begin_tag, end_tag)](#convmdadd_tagbegin_tag-end_tag)<br />
-[ConvMD.repl_beg_end(begin_regexp, end_regexp, begin_tag, end_tag)](#convmdrepl_beg_endbegin_regexp-end_regexp-begin_tag-end_tag)<br />
-[ConvMD.repl_str(old_string, new_string)](#convmdrepl_strold_string-new_string)<br />
+[ConvMD.repl_str()](#convmdrepl_str)<br />
+[ConvMD.repl_str.tags_decorator()](#convmdrepl_strtags_decorator)<br />
+[ConvMD.repl_beg_end()](#convmdrepl_beg_end)<br />
+[ConvMD.repl_beg_end.tags_decorator()](#convmdrepl_beg_endtags_decorator)<br />
+[ConvMD.add_tag()](#convmdadd_tag)<br />
+[ConvMD.add_tag.tags_decorator()](#convmdadd_tagtags_decorator)<br />
 [DocString2MD()](#docstring2md)<br />
-[@Property: DocString2MD.module_name](#property-docstring2mdmodule_name)<br />
-[DocString2MD.get_doc(self)](#docstring2mdget_docself)<br />
-[DocString2MD.import_module(self)](#docstring2mdimport_moduleself)<br />
-[DocStringObj()](#docstringobj)<br />
-[@Property: DocStringObj.value](#property-docstringobjvalue)<br />
-[ExtractPythonModule()](#extractpythonmodule)<br />
-[ExtractPythonModule.extract(self)](#extractpythonmoduleextractself)<br />
-[ExtractPythonModule.import_module(self)](#extractpythonmoduleimport_moduleself)<br />
-[MembersObj()](#membersobj)<br />
-[MembersObj.items(self)](#membersobjitemsself)<br />
-[MembersObj.sortkeys(self)](#membersobjsortkeysself)<br />
-[ModuleObj()](#moduleobj)<br />
-[ModuleObj.getallstr(self, member=None)](#moduleobjgetallstrself-membernone)<br />
-[ModuleObj.gettoc(self, member=None)](#moduleobjgettocself-membernone)<br />
-[PythonObj.getlink(self)](#pythonobjgetlinkself)<br />
+[DocString2MD.import_module()](#docstring2mdimport_module)<br />
+[DocString2MD.get_doc()](#docstring2mdget_doc)<br />
 [PytFile()](#pytfile)<br />
-[@Property: PytFile.filename](#property-pytfilefilename)<br />
-[PytFile.exists(self)](#pytfileexistsself)<br />
-[PytFile.read(self)](#pytfilereadself)<br />
-[PythonDefinitionObj()](#pythondefinitionobj)<br />
-[@Property: PythonDefinitionObj.value](#property-pythondefinitionobjvalue)<br />
-[PythonObj()](#pythonobj)<br />
-[PythonObj.getlink(self)](#pythonobjgetlinkself)<br />
-[TitleObj()](#titleobj)<br />
-[@Property: TitleObj.level](#property-titleobjlevel)<br />
-[@Property: TitleObj.title](#property-titleobjtitle)<br />
-[TitleObj.getanchor(self)](#titleobjgetanchorself)<br />
+[PytFile.filename()](#pytfilefilename)<br />
+[PytFile.filename()](#pytfilefilename)<br />
+[PytFile.exists()](#pytfileexists)<br />
+[PytFile.read()](#pytfileread)<br />
+[run()](#run)<br />
+[PytMod()](#pytmod)<br />
+[PytMod.module()](#pytmodmodule)<br />
+[PytMod.docstring()](#pytmoddocstring)<br />
+[PytMod.pkg_main_docstring()](#pytmodpkg_main_docstring)<br />
+[PytMod.toc()](#pytmodtoc)<br />
+[PytMod.ismodule()](#pytmodismodule)<br />
+[PytMod.read()](#pytmodread)<br />
 
+#### ObjVisitor()
+```python
+class ObjVisitor():
+```
 
+```
+This Class is an ast.NodeVisitor class and allow us to parse
+code tree.
+All methods are called according to node type.
+We define other private method in order to manage string format.
+We use decorator to keep a clean code without MD Tag.
+
+ObjVisitor(module_docstring=True|False)
+    module_docstring: true => retrieve the module docstring
+    This parameter is usefull to use the first docstring module
+    in a package.
+
+Use:
+    >>> from docstring2md.file import PytFile
+    >>> import pathlib
+    >>> module = str(pathlib.Path(__file__).resolve())
+    >>> source = PytFile(module)
+    >>> # init
+    >>> doc = ObjVisitor(module_docstring=False)
+    >>> # provide source, generate the tree and use visit mechanisme
+    >>> doc.visit(doc.get_tree(source.read()))
+    >>> result = doc.output
+    >>> result = result.split("\n")
+    >>> result[0]
+    '#### ObjVisitor()'
+    >>> result = doc.toc
+    >>> result = result.split("\n")
+    >>> result[0]
+    '[ObjVisitor()](#objvisitor)<br />'
+```
+
+##### ObjVisitor.get_tree()
+```python
+
+def ObjVisitor.get_tree(self, source):
+```
+> <br />
+> This function allow us to parse the source and build the<br />
+> tree.<br />
+> We put this function to group all AST function in this<br />
+> module.<br />
+> <br />
+> <b>Args:</b><br />
+> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  source (str): source code<br />
+> <br />
+> <b>Returns:</b><br />
+> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  AST tree<br />
+> <br />
+##### ObjVisitor.visit_Module()
+```python
+
+def ObjVisitor.visit_Module(self, node):
+```
+> <br />
+> This function is automatically called by AST mechanisme<br />
+> when the current node is a module.<br />
+> We update self.output.<br />
+> <br />
+> <b>Args:</b><br />
+> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  node (ast): current node<br />
+> <br />
+> <b>Returns:</b><br />
+> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  None.<br />
+> <br />
+##### ObjVisitor.visit_ClassDef()
+```python
+
+def ObjVisitor.visit_ClassDef(self, node):
+```
+> <br />
+> This function is automatically called by AST mechanisme<br />
+> when the current node is a class.<br />
+> We update self.output.<br />
+> <br />
+> <b>Args:</b><br />
+> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  node (ast): current node<br />
+> <br />
+> <b>Returns:</b><br />
+> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  None.<br />
+> <br />
+##### ObjVisitor.visit_FunctionDef()
+```python
+
+def ObjVisitor.visit_FunctionDef(self, node):
+```
+> <br />
+> This function is automatically called by AST mechanisme<br />
+> when the current node is a function.<br />
+> We update self.output.<br />
+> <br />
+> <b>Args:</b><br />
+> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  node (ast): current node<br />
+> <br />
+> <b>Returns:</b><br />
+> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  None.<br />
+> <br />
 #### ConvMD()
 ```python
 class ConvMD(object):
@@ -170,25 +274,33 @@ class ConvMD(object):
 Prepare MD string
 ```
 
-##### ConvMD.add_tag(begin_tag, end_tag)
+##### ConvMD.repl_str()
 ```python
-def ConvMD.add_tag(begin_tag, end_tag):
+
+def ConvMD.repl_str(old_string, new_string):
 ```
 > <br />
-> Decorator - add a tag<br />
-> <br />
-> <b>Example:</b><br />
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  ('__', '__') => __ TXT __<br />
+> Decorator - search & replace a string by another string<br />
+> Example : replace space by a HTML tag.<br />
 > <br />
 > <b>Args:</b><br />
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  beg_tag (str)<br />
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  end_tag (str)<br />
+> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  old_string (str): string to search<br />
+> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  new_string (str): new string<br />
 > <br />
 > <b>Returns:</b><br />
 > &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  decorated function<br />
 > <br />
-##### ConvMD.repl_beg_end(begin_regexp, end_regexp, begin_tag, end_tag)
+###### ConvMD.repl_str.tags_decorator()
 ```python
+
+def ConvMD.repl_str.tags_decorator(func):
+```
+> <br />
+> decorator <br />
+> <br />
+##### ConvMD.repl_beg_end()
+```python
+
 def ConvMD.repl_beg_end(begin_regexp, end_regexp, begin_tag, end_tag):
 ```
 > <br />
@@ -207,20 +319,39 @@ def ConvMD.repl_beg_end(begin_regexp, end_regexp, begin_tag, end_tag):
 > <b>Returns:</b><br />
 > &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  decorated function<br />
 > <br />
-##### ConvMD.repl_str(old_string, new_string)
+###### ConvMD.repl_beg_end.tags_decorator()
 ```python
-def ConvMD.repl_str(old_string, new_string):
+
+def ConvMD.repl_beg_end.tags_decorator(func):
 ```
 > <br />
-> Decorator - search & replace a string by another string<br />
-> Example : replace space by a HTML tag.<br />
+> decorator <br />
+> <br />
+##### ConvMD.add_tag()
+```python
+
+def ConvMD.add_tag(begin_tag, end_tag):
+```
+> <br />
+> Decorator - add a tag<br />
+> <br />
+> <b>Example:</b><br />
+> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  ('__', '__') => __ TXT __<br />
 > <br />
 > <b>Args:</b><br />
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  old_string (str): string to search<br />
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  new_string (str): new string<br />
+> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  beg_tag (str)<br />
+> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  end_tag (str)<br />
 > <br />
 > <b>Returns:</b><br />
 > &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  decorated function<br />
+> <br />
+###### ConvMD.add_tag.tags_decorator()
+```python
+
+def ConvMD.add_tag.tags_decorator(func):
+```
+> <br />
+> decorator <br />
 > <br />
 #### DocString2MD()
 ```python
@@ -231,6 +362,9 @@ class DocString2MD(object):
 Class DocString2MD : export Google docstring to MD File.
 
 Use:
+    >>> doc = DocString2MD("oups")
+    >>> doc.import_module()
+    False
     >>> doc = DocString2MD("docstring2md")
     >>> doc.import_module()
     True
@@ -240,25 +374,17 @@ Use:
     # docstring2md
 ```
 
-##### @Property: DocString2MD.module_name
+##### DocString2MD.import_module()
 ```python
-@property
-def DocString2MD.module_name(self):
-@module_name.setter
-def DocString2MD.module_name(self, module_name):
 
+def DocString2MD.import_module(self):
 ```
 > <br />
-> return /path/to/the/json/file<br />
+> import all infos<br />
 > <br />
-> <b>Args:</b><br />
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  None<br />
-> <br />
-> <b>Returns:</b><br />
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  None<br />
-> <br />
-##### DocString2MD.get_doc(self)
+##### DocString2MD.get_doc()
 ```python
+
 def DocString2MD.get_doc(self):
 ```
 > <br />
@@ -270,164 +396,6 @@ def DocString2MD.get_doc(self):
 > <br />
 > <b>Returns:</b><br />
 > &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  str: self.__output<br />
-> <br />
-##### DocString2MD.import_module(self)
-```python
-def DocString2MD.import_module(self):
-```
-> <br />
-> import all infos<br />
-> <br />
-#### DocStringObj()
-```python
-class DocStringObj(object):
-```
-
-```
-String to store and prepare the docstring.
-This object will become an attribut.
-
-Use:
-    >>> docstring = DocStringObj("My docstring", PythonObjType.fun)
-    >>> print(docstring)
-    > <br />
-    > My docstring<br />
-    > <br />
-    >>> docstring = DocStringObj("", PythonObjType.fun)
-    >>> print(docstring)
-    > <br />
-    > <br />
-    > <br />
-    >>> docstring = DocStringObj("My docstring", PythonObjType.cla)
-    >>> print(docstring)
-    <BLANKLINE>
-    ```
-    My docstring
-    ```
-    <BLANKLINE>
-```
-
-##### @Property: DocStringObj.value
-```python
-@property
-def DocStringObj.value(self):
-@value.setter
-def DocStringObj.value(self, value):
-
-```
-> <br />
-> Store the docstring<br />
-> <br />
-#### ExtractPythonModule()
-```python
-class ExtractPythonModule(object):
-```
-
-```
-Object in order to extract Python functions, classes....
-
-Use:
-    >>> mod = ExtractPythonModule("oups...")
-    >>> mod.import_module()
-    Traceback (most recent call last):
-    ...
-    ModuleNotFoundError: No module named 'oups'
-    >>> mod = ExtractPythonModule("json")
-    >>> mod.import_module()
-    True
-    >>> mod.extract()
-```
-
-##### ExtractPythonModule.extract(self)
-```python
-def ExtractPythonModule.extract(self):
-```
-> <br />
-> Defines module object and extracts all members.<br />
-> <br />
-> <b>Args:</b><br />
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  None<br />
-> <br />
-> <b>Returns:</b><br />
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  None<br />
-> <br />
-##### ExtractPythonModule.import_module(self)
-```python
-@__check_module
-def ExtractPythonModule.import_module(self):
-```
-> <br />
-> Check module<br />
-> Import the module via the passed in module specification<br />
-> Returns the newly imported module and updates attributes self.__module<br />
-> <br />
-> <b>Args:</b><br />
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  None<br />
-> <br />
-> <b>Returns:</b><br />
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  bool: The return value. True for success, False otherwise.<br />
-> <br />
-#### MembersObj()
-```python
-class MembersObj(object):
-```
-
-```
-Dict() to store a python object's members.
-This object will become an attribute.
-```
-
-##### MembersObj.items(self)
-```python
-def MembersObj.items(self):
-```
-> <br />
-> get items<br />
-> <br />
-##### MembersObj.sortkeys(self)
-```python
-def MembersObj.sortkeys(self):
-```
-> <br />
-> sort the key before using the list<br />
-> <br />
-#### ModuleObj()
-```python
-class ModuleObj(PythonObj):
-```
-
-```
-Class in order to register module informations
-__str__ is used to export with MD format.
-
-Use:
-    >>> obj = ModuleObj("Mod", "module", "mod doc")
-    >>> print(obj)
-    mod doc
-    ## Dev notes
-    <BLANKLINE>
-```
-
-##### ModuleObj.getallstr(self, member=None)
-```python
-def ModuleObj.getallstr(self, member=None):
-```
-> <br />
-> get all definitions and docstring<br />
-> <br />
-##### ModuleObj.gettoc(self, member=None)
-```python
-def ModuleObj.gettoc(self, member=None):
-```
-> <br />
-> Get all link and provide a toc<br />
-> <br />
-##### PythonObj.getlink(self)
-```python
-def PythonObj.getlink(self):
-```
-> <br />
-> MD Link format<br />
 > <br />
 #### PytFile()
 ```python
@@ -455,159 +423,129 @@ False
 'LICENSE'
 >>> license.exists()
 True
->>> #print(license.read())
+>>> result = license.read()
+>>> result = result.split("\n")
+>>> result[0]
+'                    GNU GENERAL PUBLIC LICENSE'
 ```
 
-##### @Property: PytFile.filename
+##### PytFile.filename()
 ```python
 @property
 def PytFile.filename(self):
-@filename.setter
-def PytFile.filename(self, value):
-
 ```
 > <br />
 > path to the module<br />
 > <br />
-##### PytFile.exists(self)
+##### PytFile.filename()
 ```python
+@setter
+def PytFile.filename(self, value):
+```
+> <br />
+> Store the path<br />
+> <br />
+##### PytFile.exists()
+```python
+
 def PytFile.exists(self):
 ```
 > <br />
 > file exists<br />
 > <br />
-##### PytFile.read(self)
+##### PytFile.read()
 ```python
+
 def PytFile.read(self):
 ```
 > <br />
 > read the text<br />
 > <br />
-#### PythonDefinitionObj()
+#### run()
 ```python
-class PythonDefinitionObj(object):
+
+def run():
+```
+> <br />
+> This function is called by the CLI runner and manage options.<br />
+> <br />
+> <b>Args:</b><br />
+> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  None.<br />
+> <br />
+> <b>Returns:</b><br />
+> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  print screen|file<br />
+> <br />
+#### PytMod()
+```python
+class PytMod(object):
 ```
 
 ```
-String so store and prepare the object definition:
-Example : def function_name(*args)
-This object will become an attribute.
+Object in order to extract Python functions, class....
 
 Use:
-    >>> obj = PythonDefinitionObj(1)
+    >>> mod = PytMod("oups...")
+    >>> mod.read()
     Traceback (most recent call last):
     ...
-    ValueError: PytDefObj: bad value
-    >>> obj = PythonDefinitionObj("")
-    Traceback (most recent call last):
-    ...
-    ValueError: PytDefObj: bad value
-    >>> obj = PythonDefinitionObj("MyOBJ")
-    >>> print(obj)
-    ```python
-    MyOBJ
-    ```
+    ModuleNotFoundError: No module named 'oups'
+    >>> mod = PytMod("json")
+    >>> mod.read()
+    >>> # print(mod.pkg_main_docstring)
+    >>> # print(mod.docstring)
 ```
 
-##### @Property: PythonDefinitionObj.value
+##### PytMod.module()
 ```python
 @property
-def PythonDefinitionObj.value(self):
-@value.setter
-def PythonDefinitionObj.value(self, value):
-
+def PytMod.module(self):
 ```
 > <br />
-> Store the value<br />
+> <b>module name (str):</b><br />
+> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  modulename<br />
+> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  /path/to/the/mod<br />
+> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  ./path/to/the/mod<br />
 > <br />
-#### PythonObj()
-```python
-class PythonObj(object):
-```
-
-```
-Class in order to register object informations
-__str__ is used to export with MD format.
-
-Use:
-    >>> obj = PythonObj("Mc", "def Mc()", "Doc", 1, PythonObjType.fun)
-    >>> print(obj)
-    <BLANKLINE>
-    #### Mc
-    ```python
-    def Mc()
-    ```
-    > <br />
-    > Doc<br />
-    > <br />
-    >>> obj = PythonObj("Mc", "class Mc():", "Doc", 1, PythonObjType.cla)
-    >>> print(obj)
-    <BLANKLINE>
-    #### Mc
-    ```python
-    class Mc():
-    ```
-    <BLANKLINE>
-    ```
-    Doc
-    ```
-    <BLANKLINE>
-```
-
-##### PythonObj.getlink(self)
-```python
-def PythonObj.getlink(self):
-```
-> <br />
-> MD Link format<br />
-> <br />
-#### TitleObj()
-```python
-class TitleObj(object):
-```
-
-```
-String to store and prepare MD title
-This object will become an attribute.
-
-Use:
-    >>> title = TitleObj(3, "oups")
-    Traceback (most recent call last):
-    ...
-    ValueError: TitleObj: Title type is string
-    >>> title = TitleObj("Test_def(self, var, indx)", 3)
-    >>> print(title)
-    ###### Test_def(self, var, indx)
-    >>> print(title.getanchor())
-    test_defself-var-indx
-```
-
-##### @Property: TitleObj.level
+##### PytMod.docstring()
 ```python
 @property
-def TitleObj.level(self):
-@level.setter
-def TitleObj.level(self, level):
-
+def PytMod.docstring(self):
 ```
 > <br />
-> Store the level<br />
+> returns all the docstrings.<br />
 > <br />
-##### @Property: TitleObj.title
+##### PytMod.pkg_main_docstring()
 ```python
 @property
-def TitleObj.title(self):
-@title.setter
-def TitleObj.title(self, title):
-
+def PytMod.pkg_main_docstring(self):
 ```
 > <br />
-> Store the title<br />
+> PKG only.<br />
+> Returns the main docstring.<br />
 > <br />
-##### TitleObj.getanchor(self)
+##### PytMod.toc()
 ```python
-def TitleObj.getanchor(self):
+@property
+def PytMod.toc(self):
 ```
 > <br />
-> provide a link to prepare the toc.<br />
+> Returns the TOC<br />
 > <br />
+##### PytMod.ismodule()
+```python
+
+def PytMod.ismodule(self):
+```
+> <br />
+> If module name is a module file => True<br />
+> Else if the module name is a package => False<br />
+> <br />
+##### PytMod.read()
+```python
+
+def PytMod.read(self):
+```
+> <br />
+> Reads all files and store the result.<br />
+> <br />
+

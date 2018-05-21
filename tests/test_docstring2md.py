@@ -46,11 +46,8 @@ class TestDocstring2MD(unittest.TestCase):
         self.assertTrue(doc is not "")
 
     def test_cls_4_filenotfound(self):
-        try:
-            module = DocString2MD("dxocstring2md")
-            self.assertTrue(module.import_module())
-        except OSError as error:
-            self.assertTrue(True)
+        module = DocString2MD("dxocstring2md")
+        self.assertFalse(module.import_module())
 
     def test_cls_5_fileisnotmodule(self):
         try:

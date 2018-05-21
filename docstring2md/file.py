@@ -37,7 +37,10 @@ class PytFile(object):
     'LICENSE'
     >>> license.exists()
     True
-    >>> #print(license.read())
+    >>> result = license.read()
+    >>> result = result.split("\\n")
+    >>> result[0]
+    '                    GNU GENERAL PUBLIC LICENSE'
 
     """
 

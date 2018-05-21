@@ -11,10 +11,11 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 """
 
-__version__ = '0.2.4'
+__version__ = '0.3.0'
 __pkg_name__ = 'docstring2md'
 __author__ = 'Ko4lA'
 __email__ = 'francois@le.ko4la.fr'
+__license__ = 'GPL'
 __description__ = 'Docstring extractor to generate readme.'
 __url__ = 'https://github.com/francois-le-ko4la/docstring2md.git'
 __script_description__ = """

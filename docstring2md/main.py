@@ -95,7 +95,7 @@ PRIV.add_argument(
     '--no-private-def',
     dest='priv',
     action='store_false',
-    help="Don't show private objects"
+    help="Don't show private objects (DEFAULT)"
 )
 PRIV.set_defaults(priv=False)
 ARGS = PARSER.parse_args()
@@ -103,7 +103,13 @@ ARGS = PARSER.parse_args()
 
 def run():
     """
-    Main function
+    This function is called by the CLI runner and manage options.
+
+    Args:
+        None.
+
+    Returns:
+        print screen|file
     """
     current_args = PARSER.parse_args()
     module = DocString2MD(

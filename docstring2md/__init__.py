@@ -6,6 +6,12 @@
 
 This package Export Google DocString to Markdown from Python module.
 
+## Why ?:
+
+We can find a lot of tools to generate docs from code but we want something
+quick and easy to setup.
+This tool can be used on python file or python package.
+
 ## Setup:
 ```shell
 $ git clone https://github.com/francois-le-ko4la/docstring-to-markdown.git
@@ -67,14 +73,14 @@ Enjoy...
 │   └── export_docstring2md.py
 ├── docstring2md
 │   ├── __about__.py
+│   ├── ast_engine.py
 │   ├── __config__.py
 │   ├── convmd.py
 │   ├── doc2md.py
 │   ├── file.py
 │   ├── __init__.py
 │   ├── main.py
-│   ├── module.py
-│   └── objdef.py
+│   └── mod.py
 ├── last_check.log
 ├── LICENSE
 ├── Makefile
@@ -104,6 +110,8 @@ Enjoy...
 - [X] Add-on : class properties
 - [X] Add-on : runtime & requirements
 - [X] Add-on : toc
+- [X] Add-on : remove inspect library and use AST
+- [X] Add-on : improve global performance (x3)
 - [X] Write Doc/stringdoc
 - [X] Run PEP8 validation
 - [X] Clean & last check
@@ -115,14 +123,13 @@ This package is distributed under the [GPLv3 license](./LICENSE)
 
 """
 
-import docstring2md.__about__
+from docstring2md import __about__
 from docstring2md.convmd import ConvMD
-from docstring2md.objdef import PythonObj
-from docstring2md.objdef import ModuleObj
-from docstring2md.objdef import TitleObj
-from docstring2md.objdef import PythonDefinitionObj
-from docstring2md.objdef import DocStringObj
-from docstring2md.objdef import MembersObj
 from docstring2md.file import PytFile
-from docstring2md.module import ExtractPythonModule
+from docstring2md.mod import PytMod
 from docstring2md.doc2md import DocString2MD
+
+
+__version__ = __about__.__version__
+__author__ = __about__.__author__
+__license__ = __about__.__license__
