@@ -14,7 +14,7 @@
 """
 import ast
 import re
-from docstring2md.__config__ import TAG
+from docstring2md.__config__ import TAG, BLACKLIST
 from docstring2md.convmd import ConvMD
 
 
@@ -55,6 +55,7 @@ class ObjVisitor(ast.NodeVisitor):
         self.toc = ""
         self.__module_docstring = module_docstring
         self.__priv = priv
+        self.__func = []
 
     def get_tree(self, source):
         """
@@ -250,6 +251,14 @@ class ObjVisitor(ast.NodeVisitor):
         )
         self.generic_visit(node)
 
+    def __valid_name(self, node):
+        fullname = self.__get_fullname(node)
+        if fullname in self.__func or fullname in BLACKLIST:
+            return False
+        else:
+            self.__func.append(fullname)
+            return True
+
     def visit_FunctionDef(self, node):
         """
         This function is automatically called by AST mechanisme
@@ -264,12 +273,14 @@ class ObjVisitor(ast.NodeVisitor):
         """
         if self.__priv or node.name.startswith("__") is not True:
             self.__set_parent(node)
-            if node.level <= 2:
+            if node.level <= 2 and self.__valid_name(node):
                 self.output += "{}\n{}\n{}\n".format(
                     self.__get_func_title(node),
                     self.__get_func_def(node),
                     self.__get_func_docstring(node)
                 )
+        else:
+            node.disable = True
         self.generic_visit(node)
 
 

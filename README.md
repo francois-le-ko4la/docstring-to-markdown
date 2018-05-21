@@ -152,7 +152,6 @@ pycodestyle>=2.3.1
 [DocString2MD.get_doc()](#docstring2mdget_doc)<br />
 [PytFile()](#pytfile)<br />
 [PytFile.filename()](#pytfilefilename)<br />
-[PytFile.filename()](#pytfilefilename)<br />
 [PytFile.exists()](#pytfileexists)<br />
 [PytFile.read()](#pytfileread)<br />
 [run()](#run)<br />
@@ -436,14 +435,6 @@ def PytFile.filename(self):
 ```
 > <br />
 > path to the module<br />
-> <br />
-##### PytFile.filename()
-```python
-@setter
-def PytFile.filename(self, value):
-```
-> <br />
-> Store the path<br />
 > <br />
 ##### PytFile.exists()
 ```python

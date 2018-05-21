@@ -11,7 +11,7 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 """
 
-__version__ = '0.3.0'
+__version__ = '0.3.1'
 __pkg_name__ = 'docstring2md'
 __author__ = 'Ko4lA'
 __email__ = 'francois@le.ko4la.fr'

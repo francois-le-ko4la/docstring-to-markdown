@@ -23,8 +23,10 @@ CONST = {
     "dev_obj": "### Objects",
     "decorator_tag": '@',
     "function_tag": 'def ',
-    "property_tag": '@Property'
+    "property_tag": '@Property',
 }
+
+BLACKLIST = ["wrapper"]
 
 TAG = {
     "beg_co": "\n```\n",
