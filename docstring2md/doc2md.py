@@ -14,9 +14,9 @@
 
 """
 
-from docstring2md.file import PytFile
-from docstring2md.mod import PytMod
-from docstring2md.__config__ import CONST, TAG
+from docstring2md import PytFile
+from docstring2md import PytMod
+from docstring2md import CONST, TAG
 
 
 class DocString2MD(object):

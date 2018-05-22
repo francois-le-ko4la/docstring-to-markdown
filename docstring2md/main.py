@@ -15,7 +15,7 @@
 import pathlib
 import argparse
 from docstring2md import __about__
-from docstring2md.doc2md import DocString2MD
+from docstring2md import DocString2MD
 
 
 PARSER = argparse.ArgumentParser(

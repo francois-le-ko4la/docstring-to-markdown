@@ -14,8 +14,8 @@
 """
 import ast
 import re
-from docstring2md.__config__ import TAG, BLACKLIST
-from docstring2md.convmd import ConvMD
+from docstring2md import TAG, BLACKLIST
+from docstring2md import ConvMD
 
 
 class ObjVisitor(ast.NodeVisitor):

@@ -14,8 +14,8 @@
 
 import pkgutil
 import importlib
-from docstring2md.ast_engine import ObjVisitor
-from docstring2md.file import PytFile
+from docstring2md import ObjVisitor
+from docstring2md import PytFile
 
 
 class PytMod(object):
