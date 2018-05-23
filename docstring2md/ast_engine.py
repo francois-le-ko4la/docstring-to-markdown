@@ -16,7 +16,7 @@ import ast
 import re
 from docstring2md import TAG, BLACKLIST
 from docstring2md import ConvMD
-
+from docstring2md.log import PytLog
 
 class ObjVisitor(ast.NodeVisitor):
     """
@@ -49,8 +49,12 @@ class ObjVisitor(ast.NodeVisitor):
         >>> result[0]
         '[ObjVisitor()](#objvisitor)<br />'
     """
-    def __init__(self, module_docstring=False, priv=False):
+    def __init__(self, module_docstring=False, priv=False, debug=False):
         super(ast.NodeVisitor, self).__init__()
+        self.__log = PytLog()
+        self.__debug = debug
+        if self.__debug:
+            self.__log.set_debug()
         self.output = ""
         self.toc = ""
         self.__module_docstring = module_docstring
@@ -85,6 +89,7 @@ class ObjVisitor(ast.NodeVisitor):
         Returns:
             None.
         """
+        self.__log.info("visit module: {}".format(node))
         if self.__module_docstring:
             self.output += self.__get_docstring(node)
         self.generic_visit(node)
@@ -174,6 +179,7 @@ class ObjVisitor(ast.NodeVisitor):
             return node.name
 
     def __get_docstring(self, node):
+        self.__log.debug("get docstring: {}".format(node))
         return ast.get_docstring(node)
 
     @ConvMD.add_tag(TAG["beg_co"], TAG["end_co"])
@@ -189,9 +195,11 @@ class ObjVisitor(ast.NodeVisitor):
     @ConvMD.repl_str(TAG["tab"], TAG["html_tab"])
     @ConvMD.add_tag(TAG["cr"], TAG["cr"])
     def __get_func_docstring(self, node):
+        self.__log.debug("get func docstring: {}".format(node.name))
         return ast.get_docstring(node)
 
     def __get_func_title(self, node):
+        self.__log.debug("get func title: {}".format(node.name))
         fullname = self.__get_fullname(node)
         if "@property" in self.__get_decorator(node):
             printname = "@Property {}".format(fullname)
@@ -205,6 +213,7 @@ class ObjVisitor(ast.NodeVisitor):
 
     @ConvMD.add_tag(TAG["beg_py"], TAG["end_py"])
     def __get_func_def(self, node):
+        self.__log.debug("get func def: {}".format(node.name))
         if hasattr(node, "decorator_list"):
             decorator = self.__get_decorator(node)
         return "{}\ndef {}{}:".format(
@@ -214,6 +223,7 @@ class ObjVisitor(ast.NodeVisitor):
         )
 
     def __get_cla_title(self, node):
+        self.__log.debug("get cla title: {}".format(node.name))
         fullname = "{}()".format(node.name)
         self.__add_toc(fullname)
         return "{} {}".format(
@@ -223,6 +233,7 @@ class ObjVisitor(ast.NodeVisitor):
 
     @ConvMD.add_tag(TAG["beg_py"], TAG["end_py"])
     def __get_cla_def(self, node):
+        self.__log.debug("get cla def: {}".format(node.name))
         return "class {}{}:".format(
             node.name,
             self.__get_inheritance(node)
@@ -247,6 +258,7 @@ class ObjVisitor(ast.NodeVisitor):
         Returns:
             None.
         """
+        self.__log.info("visit class: {}".format(node.name))
         self.__set_parent(node)
         self.output += "{}\n{}\n{}\n".format(
             self.__get_cla_title(node),
@@ -275,6 +287,7 @@ class ObjVisitor(ast.NodeVisitor):
         Returns:
             None.
         """
+        self.__log.info("visit function: {}".format(node.name))
         if self.__priv or node.name.startswith("__") is not True:
             self.__set_parent(node)
             if node.level <= 2 and self.__valid_name(node):

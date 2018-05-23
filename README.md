@@ -154,6 +154,13 @@ pycodestyle>=2.3.1
 [@Property PytFile.filename](#property-pytfilefilename)<br />
 [PytFile.exists()](#pytfileexists)<br />
 [PytFile.read()](#pytfileread)<br />
+[PytLog()](#pytlog)<br />
+[PytLog.debug()](#pytlogdebug)<br />
+[PytLog.warning()](#pytlogwarning)<br />
+[PytLog.info()](#pytloginfo)<br />
+[PytLog.error()](#pytlogerror)<br />
+[PytLog.set_level()](#pytlogset_level)<br />
+[PytLog.set_debug()](#pytlogset_debug)<br />
 [run()](#run)<br />
 [PytMod()](#pytmod)<br />
 [@Property PytMod.module](#property-pytmodmodule)<br />
@@ -451,6 +458,63 @@ def PytFile.read(self):
 ```
 > <br />
 > read the text<br />
+> <br />
+#### PytLog()
+```python
+class PytLog(object):
+```
+
+```
+None
+```
+
+##### PytLog.debug()
+```python
+
+def PytLog.debug(self, msg):
+```
+> <br />
+> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  <br />
+> <br />
+##### PytLog.warning()
+```python
+
+def PytLog.warning(self, msg):
+```
+> <br />
+> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  <br />
+> <br />
+##### PytLog.info()
+```python
+
+def PytLog.info(self, msg):
+```
+> <br />
+> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  <br />
+> <br />
+##### PytLog.error()
+```python
+
+def PytLog.error(self, msg):
+```
+> <br />
+> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  <br />
+> <br />
+##### PytLog.set_level()
+```python
+
+def PytLog.set_level(self, sev):
+```
+> <br />
+> None<br />
+> <br />
+##### PytLog.set_debug()
+```python
+
+def PytLog.set_debug(self):
+```
+> <br />
+> None<br />
 > <br />
 #### run()
 ```python

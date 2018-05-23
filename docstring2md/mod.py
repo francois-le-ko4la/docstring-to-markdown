@@ -16,7 +16,7 @@ import pkgutil
 import importlib
 from docstring2md import ObjVisitor
 from docstring2md import PytFile
-
+from docstring2md.log import PytLog
 
 class PytMod(object):
 
@@ -35,13 +35,19 @@ class PytMod(object):
         >>> # print(mod.docstring)
     """
 
-    def __init__(self, module_name, priv=False):
+    def __init__(self, module_name, priv=False, debug=False):
+        self.__log = PytLog()
+        self.__debug = debug
+        if self.__debug:
+            self.__log.set_debug()
+        self.__log.debug("PytMod: init")
         self.__doc = ""
         self.__module_docstring = ""
-        self.__path = ""
+        self.__path = None
         self.__module = module_name
         self.__priv = priv
         self.__toc = ""
+        self.__log.debug("PytMod: module={} / priv={}".format(module_name, priv))
 
     @property
     def module(self):
@@ -67,7 +73,9 @@ class PytMod(object):
         Returns the main docstring.
         """
         if self.ismodule():
+            self.__log.debug("PytMod: {} is a module".format(self.module))
             return ""
+        self.__log.debug("PytMod: {} is a mod =>".format(self.module))
         return self.__get_doc_from_module(
             self.__path + "/__init__.py", module_docstring=True)
 
@@ -99,21 +107,33 @@ class PytMod(object):
 
     def __get_doc_from_module(self, module, module_docstring=False):
         source = PytFile(module)
-        # tree = ast.parse(source.read())
-        doc = ObjVisitor(module_docstring=module_docstring, priv=self.__priv)
+        doc = ObjVisitor(module_docstring=module_docstring, priv=self.__priv, debug=self.__debug)
         doc.visit(doc.get_tree(source.read()))
         self.__toc += doc.toc
         return doc.output
 
-    def __get_doc_from_pkg(self, package):
+    def __get_module_list(self, package):
         module = []
-        output = ""
-        package = importlib.import_module(package)
-        self.__path = package.__path__[0]
+        imp_pkg = importlib.import_module(package)
+        if self.__path is None:
+            self.__path = imp_pkg.__path__[0]
         for importer, modname, ispkg in pkgutil.walk_packages(
-                package.__path__):
-            output += self.__get_doc_from_module(
-                package.__path__[0] + "/" + modname + ".py")
+                imp_pkg.__path__):
+            if ispkg:
+                self.__log.info("PytMod - new module => {}".format(package + "." + modname))
+                module += self.__get_module_list(package + "." + modname)
+            else:
+                if modname.startswith("__") is False:
+                    module.append(imp_pkg.__path__[0] + "/" + modname + ".py")
+        return module
+
+    def __get_doc_from_pkg(self, package):
+        output = ""
+        modules = self.__get_module_list(package)
+        self.__log.debug("PytMod: {}".format(str(modules)))
+        for module in modules:
+            self.__log.debug("PytMod - extract {}".format(module))
+            output += self.__get_doc_from_module(module)
         return output
 
 

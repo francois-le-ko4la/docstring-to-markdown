@@ -38,7 +38,8 @@ class DocString2MD(object):
     """
 
     def __init__(self, module_name, export_file=None, runtime_file=None,
-                 requirements_file=None, uml_file=None, toc=True, priv=False):
+                 requirements_file=None, uml_file=None, toc=True, priv=False,
+                 debug=False):
         """Init the class
         This function define default attributs.
 
@@ -55,11 +56,12 @@ class DocString2MD(object):
             obj
 
         """
+        self.__debug = debug
         self.__runtime = PytFile(runtime_file)
         self.__requirements = PytFile(requirements_file)
         self.__uml = PytFile(uml_file, resolve=False)
         self.__export_file = export_file
-        self.__my_module = PytMod(module_name, priv)
+        self.__my_module = PytMod(module_name, priv, debug)
         self.__toc = toc
         self.__output = ""
 

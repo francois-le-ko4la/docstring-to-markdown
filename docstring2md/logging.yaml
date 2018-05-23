@@ -1,0 +1,27 @@
+version: 1
+
+handlers:
+  console:
+    class: logging.StreamHandler
+    level: DEBUG
+    stream: ext://sys.stderr
+    formatter: simpleFormatter
+  file:
+    class: logging.FileHandler
+    filename: /tmp/docstring2md.log
+    mode: w
+    level: DEBUG
+    formatter: simpleFormatter
+
+formatters:
+  simpleFormatter:
+    format: '%(name)s %(asctime)s %(levelname)s %(message)s'
+    datefmt: '%d/%m/%Y %H:%M:%S'
+
+root:
+  level: INFO
+  handlers: [console, file]
+
+loggers:
+  mod:
+    level: DEBUG

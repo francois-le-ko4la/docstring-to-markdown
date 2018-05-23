@@ -98,6 +98,20 @@ PRIV.add_argument(
     help="Don't show private objects (DEFAULT)"
 )
 PRIV.set_defaults(priv=False)
+DEB = PARSER.add_mutually_exclusive_group(required=False)
+DEB.add_argument(
+    '--debug',
+    dest='debug',
+    action='store_true',
+    help="Show private objects"
+)
+DEB.add_argument(
+    '--no-debug',
+    dest='debug',
+    action='store_false',
+    help="Don't debug (DEFAULT)"
+)
+DEB.set_defaults(priv=False)
 ARGS = PARSER.parse_args()
 
 
@@ -119,7 +133,8 @@ def run():
         requirements_file=current_args.requirements,
         uml_file=current_args.uml_diagramm,
         toc=current_args.toc,
-        priv=current_args.priv
+        priv=current_args.priv,
+        debug=current_args.debug
     )
     module.import_module()
 
