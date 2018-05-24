@@ -19,27 +19,29 @@ default:
 	@echo
 
 init:
-	@pip3 install -r requirements.txt
-	@sudo apt-get install graphviz
+	@sudo apt install graphviz
 
 dev:
-	@sudo python3 setup.py develop
+	@pip install -e .
 
 install:
 	@$(MAKE) init
-	@sudo ./setup.py install
+	@pip3 install .
 
 uninstall:
-	@sudo -H pip3 uninstall -y $(PACKAGE_NAME)
+	@pip3 uninstall -y $(PACKAGE_NAME)
 
 clean:
 	@sudo rm -Rf *.egg *.egg-info .cache .coverage .tox build dist docs/build htmlcov .pytest_cache
 	@sudo find -depth -type d -name __pycache__ -exec rm -Rf {} \;
 	@sudo find -type f -name '*.pyc' -delete
 
-doc:
+fulldoc:
 	@pyreverse $(PACKAGE_NAME) -f ALL -o png -p $(PACKAGE_NAME)
 	@mv *.png pictures/
+	@$(MAKE) doc
+
+doc:
 	@export_docstring2md.py -i $(PACKAGE_DIR) -o README.md -r requirements.txt -t runtime.txt -u pictures/classes_$(PACKAGE_NAME).png
 
 release:
