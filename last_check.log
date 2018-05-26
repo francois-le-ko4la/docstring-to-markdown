@@ -1,12 +1,9 @@
 running pytest
-Searching for pytest
-Best match: pytest 3.5.1
-Processing pytest-3.5.1-py3.6.egg
-
-Using /home/ko4la/GIT/docstring-to-markdown/.eggs/pytest-3.5.1-py3.6.egg
 running egg_info
 writing docstring2md.egg-info/PKG-INFO
 writing dependency_links to docstring2md.egg-info/dependency_links.txt
+writing entry points to docstring2md.egg-info/entry_points.txt
+writing requirements to docstring2md.egg-info/requires.txt
 writing top-level names to docstring2md.egg-info/top_level.txt
 reading manifest file 'docstring2md.egg-info/SOURCES.txt'
 reading manifest template 'MANIFEST.in'
@@ -16,36 +13,27 @@ running build_ext
 platform linux -- Python 3.6.5, pytest-3.5.1, py-1.5.3, pluggy-0.6.0 -- /usr/bin/python3
 cachedir: .pytest_cache
 rootdir: /home/ko4la/GIT/docstring-to-markdown, inifile: setup.cfg
-collecting ... collected 29 items
+collecting ... collected 20 items
 
-tests/test_docstring2md.py::TestDocstring2MD::test_cls_1_importfile PASSED [  3%]
-tests/test_docstring2md.py::TestDocstring2MD::test_cls_2_importmodule PASSED [  6%]
-tests/test_docstring2md.py::TestDocstring2MD::test_cls_3_export PASSED   [ 10%]
-tests/test_docstring2md.py::TestDocstring2MD::test_cls_4_filenotfound PASSED [ 13%]
-tests/test_docstring2md.py::TestDocstring2MD::test_cls_5_fileisnotmodule PASSED [ 17%]
-tests/test_docstring2md.py::TestDocstring2MD::test_script PASSED         [ 20%]
-tests/test_doctest.py::RunDocTest::test_mod___about__.py PASSED          [ 24%]
-tests/test_doctest.py::RunDocTest::test_mod___config__.py PASSED         [ 27%]
-tests/test_doctest.py::RunDocTest::test_mod___init__.py PASSED           [ 31%]
-tests/test_doctest.py::RunDocTest::test_mod_ast_engine.py PASSED         [ 34%]
-tests/test_doctest.py::RunDocTest::test_mod_convmd.py PASSED             [ 37%]
-tests/test_doctest.py::RunDocTest::test_mod_doc2md.py PASSED             [ 41%]
-tests/test_doctest.py::RunDocTest::test_mod_file.py PASSED               [ 44%]
-tests/test_doctest.py::RunDocTest::test_mod_main.py PASSED               [ 48%]
-tests/test_doctest.py::RunDocTest::test_mod_mod.py PASSED                [ 51%]
-tests/test_pycodestyle.py::RunPyCodeStyle::test___about__.py PASSED      [ 55%]
-tests/test_pycodestyle.py::RunPyCodeStyle::test___config__.py PASSED     [ 58%]
-tests/test_pycodestyle.py::RunPyCodeStyle::test___init__.py PASSED       [ 62%]
-tests/test_pycodestyle.py::RunPyCodeStyle::test_ast_engine.py PASSED     [ 65%]
-tests/test_pycodestyle.py::RunPyCodeStyle::test_convmd.py PASSED         [ 68%]
-tests/test_pycodestyle.py::RunPyCodeStyle::test_doc2md.py PASSED         [ 72%]
-tests/test_pycodestyle.py::RunPyCodeStyle::test_export_docstring2md.py PASSED [ 75%]
-tests/test_pycodestyle.py::RunPyCodeStyle::test_file.py PASSED           [ 79%]
-tests/test_pycodestyle.py::RunPyCodeStyle::test_main.py PASSED           [ 82%]
-tests/test_pycodestyle.py::RunPyCodeStyle::test_mod.py PASSED            [ 86%]
-tests/test_pycodestyle.py::RunPyCodeStyle::test_setup.py PASSED          [ 89%]
-tests/test_pycodestyle.py::RunPyCodeStyle::test_test_docstring2md.py PASSED [ 93%]
-tests/test_pycodestyle.py::RunPyCodeStyle::test_test_doctest.py PASSED   [ 96%]
+tests/test_doctest.py::RunDocTest::test_mod_ast_engine.py PASSED         [  5%]
+tests/test_doctest.py::RunDocTest::test_mod_cli.py PASSED                [ 10%]
+tests/test_doctest.py::RunDocTest::test_mod_convmd.py PASSED             [ 15%]
+tests/test_doctest.py::RunDocTest::test_mod_doc2md.py PASSED             [ 20%]
+tests/test_doctest.py::RunDocTest::test_mod_file.py PASSED               [ 25%]
+tests/test_doctest.py::RunDocTest::test_mod_log.py PASSED                [ 30%]
+tests/test_doctest.py::RunDocTest::test_mod_mod.py PASSED                [ 35%]
+tests/test_pycodestyle.py::RunPyCodeStyle::test___about__.py PASSED      [ 40%]
+tests/test_pycodestyle.py::RunPyCodeStyle::test___config__.py PASSED     [ 45%]
+tests/test_pycodestyle.py::RunPyCodeStyle::test___init__.py PASSED       [ 50%]
+tests/test_pycodestyle.py::RunPyCodeStyle::test_ast_engine.py PASSED     [ 55%]
+tests/test_pycodestyle.py::RunPyCodeStyle::test_cli.py PASSED            [ 60%]
+tests/test_pycodestyle.py::RunPyCodeStyle::test_convmd.py PASSED         [ 65%]
+tests/test_pycodestyle.py::RunPyCodeStyle::test_doc2md.py PASSED         [ 70%]
+tests/test_pycodestyle.py::RunPyCodeStyle::test_file.py PASSED           [ 75%]
+tests/test_pycodestyle.py::RunPyCodeStyle::test_log.py PASSED            [ 80%]
+tests/test_pycodestyle.py::RunPyCodeStyle::test_mod.py PASSED            [ 85%]
+tests/test_pycodestyle.py::RunPyCodeStyle::test_setup.py PASSED          [ 90%]
+tests/test_pycodestyle.py::RunPyCodeStyle::test_test_doctest.py PASSED   [ 95%]
 tests/test_pycodestyle.py::RunPyCodeStyle::test_test_pycodestyle.py PASSED [100%]
 
-========================== 29 passed in 1.14 seconds ===========================
+========================== 20 passed in 1.81 seconds ===========================

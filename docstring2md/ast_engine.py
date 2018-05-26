@@ -18,6 +18,7 @@ from docstring2md import TAG, BLACKLIST
 from docstring2md import ConvMD
 from docstring2md.log import PytLog
 
+
 class ObjVisitor(ast.NodeVisitor):
     """
     This Class is an ast.NodeVisitor class and allow us to parse

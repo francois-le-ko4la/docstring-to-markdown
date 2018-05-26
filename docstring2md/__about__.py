@@ -11,14 +11,48 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 """
 
-__version__ = '0.3.2'
-__pkg_name__ = 'docstring2md'
-__author__ = 'Ko4lA'
-__email__ = 'francois@le.ko4la.fr'
-__license__ = 'GPL'
-__description__ = 'Docstring extractor to generate readme.'
-__url__ = 'https://github.com/francois-le-ko4la/docstring2md.git'
-__script_description__ = """
+import json
+from pkg_resources import get_distribution
+
+
+__pkg_name__ = __name__.split(".")[0]
+
+
+try:
+    ABOUT = json.loads(
+        get_distribution(__pkg_name__).get_metadata("metadata.json")
+    )
+    __version__ = ABOUT["version"]
+    __author__ = ABOUT["extensions"]["python.details"]["contacts"][0]["name"]
+    __email__ = ABOUT["extensions"]["python.details"]["contacts"][0]["email"]
+    __url__ = ABOUT["download_url"]
+    __license__ = ABOUT["license"]
+    __description__ = ABOUT["summary"]
+
+except FileNotFoundError:
+    try:
+        PKGINFO = get_distribution(__pkg_name__).get_metadata('METADATA')
+    except FileNotFoundError:
+        PKGINFO = get_distribution(__pkg_name__).get_metadata('PKG-INFO')
+
+    __version__ = get_distribution(__pkg_name__).version
+
+    from email import message_from_string
+    MSG = message_from_string(PKGINFO)
+    for key, value in MSG.items():
+        if key.startswith("Author-email"):
+            __email__ = value
+        elif key.startswith("Author"):
+            __author__ = value
+        elif key.startswith("Download-URL"):
+            __url__ = value
+        elif key.startswith("License"):
+            __license__ = value
+        elif key.startswith("Summary"):
+            __description__ = value
+
+__script__ = "export_docstring2md.py"
+__script_descr__ = """
 This script is provided by docstring2md package.
 It exports google docstrings from python module to a Markdown file in order to
 generate README.

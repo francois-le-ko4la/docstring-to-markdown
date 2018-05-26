@@ -7,7 +7,9 @@ import logging.config
 import logging
 import pathlib
 
-YAML_CONF="/logging.yaml"
+
+YAML_CONF = "/logging.yaml"
+
 
 class PytLog(object):
     def __init__(self):

@@ -22,17 +22,22 @@ init:
 	@sudo apt install graphviz
 
 dev:
-	@pip install -e .
+	@sudo -H pip3 install -e .
 
 install:
 	@$(MAKE) init
-	@pip3 install .
+	@./setup.py sdist bdist_wheel
+	@sudo -H pip3 install . --upgrade
+
+upgrade:
+	@sudo -H pip3 install . --upgrade
+
 
 uninstall:
-	@pip3 uninstall -y $(PACKAGE_NAME)
+	@sudo -H pip3 uninstall -y $(PACKAGE_NAME)
 
 clean:
-	@sudo rm -Rf *.egg *.egg-info .cache .coverage .tox build dist docs/build htmlcov .pytest_cache
+	@sudo rm -Rf .eggs *.egg-info .cache .coverage .tox build dist docs/build htmlcov .pytest_cache
 	@sudo find -depth -type d -name __pycache__ -exec rm -Rf {} \;
 	@sudo find -type f -name '*.pyc' -delete
 
@@ -49,12 +54,8 @@ release:
 	@$(MAKE) install
 	@$(MAKE) doc
 
-requirements:
-	@pipreqs . --force
-
 publish:
 	@$(MAKE) test
-	@pipreqs .
 	@git add .
 	@git commit
 	@git push

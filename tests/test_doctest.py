@@ -19,6 +19,13 @@ import subprocess
 from docstring2md import __about__
 
 
+blacklist = ["__init__.py", "__about__.py", "__config__.py"]
+
+
+def ch(current_file):
+    return lambda self: self.run_doctest(current_file)
+
+
 class RunDocTest(unittest.TestCase):
     def run_doctest(self, current_file):
         try:
@@ -41,13 +48,15 @@ sys.path.append(path)
 
 for current_file in list(path.glob('**/*.py')):
     current_file = pathlib.Path(current_file)
+    print(current_file.name)
+    print(current_file.name in blacklist)
 
-    def ch(current_file):
-        return lambda self: self.run_doctest(current_file)
-    setattr(RunDocTest,
+    if current_file.name not in blacklist:
+        setattr(
+            RunDocTest,
             "test_mod_{}".format(current_file.name),
             ch(str(current_file))
-            )
+        )
 
 
 if __name__ == "__main__":

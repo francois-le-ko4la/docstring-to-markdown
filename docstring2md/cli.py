@@ -14,14 +14,14 @@
 
 import pathlib
 import argparse
-from docstring2md import __about__
+from docstring2md.__about__ import __version__, __script_descr__, __script__
 from docstring2md import DocString2MD
 
 
 PARSER = argparse.ArgumentParser(
-    prog=pathlib.Path(__file__).name,
+    prog=__script__,
     formatter_class=argparse.RawDescriptionHelpFormatter,
-    description=__about__.__script_description__,
+    description=__script_descr__,
     epilog="Enjoy...",
     add_help=False
 )
@@ -36,7 +36,7 @@ OPTIONAL.add_argument(
     '-v',
     '--version',
     action='version',
-    version=__about__.__version__
+    version=__version__
 )
 REQUIRED = PARSER.add_argument_group('required arguments')
 REQUIRED.add_argument(

@@ -18,6 +18,7 @@ from docstring2md import ObjVisitor
 from docstring2md import PytFile
 from docstring2md.log import PytLog
 
+
 class PytMod(object):
 
     """
@@ -47,7 +48,9 @@ class PytMod(object):
         self.__module = module_name
         self.__priv = priv
         self.__toc = ""
-        self.__log.debug("PytMod: module={} / priv={}".format(module_name, priv))
+        self.__log.debug(
+            "PytMod: module={} / priv={}".format(module_name, priv)
+        )
 
     @property
     def module(self):
@@ -107,7 +110,11 @@ class PytMod(object):
 
     def __get_doc_from_module(self, module, module_docstring=False):
         source = PytFile(module)
-        doc = ObjVisitor(module_docstring=module_docstring, priv=self.__priv, debug=self.__debug)
+        doc = ObjVisitor(
+            module_docstring=module_docstring,
+            priv=self.__priv,
+            debug=self.__debug
+        )
         doc.visit(doc.get_tree(source.read()))
         self.__toc += doc.toc
         return doc.output
@@ -120,7 +127,9 @@ class PytMod(object):
         for importer, modname, ispkg in pkgutil.walk_packages(
                 imp_pkg.__path__):
             if ispkg:
-                self.__log.info("PytMod - new module => {}".format(package + "." + modname))
+                self.__log.info(
+                    "PytMod - new module => {}".format(package + "." + modname)
+                )
                 module += self.__get_module_list(package + "." + modname)
             else:
                 if modname.startswith("__") is False:

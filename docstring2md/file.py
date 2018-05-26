@@ -20,7 +20,7 @@ class PytFile(object):
     >>> data_file = PytFile("lorem")
     Traceback (most recent call last):
     ...
-    OSError: File not found !
+    OSError: File not found ! lorem
     >>> data_file = PytFile(None)
     >>> data_file.exists()
     False
@@ -71,7 +71,7 @@ class PytFile(object):
                 self.__filename = pathlib.Path(str(value))
         else:
             self.__exists = False
-            raise IOError("File not found !")
+            raise IOError("File not found ! {}".format(value))
         self.__exists = True
 
     def exists(self):

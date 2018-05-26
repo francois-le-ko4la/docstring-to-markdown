@@ -122,16 +122,10 @@ Enjoy...
 This package is distributed under the [GPLv3 license](./LICENSE)
 
 """
-
-from docstring2md import __about__
+from docstring2md.__about__ import __version__, __author__, __license__
 from docstring2md.__config__ import CONST, TAG, BLACKLIST
 from docstring2md.convmd import ConvMD
 from docstring2md.file import PytFile
 from docstring2md.ast_engine import ObjVisitor
 from docstring2md.mod import PytMod
 from docstring2md.doc2md import DocString2MD
-
-
-__version__ = __about__.__version__
-__author__ = __about__.__author__
-__license__ = __about__.__license__
