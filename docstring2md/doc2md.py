@@ -63,7 +63,7 @@ class DocString2MD(object):
         self.__export_file = export_file
         self.__my_module = PytMod(module_name, priv, debug)
         self.__toc = toc
-        self.__output = ""
+        self.__output = None
 
     def import_module(self):
         """
@@ -76,38 +76,50 @@ class DocString2MD(object):
 
         # print(mod.pkg_main_docstring)
         # print(mod.docstring)
-        self.__output = ""
+        self.__output = []
         """ module / README """
-        self.__output += self.__my_module.pkg_main_docstring
+        self.__output.append(self.__my_module.pkg_main_docstring)
         """ runtime """
         if self.__runtime.exists():
-            self.__output += "\n\n{}\n{}{}{}".format(
-                CONST["dev_runtime"],
-                TAG["beg_co"],
-                self.__runtime.read(),
-                TAG["end_co"]
+            self.__output.extend(
+                (
+                    CONST["dev_runtime"],
+                    TAG["beg_co"],
+                    self.__runtime.read(),
+                    TAG["end_co"]
+                )
             )
         """ requirements """
         if self.__requirements.exists():
-            self.__output += "{}\n{}{}{}".format(
-                CONST["dev_requirement"],
-                TAG["beg_co"],
-                self.__requirements.read(),
-                TAG["end_co"]
+            self.__output.extend(
+                (
+                    CONST["dev_requirement"],
+                    TAG["beg_co"],
+                    self.__requirements.read(),
+                    TAG["end_co"]
+                )
             )
         """ UML """
         if self.__uml.exists:
-            self.__output += "{}\n![alt text]({})\n\n".format(
-                CONST["dev_uml"],
-                self.__uml.filename)
+            self.__output.append(
+                "{}\n![alt text]({})\n\n".format(
+                    CONST["dev_uml"],
+                    self.__uml.filename
+                )
+            )
 
         """ children """
-        self.__output += "{}\n".format(CONST["dev_obj"])
+        self.__output.append("{}\n".format(CONST["dev_obj"]))
         if self.__toc:
-            self.__output += "{}\n".format(
-                self.__my_module.toc)
-        self.__output += "{}\n".format(
-            self.__my_module.docstring)
+            self.__output.append(
+                "{}\n".format(
+                    self.__my_module.toc
+                )
+            )
+        self.__output.append(self.__my_module.docstring)
+
+        self.__output = "\n".join(self.__output)
+
         return True
 
     def get_doc(self):

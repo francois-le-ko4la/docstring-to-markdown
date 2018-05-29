@@ -47,7 +47,7 @@ class PytMod(object):
         self.__path = None
         self.__module = module_name
         self.__priv = priv
-        self.__toc = ""
+        self.__toc = []
         self.__log.debug(
             "PytMod: module={} / priv={}".format(module_name, priv)
         )
@@ -87,7 +87,7 @@ class PytMod(object):
         """
         Returns the TOC
         """
-        return self.__toc
+        return "\n".join(self.__toc)
 
     def ismodule(self):
         """
@@ -116,7 +116,7 @@ class PytMod(object):
             debug=self.__debug
         )
         doc.visit(doc.get_tree(source.read()))
-        self.__toc += doc.toc
+        self.__toc.append(doc.toc)
         return doc.output
 
     def __get_module_list(self, package):
@@ -128,7 +128,7 @@ class PytMod(object):
                 imp_pkg.__path__):
             if ispkg:
                 self.__log.info(
-                    "PytMod - new module => {}".format(package + "." + modname)
+                    "PytMod - new module => {}.{}".format(package,  modname)
                 )
                 module += self.__get_module_list(package + "." + modname)
             else:
@@ -137,13 +137,13 @@ class PytMod(object):
         return module
 
     def __get_doc_from_pkg(self, package):
-        output = ""
+        output = []
         modules = self.__get_module_list(package)
         self.__log.debug("PytMod: {}".format(str(modules)))
         for module in modules:
             self.__log.debug("PytMod - extract {}".format(module))
-            output += self.__get_doc_from_module(module)
-        return output
+            output.append(self.__get_doc_from_module(module))
+        return "\n".join(output)
 
 
 if __name__ == "__main__":

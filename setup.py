@@ -14,11 +14,36 @@ Test:
 """
 from setuptools import setup, find_packages
 from setuptools.config import read_configuration
+from setuptools.command.develop import develop
+from setuptools.command.install import install
+from subprocess import check_call
 import warnings
+
+
+def apt_get_install():
+    check_call("sudo apt install -y graphviz".split())
+
+
+class PostDevelopCommand(develop):
+    """Post-installation for development mode."""
+    def run(self):
+        apt_get_install()
+        develop.run(self)
+
+
+class PostInstallCommand(install):
+    """Post-installation for installation mode."""
+    def run(self):
+        apt_get_install()
+        install.run(self)
 
 
 warnings.filterwarnings("ignore")
 CFG = read_configuration('./setup.cfg')
 CFG["options"].update(CFG["metadata"])
 CFG = CFG["options"]
+CFG["cmdclass"] = {
+    'develop': PostDevelopCommand,
+    'install': PostInstallCommand,
+}
 setup(use_scm_version=False, **CFG)

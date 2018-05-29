@@ -10,50 +10,38 @@ This script is provided in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 """
-
-import json
+from email import message_from_string
 from pkg_resources import get_distribution
 
 
+if __name__ == "__main__":
+    raise Exception("Do not start this script manually !")
+
+
+META_FILES = ["METADATA", "PKG-INFO"]
+
+
+def get_metafile(dist):
+    for meta_file in META_FILES:
+        if dist.has_metadata(meta_file):
+            return meta_file
+    raise Exception("Install the package...")
+
+
 __pkg_name__ = __name__.split(".")[0]
-
-
-try:
-    ABOUT = json.loads(
-        get_distribution(__pkg_name__).get_metadata("metadata.json")
-    )
-    __version__ = ABOUT["version"]
-    __author__ = ABOUT["extensions"]["python.details"]["contacts"][0]["name"]
-    __email__ = ABOUT["extensions"]["python.details"]["contacts"][0]["email"]
-    __url__ = ABOUT["download_url"]
-    __license__ = ABOUT["license"]
-    __description__ = ABOUT["summary"]
-
-except FileNotFoundError:
-    try:
-        PKGINFO = get_distribution(__pkg_name__).get_metadata('METADATA')
-    except FileNotFoundError:
-        PKGINFO = get_distribution(__pkg_name__).get_metadata('PKG-INFO')
-
-    __version__ = get_distribution(__pkg_name__).version
-
-    from email import message_from_string
-    MSG = message_from_string(PKGINFO)
-    for key, value in MSG.items():
-        if key.startswith("Author-email"):
-            __email__ = value
-        elif key.startswith("Author"):
-            __author__ = value
-        elif key.startswith("Download-URL"):
-            __url__ = value
-        elif key.startswith("License"):
-            __license__ = value
-        elif key.startswith("Summary"):
-            __description__ = value
-
+META = get_metafile(get_distribution(__pkg_name__))
+META = get_distribution(__pkg_name__).get_metadata(META)
+META = message_from_string(META)
+__version__ = META["Version"]
+__email__ = META["Author-email"]
+__author__ = META["Author"]
+__url__ = META["Download-URL"]
+__license__ = META["License"]
+__description__ = META["Summary"]
 __script__ = "export_docstring2md.py"
 __script_descr__ = """
 This script is provided by docstring2md package.
 It exports google docstrings from python module to a Markdown file in order to
 generate README.
 """
+__all__ = ["__version__", "__email__", "__author__", "__url__", "__license__"]

@@ -56,11 +56,19 @@ class ObjVisitor(ast.NodeVisitor):
         self.__debug = debug
         if self.__debug:
             self.__log.set_debug()
-        self.output = ""
-        self.toc = ""
+        self.__toc = []
+        self.__output = []
         self.__module_docstring = module_docstring
         self.__priv = priv
         self.__func = []
+
+    @property
+    def toc(self):
+        return "\n".join(self.__toc)
+
+    @property
+    def output(self):
+        return "\n".join(self.__output)
 
     def get_tree(self, source):
         """
@@ -92,7 +100,7 @@ class ObjVisitor(ast.NodeVisitor):
         """
         self.__log.info("visit module: {}".format(node))
         if self.__module_docstring:
-            self.output += self.__get_docstring(node)
+            self.__output.append(self.__get_docstring(node))
         self.generic_visit(node)
 
     def __set_parent(self, node):
@@ -107,7 +115,7 @@ class ObjVisitor(ast.NodeVisitor):
         anchor = re.sub(r"__([a-zA-Z_]*)__\(", r"\1(", anchor)
         anchor = re.sub(
             r"[^\w\- ]+", "", (anchor.replace(' ', '-')).lower())
-        self.toc += "[{}](#{})<br />\n".format(title, anchor)
+        self.__toc.append("[{}](#{})<br />".format(title, anchor))
 
     def __get_args(self, node):
         argument = []
@@ -162,7 +170,7 @@ class ObjVisitor(ast.NodeVisitor):
                 else:
                     name = dec.func.id
                 if hasattr(dec.func, "attr"):
-                    name = name + "." + dec.func.attr
+                    name = ".".join(name, dec.func.attr)
                 if hasattr(dec, "args"):
                     self.__get_decorator_args(dec)
                     name += self.__get_decorator_args(dec)
@@ -261,10 +269,12 @@ class ObjVisitor(ast.NodeVisitor):
         """
         self.__log.info("visit class: {}".format(node.name))
         self.__set_parent(node)
-        self.output += "{}\n{}\n{}\n".format(
-            self.__get_cla_title(node),
-            self.__get_cla_def(node),
-            self.__get_cla_docstring(node)
+        self.__output.extend(
+            (
+                self.__get_cla_title(node),
+                self.__get_cla_def(node),
+                self.__get_cla_docstring(node)
+            )
         )
         self.generic_visit(node)
 
@@ -292,10 +302,12 @@ class ObjVisitor(ast.NodeVisitor):
         if self.__priv or node.name.startswith("__") is not True:
             self.__set_parent(node)
             if node.level <= 2 and self.__valid_name(node):
-                self.output += "{}\n{}\n{}\n".format(
-                    self.__get_func_title(node),
-                    self.__get_func_def(node),
-                    self.__get_func_docstring(node)
+                self.__output.extend(
+                    (
+                        self.__get_func_title(node),
+                        self.__get_func_def(node),
+                        self.__get_func_docstring(node)
+                    )
                 )
         else:
             node.disable = True

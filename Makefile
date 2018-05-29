@@ -18,20 +18,15 @@ default:
 	@echo '    make test       test'
 	@echo
 
-init:
-	@sudo apt install graphviz
-
 dev:
 	@sudo -H pip3 install -e .
 
 install:
-	@$(MAKE) init
 	@./setup.py sdist bdist_wheel
 	@sudo -H pip3 install . --upgrade
 
 upgrade:
 	@sudo -H pip3 install . --upgrade
-
 
 uninstall:
 	@sudo -H pip3 uninstall -y $(PACKAGE_NAME)
