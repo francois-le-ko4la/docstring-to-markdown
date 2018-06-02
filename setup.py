@@ -17,7 +17,11 @@ from setuptools.config import read_configuration
 from setuptools.command.develop import develop
 from setuptools.command.install import install
 from subprocess import check_call
-import warnings
+import sys
+
+
+if not sys.version_info[0] == 3:
+            sys.exit("Sorry, your Python is not supported (yet)")
 
 
 def apt_get_install():
@@ -38,7 +42,6 @@ class PostInstallCommand(install):
         install.run(self)
 
 
-warnings.filterwarnings("ignore")
 CFG = read_configuration('./setup.cfg')
 CFG["options"].update(CFG["metadata"])
 CFG = CFG["options"]
@@ -46,4 +49,4 @@ CFG["cmdclass"] = {
     'develop': PostDevelopCommand,
     'install': PostInstallCommand,
 }
-setup(use_scm_version=False, **CFG)
+setup(**CFG)
