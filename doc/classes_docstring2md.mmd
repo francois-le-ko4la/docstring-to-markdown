@@ -1,0 +1,158 @@
+classDiagram
+  class DocString2MDOptions {
+    export_file
+    private_def
+    toc
+    toml
+    uml
+  }
+  class LoggingMSG {
+    debug
+    error
+    info
+  }
+  class MyFile {
+    exists
+    path
+    status
+    absolute() str
+    read() str
+    resolve() str
+    set_path(path: Union[str, None]) MyFile
+    write(data: str) int
+  }
+  class NodeVisitor {
+    generic_visit(node)
+    visit(node)
+    visit_Constant(node)
+  }
+  class PytMod {
+    docstring
+    module
+    pkg_main_docstring
+    toc
+    ismodule() bool
+    read() None
+  }
+  class Const {
+    decorator_tag : str
+    dev_head : str
+    dev_obj : str
+    dev_toml : str
+    dev_uml : str
+    docstring_empty : str
+    function_tag : str
+    head_tag : str
+    property_tag : str
+  }
+  class LoggingMSG {
+    debug : str
+    error : str
+    info : str
+  }
+  class LoggingMSGCollection {
+    args
+    dump
+    elapse_time
+    logfile
+    python
+    result
+  }
+  class LoggingSetup {
+    default_format : str
+    default_level : str
+    encoding : str
+    file_format : str
+    logfile : str
+    simple_format : str
+    set_logfile(path: str) 'LoggingSetup'
+  }
+  class Tag {
+    beg_b : str
+    beg_co : str
+    beg_mermaid : str
+    beg_py : str
+    beg_str : str
+    cr : str
+    end_b : str
+    end_bh : str
+    end_co : str
+    end_py : str
+    end_str : str
+    end_strh : str
+    html_cr : str
+    html_tab : str
+    quote : str
+    tab : str
+  }
+  class NodeLink {
+    level : int
+    parent : Union[ast.FunctionDef, ast.ClassDef, ast.Module]
+  }
+  class ObjVisitor {
+    output
+    toc
+    get_tree(source: str) ast.AST
+    visit_ClassDef(node: ast.ClassDef) None
+    visit_FunctionDef(node: ast.FunctionDef) None
+    visit_Module(node: ast.Module) None
+  }
+  class ConvMD {
+    add_tag(begin_tag, end_tag)
+    repl_beg_end(begin_regexp: str, end_regexp: str, begin_tag: str, end_tag: str)
+    repl_str(old_string, new_string)
+  }
+  class DocString2MD {
+    get_doc() str
+    import_module() int
+    writedoc() int
+  }
+  class DocString2MDOptions {
+    export_file
+    private_def : bool
+    toc : bool
+    toml
+    uml
+  }
+  class MyFile {
+    exists : bool
+    path : Union[Path, None]
+    status : int
+    absolute() str
+    read() str
+    resolve() str
+    set_path(path: Union[str, None]) MyFile
+    write(data: str) int
+  }
+  class PytMod {
+    docstring
+    module
+    pkg_main_docstring
+    toc
+    ismodule() bool
+    read() None
+  }
+  class NamedTuple {
+  }
+  Const --|> NamedTuple
+  LoggingMSG --|> NamedTuple
+  LoggingMSGCollection --|> NamedTuple
+  LoggingSetup --|> NamedTuple
+  Tag --|> NamedTuple
+  NodeLink --|> NamedTuple
+  ObjVisitor --|> NodeVisitor
+  DocString2MDOptions --|> NamedTuple
+  MyFile --|> NamedTuple
+  DocString2MDOptions --* DocString2MD : __options
+  DocString2MDOptions --* DocString2MD : __options
+  LoggingMSG --* LoggingMSGCollection : logfile
+  LoggingMSG --* LoggingMSGCollection : args
+  LoggingMSG --* LoggingMSGCollection : python
+  LoggingMSG --* LoggingMSGCollection : dump
+  LoggingMSG --* LoggingMSGCollection : result
+  LoggingMSG --* LoggingMSGCollection : elapse_time
+  MyFile --* DocString2MDOptions : toml
+  MyFile --* DocString2MDOptions : uml
+  MyFile --* DocString2MDOptions : export_file
+  PytMod --* DocString2MD : __my_module
+  PytMod --* DocString2MD : __my_module

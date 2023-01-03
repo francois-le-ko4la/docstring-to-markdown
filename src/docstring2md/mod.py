@@ -1,0 +1,181 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+This script is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public
+License as published by the Free Software Foundation; either
+version 3 of the License, or (at your option) any later version.
+
+This script is provided in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+"""
+from __future__ import annotations
+
+import pkgutil
+import importlib
+from typing import Union, Any
+
+from docstring2md.ast_engine import ObjVisitor
+from docstring2md.file import MyFile
+from docstring2md.log import logger
+
+
+class PytMod:
+
+    """
+    Object in order to extract Python functions, class....
+
+    Use:
+        >>> mod = PytMod("oups...")
+        >>> mod.read()
+        Traceback (most recent call last):
+        ...
+        ModuleNotFoundError: No module named 'oups'
+        >>> mod = PytMod("json")
+        >>> mod.read()
+        >>> #print(mod.pkg_main_docstring)
+        >>> print(mod.docstring)
+        #### JSONDecodeError()
+        ```python
+        class JSONDecodeError(ValueError):
+        ...
+        >>> mod = PytMod(__file__)
+        >>> mod.read()
+        >>> print(mod.docstring)
+        This script is free software; you can redistribute it and/or
+        modify it under the terms of the GNU Lesser General Public
+        License as published by the Free Software Foundation; either
+        version 3 of the License, or (at your option) any later version.
+        <BLANKLINE>
+        This script is provided in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+        #### PytMod()
+        ...
+        >>> mod = PytMod('docstring2md')
+        >>> mod.read()
+        >>> print(mod.docstring)
+        #### NodeLink()
+        ```python
+        class NodeLink(NamedTuple):
+        ...
+    """
+    __doc: str
+    __path: Union[str, None]
+    __module: str
+    __priv: bool
+    __toc: list[Any]
+
+    def __init__(self, module_name: str, priv: bool = False) -> None:
+        self.__doc = ""
+        self.__path = ""
+        self.__module = module_name
+        self.__priv = priv
+        self.__toc = []
+        logger.debug("PytMod: module=%s", module_name)
+
+    @property
+    def module(self) -> str:
+        """
+        module name (str):
+            modulename
+            /path/to/the/mod
+            ./path/to/the/mod
+        """
+        return self.__module
+
+    @property
+    def docstring(self) -> str:
+        """
+        returns all the docstrings.
+        """
+        return self.__doc
+
+    @property
+    def pkg_main_docstring(self) -> str:
+        """
+        PKG only.
+        Returns the main docstring.
+        """
+        if self.ismodule():
+            logger.debug("PytMod: %s is a module", self.module)
+            return ""
+        logger.debug("PytMod: %s is a mod =>", self.module)
+        return self.__get_doc_from_module(
+             f"{self.__path}/__init__.py", module_docstring=True)
+
+    @property
+    def toc(self) -> str:
+        """
+        Returns the TOC
+        """
+        return "\n".join(self.__toc)
+
+    def ismodule(self) -> bool:
+        """
+        If module name is a module file => True
+        Else if the module name is a package => False
+        """
+        if self.module.endswith(".py"):
+            return True
+        return False
+
+    def read(self) -> None:
+        """
+        Reads all files and store the result.
+        """
+        logger.debug("PytMod - start reading %s", self.module)
+        if self.ismodule():
+            logger.debug("PytMod - This is a python module : %s", self.module)
+            self.__doc = self.__get_doc_from_module(
+                self.module, module_docstring=True)
+        else:
+            logger.debug("PytMod: This is a package folder : %s", self.module)
+            self.__doc = self.__get_doc_from_pkg(self.module)
+
+    def __get_doc_from_module(
+            self, module: str, module_docstring: bool = False) -> str:
+        # module name, for example json
+        source = MyFile.set_path(module)
+        # create an ObjVisitor to search in the module
+        doc = ObjVisitor(
+            module_docstring=module_docstring,
+            priv=self.__priv
+        )
+        # Visite all module in the package
+        doc.visit(doc.get_tree(source.read()))
+        self.__toc.append(doc.toc)
+        return doc.output
+
+    def __get_module_list(self, package: str) -> list[str]:
+        module = []
+        imp_pkg = importlib.import_module(package)
+        if self.__path == "":
+            self.__path = imp_pkg.__path__[0]
+        for _importer, modname, ispkg in pkgutil.walk_packages(
+                imp_pkg.__path__):
+            fullname = f"{package}.{modname}"
+            if ispkg:
+                logger.info(
+                    "PytMod - new module => %s", fullname)
+                module += self.__get_module_list(fullname)
+            else:
+                if modname.startswith("__") is False:
+                    module.append(imp_pkg.__path__[0] + "/" + modname + ".py")
+        return module
+
+    def __get_doc_from_pkg(self, package: str) -> str:
+        output = []
+        logger.debug("Package : %s", package)
+        modules = self.__get_module_list(package)
+        logger.debug("PytMod: %s", str(modules))
+        for module in modules:
+            logger.debug("PytMod - extract %s", str(module))
+            output.append(self.__get_doc_from_module(module))
+        return "\n".join(output)
+
+
+if __name__ == "__main__":
+    import doctest
+    doctest.testmod()

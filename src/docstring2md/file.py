@@ -1,0 +1,129 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+This script is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public
+License as published by the Free Software Foundation; either
+version 3 of the License, or (at your option) any later version.
+
+This script is provided in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+"""
+from __future__ import annotations
+
+from typing import NamedTuple, Union
+from pathlib import Path
+
+from docstring2md.log import logger
+from docstring2md.__config__ import EX_OK, EX_OSFILE, EX_IOERR, EX_CANTCREAT,\
+    LOGGING_SETUP
+
+
+class MyFile(NamedTuple):
+    """This class describe a file with a NamedTuple
+    @classmethod is used to init the objects correctly.
+
+    Notes:
+        The objective is to define a file with only one NamedTuple.
+        The NamedTuple will be created by the set_path function to define the
+        path.
+
+    Examples:
+        >>> data_file = MyFile.set_path("lorem")
+        >>> data_file.status
+        72
+        >>> fstab = MyFile.set_path("/etc/fstab")
+        >>> fstab.path.stem
+        'fstab'
+        >>> fstab
+        MyFile(path=PosixPath('/etc/fstab'), exists=False, status=72)
+        >>> fstab.absolute()
+        '/etc/fstab'
+        >>> # pathlib to run the test everywhere
+        >>> import pathlib
+        >>> path = str(pathlib.Path(__file__).resolve().parent) + "/"
+        >>> lic = MyFile.set_path(f"{path}../../LICENSE")
+        >>> lic.path.stem
+        'LICENSE'
+        >>> lic.exists
+        True
+        >>> result = lic.read()
+        >>> result = result.split("\\n")
+        >>> result[0]
+        '                    GNU GENERAL PUBLIC LICENSE'
+    """
+    path: Union[Path, None]
+    exists: bool
+    status: int
+
+    @classmethod
+    def set_path(cls, path: Union[str, None]) -> MyFile:
+        """ This function create the MyFile object with the file's path.
+        if path = None then return None
+
+        Args:
+            path: The file's path.
+
+        Returns:
+            MyFile or None
+
+        """
+        if path is None:
+            return cls(path=None, exists=False, status=EX_CANTCREAT)
+        _exists: bool = Path(path).exists()
+        _status: int = EX_OK if _exists else EX_OSFILE
+        return cls(path=Path(path), exists=_exists, status=_status)
+
+    def __repr__(self) -> str:
+        _repr: str = f"path={repr(self.path)}, exists={self.exists}, status" \
+                     f"={self.status}"
+        return f'{self.__class__.__name__}({_repr})'
+
+    def read(self) -> str:
+        """
+        read the text
+        """
+        if self.path:
+            return self.path.read_text()
+        return ""
+
+    def write(self, data: str) -> int:
+        """
+        Write data in the file
+        """
+        if not self.path:
+            return EX_CANTCREAT
+        try:
+            with open(self.path, 'w', encoding=LOGGING_SETUP.encoding) as file:
+                try:
+                    file.write(data)
+                except (IOError, OSError):
+                    logger.error("Error writing to the file.")
+                    return EX_IOERR
+        except (FileNotFoundError, PermissionError, OSError):
+            logger.error("Error opening file")
+            return EX_CANTCREAT
+        logger.info("Doc has been created")
+        return EX_OK
+
+    def resolve(self) -> str:
+        """
+        get path.resolve()
+        """
+        if self.path:
+            return str(self.path.resolve())
+        return ""
+
+    def absolute(self) -> str:
+        """
+        get path.absolute()
+        """
+        if self.path:
+            return str(self.path.absolute())
+        return ""
+
+
+if __name__ == "__main__":
+    import doctest
+    doctest.testmod()
