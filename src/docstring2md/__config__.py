@@ -73,15 +73,15 @@ class LoggingSetup(NamedTuple):
         file's path is initialized by default.
 
         Args:
-            path: The file's path.
+                    path: The file's path.
 
         Returns:
-            MyFile
+                    MyFile
 
         Examples:
-            >>> a = LoggingSetup.set_logfile('report.log')
-            >>> str(a)[0:32]
-            "LoggingSetup(logfile='report.log"
+                    >>> a = LoggingSetup.set_logfile('report.log')
+                    >>> str(a)[0:32]
+                    "LoggingSetup(logfile='report.log"
         """
         return cls(path)
 
@@ -90,9 +90,9 @@ class LoggingMSG(NamedTuple):
     """Messages with different sev
 
     Examples:
-    >>> logfile = LoggingMSG(info="Log file used: %s")
-    >>> logfile.info
-    'Log file used: %s'
+                >>> logfile = LoggingMSG(info="Log file used: %s")
+                >>> logfile.info
+                'Log file used: %s'
 
     """
     info: str = ""
@@ -104,9 +104,9 @@ class LoggingMSGCollection(NamedTuple):
     """All logging messages
 
     Examples:
-        >>> log_msg = LoggingMSGCollection()
-        >>> log_msg.logfile.info
-        'Log file used: %s'
+                >>> log_msg = LoggingMSGCollection()
+                >>> log_msg.logfile.info
+                'Log file used: %s'
 
     """
     logfile: LoggingMSG = LoggingMSG(
@@ -133,7 +133,6 @@ ROOT_DIR: str = os.path.abspath(os.path.dirname(__file__))
 PID: int = os.getpid()
 # exit values
 EX_OK: int = getattr(os, 'EX_OK', 0)
-EX_USAGE: int = getattr(os, 'EX_USAGE', 64)
 EX_OSFILE: int = getattr(os, 'EX_OSFILE', 72)
 EX_CANTCREAT: int = getattr(os, 'EX_CANTCREAT', 73)
 EX_IOERR: int = getattr(os, 'EX_IOERR', 74)

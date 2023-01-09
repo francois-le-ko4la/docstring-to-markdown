@@ -16,41 +16,47 @@ from __future__ import annotations
 
 import ast
 import re
-from typing import NamedTuple, Union, Callable, Any
 from collections import deque
+from functools import wraps
+from typing import TypeVar, NamedTuple, Union, Callable, Any, cast
 
 from docstring2md.__config__ import TAG
 from docstring2md.convmd import ConvMD
 from docstring2md.log import logger
 
+F = TypeVar('F', bound=Callable[..., Any])
 
-def logger_ast(cur_func: Callable[..., Any]) -> Any:
+
+def logger_ast(func: F) -> F:
     """
     This function is a decorator to use in the AST Navigator Class.
 
     Args:
-        cur_func: Callable[P, Any]
+                func: Callable[P, Any]
 
     Returns:
-        Callable[P, Any]
+                Callable[P, Any]
 
     """
-    def inner(*args: object, **kwargs: object) -> Any:
-        msg = f"{cur_func.__name__}"
+
+    @wraps(func)
+    def func_wrapper(*args: Any, **kwargs: Any) -> Any:
+        msg = f"{func.__name__}"
         msg_debug: Union[None, str] = None
 
         for arg in args:
             if isinstance(arg, (ast.FunctionDef, ast.ClassDef)):
                 msg = f"{msg}: {arg.name}"
                 msg_debug = ast.dump(arg)
-        if str(cur_func.__name__).startswith("visit_"):
+        if str(func.__name__).startswith("visit_"):
             logger.info(msg)
             if msg_debug:
                 logger.debug(msg_debug)
         else:
             logger.debug(msg)
-        return cur_func(*args, **kwargs)
-    return inner
+        return func(*args, **kwargs)
+
+    return cast(F, func_wrapper)
 
 
 class NodeLink(NamedTuple):
@@ -67,20 +73,22 @@ class NodeDef(NamedTuple):
     level: int
 
     def get_summary(self) -> str:
-        """Node summary
+        """
+        Node summary
 
         Returns:
-            str
+                    str
 
         """
         return f"{self.get_title()}\n{self.get_definition()}\n" + \
-               f"{self.get_docstring()}"
+            f"{self.get_docstring()}"
 
     def get_toc_elem(self) -> str:
-        """Return a TOC entry for this node
+        """
+        Return a TOC entry for this node
 
         Returns:
-            str
+                    str
 
         """
         anchor: str = f"{self.title}"
@@ -90,30 +98,33 @@ class NodeDef(NamedTuple):
         return f"[{self.title}](#{anchor})<br />"
 
     def get_title(self) -> str:
-        """Return the node's title
+        """
+        Return the node's title
 
         Returns:
-            str
+                    str
 
         """
         return f"{'#' * (self.level + 3)} {self.title}"
 
     @ConvMD.add_tag(TAG.beg_py, TAG.end_py)
     def get_definition(self) -> str:
-        """Return a TOC entry for this node
+        """
+        Return a TOC entry for this node
 
         Returns:
-            str
+                    str
 
         """
         return self.definition
 
     @ConvMD.add_tag(TAG.beg_co, TAG.end_co)
     def get_docstring(self) -> str:
-        """Return the node's docstring.
+        """
+        Return the node's docstring.
 
         Returns:
-            str
+                    str
 
         """
 
@@ -121,34 +132,40 @@ class NodeDef(NamedTuple):
 
 
 class ClassDef(NodeDef):
-    """Define a Class node.
+    """
+    Define a Class node.
 
     Returns:
-        ClassDef
+                ClassDef
 
     """
-    def __new__(cls, *arg, **kwargs) -> ClassDef:
-        return super().__new__(ClassDef, *arg, **kwargs)
+
+    def __new__(cls, *args: Any, **kwargs: Any) -> ClassDef:
+        return super().__new__(ClassDef, *args, **kwargs)
 
     def __init__(
-            self, title: str, definition: str, docstring: str, level: int):
+            self, title: str, definition: str, docstring: str, level: int) \
+            -> None:
         logger.debug(
             "New ClassDef - title: %s / def: %s / doc: %s / lvl: %s",
             title, definition, docstring, level)
 
 
 class FuncDef(NodeDef):
-    """Define a Function node.
+    """
+    Define a Function node.
 
     Returns:
-        FuncDef
+                FuncDef
 
     """
-    def __new__(cls, *args, **kwargs) -> FuncDef:
+
+    def __new__(cls, *args: Any, **kwargs: Any) -> FuncDef:
         return super().__new__(FuncDef, *args, **kwargs)
 
     def __init__(
-            self, title: str, definition: str, docstring: str, level: int):
+            self, title: str, definition: str, docstring: str, level: int) \
+            -> None:
         logger.debug(
             "New FuncDef - title: %s / def: %s / doc: %s / lvl: %s",
             title, definition, docstring, level)
@@ -165,14 +182,16 @@ class ModuleDef(NodeDef):
     """Define a Module node.
 
     Returns:
-        ModuleDef
+                ModuleDef
 
     """
-    def __new__(cls, *args, **kwargs) -> ModuleDef:
+
+    def __new__(cls, *args: Any, **kwargs: Any) -> ModuleDef:
         return super().__new__(ModuleDef, *args, **kwargs)
 
     def __init__(
-            self, title: str, definition: str, docstring: str, level: int):
+            self, title: str, definition: str, docstring: str, level: int) \
+            -> None:
         logger.debug(
             "New ModuleDef - title: %s / def: %s / doc: %s / lvl: %s",
             title, definition, docstring, level)
@@ -191,20 +210,23 @@ class ObjVisitor(ast.NodeVisitor):
         This parameter is usefull to use the first docstring module
         in a package.
 
-    Use:
-        >>> from docstring2md.file import MyFile
-        >>> import pathlib
-        >>> module = str(pathlib.Path(__file__).resolve())
-        >>> source = MyFile.set_path(module)
-        >>> # init
-        >>> doc = ObjVisitor(module_docstring=False)
-        >>> # provide source, generate the tree and use visit mechanism
-        >>> doc.visit(doc.get_tree(source.read()))
-        >>> result = doc.node_lst
-        >>> result[0].title
-        'logger_ast()'
-        >>> result[0].get_toc_elem()
-        '[logger_ast()](#logger_ast)<br />'
+    Examples:
+                >>> from docstring2md.file import MyFile
+                >>> import pathlib
+                >>> module = str(pathlib.Path(__file__).resolve())
+                >>> source = MyFile.set_path(module)
+                >>> # init
+                >>> doc = ObjVisitor(module_docstring=False)
+                >>> # provide source, generate the tree and use visit mechanism
+                >>> doc.visit(doc.get_tree(source.read()))
+                >>> result = doc.node_lst
+                >>> result[0].title
+                'logger_ast()'
+                >>> result[0].get_toc_elem()
+                '[logger_ast()](#logger_ast)<br />'
+                >>> result[0].definition
+                'def logger_ast(func: F) -> F:'
+
     """
     __module_docstring: bool
     __priv: bool
@@ -230,14 +252,12 @@ class ObjVisitor(ast.NodeVisitor):
         """
         This function allow us to parse the source and build the
         tree.
-        We put this function to group all AST function in this
-        module.
 
         Args:
-            source (str): source code
+                    source (str): source code
 
         Returns:
-            AST tree
+                    AST tree
 
         """
         return ast.parse(source)
@@ -253,7 +273,7 @@ class ObjVisitor(ast.NodeVisitor):
 
         for child in ast.iter_child_nodes(node):
             if isinstance(child, (ast.ClassDef, ast.FunctionDef)):
-                self.__set_level(child, (level+1), node)
+                self.__set_level(child, (level + 1), node)
         if level == 0:
             logger.info("start node link analysys: end")
 
@@ -266,15 +286,14 @@ class ObjVisitor(ast.NodeVisitor):
                        node: Union[
                            ast.FunctionDef, ast.ClassDef]) -> str:
         node_link: NodeLink = self.__link_lst[node]
-        if isinstance(node_link.parent, ast.Module):
-            return node.name
-        return f"{self.__get_fullname(node_link.parent)}.{node.name}"
+        return node.name if isinstance(node_link.parent, ast.Module) \
+            else f"{self.__get_fullname(node_link.parent)}.{node.name}"
 
     @staticmethod
     @logger_ast
     def __get_docstring(
-        node: Union[
-            ast.Module, ast.ClassDef, ast.FunctionDef]) -> str:
+            node: Union[
+                ast.Module, ast.ClassDef, ast.FunctionDef]) -> str:
         return str(ast.get_docstring(node))
 
     @staticmethod
@@ -296,19 +315,21 @@ class ObjVisitor(ast.NodeVisitor):
 
     @staticmethod
     def __get_value_from_attribute(node: ast.Attribute) -> str:
-        if isinstance(node.value, ast.Name):
-            return f"{node.value.id}.{node.attr}"
-        logger.warning("__get_value_from_attribute - another object: %s",
-                       str(ast.dump(node)))
-        return ""
+        return f"{node.value.id}.{node.attr}" \
+            if isinstance(node.value, ast.Name) else ""
 
     @staticmethod
     def __get_value_from_unary(node: ast.UnaryOp) -> str:
-        if isinstance(node.operand, ast.Name):
-            return f"-{node.operand.id}"
-        logger.warning("__get_value_from_unary - another object: %s",
-                       str(ast.dump(node)))
-        return ""
+        return f"-{node.operand.id}" \
+            if isinstance(node.operand, ast.Name) else ""
+
+    def __get_value_from_list(self, node: ast.List) -> str:
+        elts_lst: list[str] = [
+            self.__get_value_from_node(elt) for elt in node.elts
+            if isinstance(elt, (ast.Num, ast.Constant, ast.Subscript, ast.Str,
+                                ast.Name, ast.NameConstant, ast.Attribute))]
+        elts = ", ".join(elts_lst)
+        return f"[{elts}]"
 
     def __get_value_from_subscript(self, node: ast.Subscript) -> str:
         if isinstance(node.value, ast.Name):
@@ -319,18 +340,9 @@ class ObjVisitor(ast.NodeVisitor):
             if hasattr(curr_slice, "elts"):
                 for elt in curr_slice.elts:
                     if isinstance(elt, ast.List):
-                        sub_str = [
-                            self.__get_value_from_node(sub) for sub in
-                            elt.elts if
-                            isinstance(sub, (ast.Name, ast.Constant,
-                                             ast.NameConstant, ast.Num,
-                                             ast.Subscript, ast.Attribute,
-                                             ast.Str))]
-                        _elts = ", ".join(sub_str)
-                        _elts = f"[{_elts}], "
-                    elif isinstance(elt, (
-                            ast.Name, ast.Constant, ast.Attribute,
-                            ast.Subscript)):
+                        _elts = f"{_elts}{self.__get_value_from_node(elt)}, "
+                    elif isinstance(elt, (ast.Attribute, ast.Subscript,
+                                          ast.Name, ast.Constant)):
                         _elts = f"{_elts}{self.__get_value_from_node(elt)}, "
                 _elts = _elts[:-2] if _elts.endswith(", ") else _elts
                 return f"{curr_value.id}[{_elts}]"
@@ -349,7 +361,7 @@ class ObjVisitor(ast.NodeVisitor):
     def __get_value_from_node(
             self, node: Union[
                 ast.Name, ast.Constant, ast.NameConstant, ast.Num, ast.Str,
-                ast.Attribute, ast.Subscript, ast.UnaryOp]) -> str:
+                ast.Attribute, ast.Subscript, ast.UnaryOp, ast.List]) -> str:
 
         methode_by_type: dict[Any, Callable[..., str]] = {
             ast.Name: self.__get_value_from_name,
@@ -358,14 +370,15 @@ class ObjVisitor(ast.NodeVisitor):
             ast.Num: self.__get_value_from_num,
             ast.Str: self.__get_value_from_str,
             ast.Attribute: self.__get_value_from_attribute,
+            ast.List: self.__get_value_from_list,
             ast.Subscript: self.__get_value_from_subscript,
             ast.UnaryOp: self.__get_value_from_unary}
 
         if type(node) in methode_by_type:
             func: Callable[..., str] = methode_by_type[type(node)]
             return func(node)
-        logger.warning("__get_value_from_node - another object: %s",
-                       str(ast.dump(node)))
+        logger.warning(
+            "__get_value_from_node - another object: %s", str(ast.dump(node)))
         return ""
 
     # -------------------------------------------------------------------------
@@ -379,19 +392,18 @@ class ObjVisitor(ast.NodeVisitor):
         We update self.node_lst.
 
         Args:
-            node (ast.AST): current node
+                    node (ast.AST): current node
 
         Returns:
-            None.
+                    None
         """
         # Find all objects and set up the level
         self.__set_level(node)
         # Get docstring if available
         if self.__module_docstring:
-            self.__node_lst.append(
-                ModuleDef(
-                    title="Module", definition="",
-                    docstring=self.__mod_get_docstring(node), level=0))
+            self.__node_lst.append(ModuleDef(
+                title="Module", definition="",
+                docstring=self.__mod_get_docstring(node), level=0))
         # Continue the visit
         self.generic_visit(node)
 
@@ -409,10 +421,10 @@ class ObjVisitor(ast.NodeVisitor):
         We update self.node_lst.
 
         Args:
-            node (ast): current node
+                    node (ast.ClassDef): current node
 
         Returns:
-            None.
+                    None
         """
         self.__node_lst.append(
             ClassDef(
@@ -428,14 +440,13 @@ class ObjVisitor(ast.NodeVisitor):
 
     @logger_ast
     def __cla_get_def(self, node: ast.ClassDef) -> str:
-        return f"class {node.name}{self.__cla_get_inheritance(node)}:"
+        return f"class {node.name}({self.__cla_get_inheritance(node)}):"
 
     @logger_ast
     def __cla_get_inheritance(self, node: ast.ClassDef) -> str:
-        bases: list = [self.__get_value_from_node(base)
-                       for base in node.bases
-                       if isinstance(base, (ast.Name, ast.Attribute))]
-        return f"({', '.join(bases)})"
+        return ', '.join([self.__get_value_from_node(base)
+                          for base in node.bases
+                          if isinstance(base, (ast.Name, ast.Attribute))])
 
     @logger_ast
     def __cla_get_docstring(self, node: ast.ClassDef) -> str:
@@ -452,10 +463,11 @@ class ObjVisitor(ast.NodeVisitor):
         We update self.node_lst.
 
         Args:
-            node (ast.AST): current node
+                    node (ast.FunctionDef): current node
 
         Returns:
-            None.
+                    None
+
         """
         if self.__func_valid_name(node):
             self.__node_lst.append(FuncDef(
@@ -471,29 +483,28 @@ class ObjVisitor(ast.NodeVisitor):
 
     @logger_ast
     def __func_get_title(self, node: ast.FunctionDef) -> str:
-        fullname = self.__get_fullname(node)
-        return f"@Property {fullname}()" \
+        title = f"{self.__get_fullname(node)}()"
+        return f"@Property {title}" \
             if "@property" in self.__func_get_decorator(node) \
-            else f"{fullname}()"
+            else f"{title}"
 
     @logger_ast
     def __func_get_def(self, node: ast.FunctionDef) -> str:
-        decorator: str = ""
-        if hasattr(node, "decorator_list"):
-            decorator_lst: list[str] = self.__func_get_decorator(node)
-            decorator = "{}\n".format(
-                '\n'.join(decorator_lst)) if len(decorator_lst) > 0 else ""
-        return f"{decorator}def {self.__get_fullname(node)}" + \
-            f"{self.__func_get_args(node)}{self.__func_get_return(node)}:"
+        deco: str = '\n'.join(self.__func_get_decorator(node)) + "\n" \
+            if (hasattr(node, "decorator_list")
+                and len(node.decorator_list) > 0) else ""
+        return f"{deco}def {self.__get_fullname(node)}" + \
+               f"({self.__func_get_args(node)}){self.__func_get_return(node)}:"
 
     @logger_ast
     def __func_get_args(self, node: ast.FunctionDef) -> str:
         argument: list[str] = [arg.arg + self.__func_get_args_annotation(arg)
-                               for index, arg in enumerate(node.args.args)]
+                               for arg in node.args.args]
         if len(node.args.defaults) > 0:
-            def_value = [""] * (len(argument) - len(node.args.defaults)) + \
-                        self.__func_get_args_default(node)
-            argument = [arg+def_value[idx] for idx, arg in enumerate(argument)]
+            def_value: list[str] = [""] * (len(argument) - len(
+                node.args.defaults)) + self.__func_get_args_default(node)
+            argument = [arg + def_value[idx] for idx, arg in
+                        enumerate(argument)]
         if hasattr(node.args, "vararg") and node.args.vararg:
             argument.append(
                 f"*{node.args.vararg.arg}" +
@@ -503,7 +514,8 @@ class ObjVisitor(ast.NodeVisitor):
                 f"**{node.args.kwarg.arg}" +
                 f"{self.__func_get_args_annotation(node.args.kwarg)}")
 
-        return f"({', '.join(argument)})"
+        result: str = f"{', '.join(argument)}"
+        return result
 
     @logger_ast
     def __func_get_args_annotation(self, node: ast.arg) -> str:
@@ -516,25 +528,19 @@ class ObjVisitor(ast.NodeVisitor):
 
     @logger_ast
     def __func_get_args_default(self, node: ast.FunctionDef) -> list[str]:
-        result: list[str] = []
-
-        for def_value in node.args.defaults:
-            if isinstance(def_value, (ast.Constant,
-                                      ast.NameConstant,
-                                      ast.Num,
-                                      ast.Str,
-                                      ast.Name,
-                                      ast.Attribute,
-                                      ast.UnaryOp)):
-                result.append(f" = {self.__get_value_from_node(def_value)}")
-            else:
-                logger.warning("another kind of default value: %s", def_value)
-
-        return result
+        return [f" = {self.__get_value_from_node(def_value)}"
+                for def_value in node.args.defaults
+                if isinstance(def_value, (ast.Constant,
+                                          ast.NameConstant,
+                                          ast.Num,
+                                          ast.Str,
+                                          ast.Name,
+                                          ast.Attribute,
+                                          ast.UnaryOp))]
 
     @logger_ast
-    def __func_get_decorator(self, node: ast.FunctionDef) -> list:
-        decorator = []
+    def __func_get_decorator(self, node: ast.FunctionDef) -> list[str]:
+        decorator: list[str] = []
         name: str
         for dec in node.decorator_list:
             name = ''
@@ -551,10 +557,9 @@ class ObjVisitor(ast.NodeVisitor):
     @logger_ast
     def __func_get_decorator_args(self, node: ast.Call) -> str:
         # node = Args from Call node
-        args: list[str] = []
-        for attribute in node.args:
-            if isinstance(attribute, (ast.Name, ast.Attribute)):
-                args.append(self.__get_value_from_node(attribute))
+        args: list[str] = [self.__get_value_from_node(attribute)
+                           for attribute in node.args
+                           if isinstance(attribute, (ast.Name, ast.Attribute))]
         return f"({', '.join(args)})"
 
     @logger_ast
@@ -577,4 +582,5 @@ class ObjVisitor(ast.NodeVisitor):
 
 if __name__ == "__main__":
     import doctest
+
     doctest.testmod()

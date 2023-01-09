@@ -37,6 +37,13 @@ classDiagram
     visit(node)
     visit_Constant(node)
   }
+  class PytMod {
+    module
+    node_lst
+    pkg_main_docstring
+    ismodule() bool
+    read() None
+  }
   class Const {
     decorator_tag : str
     dev_head : str
@@ -118,9 +125,9 @@ classDiagram
     visit_Module(node: ast.Module) None
   }
   class ConvMD {
-    add_tag(begin_tag: str, end_tag: str) Callable[[Callable[P, str]], Callable[P, str]]
-    repl_beg_end(begin_regexp: str, end_regexp: str, begin_tag: str, end_tag: str) Callable[[Callable[P, str]], Callable[P, str]]
-    repl_str(old_string: str, new_string: str) Callable[[Callable[P, str]], Callable[P, str]]
+    add_tag(begin_tag: str, end_tag: str) Callable[[F], F]
+    repl_beg_end(begin_regexp: str, end_regexp: str, begin_tag: str, end_tag: str) Callable[[F], F]
+    repl_str(old_string: str, new_string: str) Callable[[F], F]
   }
   class DocString2MD {
     get_doc() str

@@ -12,10 +12,10 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 """
 from __future__ import annotations
 
-import pkgutil
 import importlib
-from typing import Union
+import pkgutil
 from collections import deque
+from typing import Union
 
 from docstring2md.ast_engine import ObjVisitor, ModuleDef, ClassDef, FuncDef
 from docstring2md.file import MyFile
@@ -23,36 +23,31 @@ from docstring2md.log import logger
 
 
 class PytMod:
-
     """
     Object in order to extract Python functions, class....
 
-    Use:
-        >>> mod = PytMod("oups...")
-        >>> mod.read()
-        Traceback (most recent call last):
-        ...
-        ModuleNotFoundError: No module named 'oups'
-        >>> mod = PytMod("json")
-        >>> mod.read()
-        >>> #print(mod.pkg_main_docstring)
-        >>> print(mod.node_lst[0].definition)
-        class JSONDecodeError(ValueError):
-        >>> mod = PytMod(__file__)
-        >>> mod.read()
-        >>> print(mod.node_lst[0].docstring)
-        This script is free software; you can redistribute it and/or
-        modify it under the terms of the GNU Lesser General Public
-        License as published by the Free Software Foundation; either
-        version 3 of the License, or (at your option) any later version.
-        <BLANKLINE>
-        This script is provided in the hope that it will be useful,
-        but WITHOUT ANY WARRANTY; without even the implied warranty of
-        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-        >>> mod = PytMod('docstring2md')
-        >>> mod.read()
-        >>> print(mod.node_lst[0].definition)
-        def logger_ast(cur_func: Callable[Ellipsis, Any]) -> Any:
+    Examples:
+                >>> mod = PytMod("oups...")
+                >>> mod.read()
+                Traceback (most recent call last):
+                ...
+                ModuleNotFoundError: No module named 'oups'
+                >>> mod = PytMod("json")
+                >>> mod.read()
+                >>> print(mod.node_lst[0].definition)
+                class JSONDecodeError(ValueError):
+                >>> mod = PytMod(__file__)
+                >>> mod.read()
+                >>> print(mod.node_lst[0].docstring)
+                This script is free software; you can redistribute it and/or
+                modify it under the terms of the GNU Lesser General Public
+                License as published by the Free Software Foundation; either
+                ...
+                MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+                >>> mod = PytMod('docstring2md')
+                >>> mod.read()
+                >>> print(mod.node_lst[0].definition)
+                def logger_ast(func: F) -> F:
 
     """
     __path: Union[str, None]
@@ -81,27 +76,38 @@ class PytMod:
     def node_lst(self) -> deque[Union[ModuleDef, ClassDef, FuncDef, None]]:
         """
         returns all the docstrings.
+
+        Returns:
+                    str: Docstring
+
         """
         return self.__node_lst
 
     @property
-    def pkg_main_docstring(self)\
+    def pkg_main_docstring(self) \
             -> deque[Union[ModuleDef, ClassDef, FuncDef, None]]:
         """
         PKG only.
-        Returns the main docstring.
+
+        Returns:
+                    str: Main docstring
+
         """
         if self.ismodule():
             logger.debug("PytMod: %s is a module", self.module)
             return deque()
         logger.debug("PytMod: %s is a mod =>", self.module)
         return self.__get_doc_from_module(
-             f"{self.__path}/__init__.py", module_docstring=True)
+            f"{self.__path}/__init__.py", module_docstring=True)
 
     def ismodule(self) -> bool:
         """
         If module name is a module file => True
         Else if the module name is a package => False
+
+        Returns:
+                    bool: It exits True on success, and False otherwise.
+
         """
         if self.module.endswith(".py"):
             return True
@@ -110,6 +116,10 @@ class PytMod:
     def read(self) -> None:
         """
         Reads all files and store the result.
+
+        Returns:
+                    None
+
         """
         logger.info("PytMod - start reading %s", self.module)
         if self.ismodule():
@@ -121,7 +131,7 @@ class PytMod:
             self.__node_lst += self.__get_doc_from_pkg(self.module)
 
     def __get_doc_from_module(
-            self, module: str, module_docstring: bool = False)\
+            self, module: str, module_docstring: bool = False) \
             -> deque[Union[ModuleDef, ClassDef, FuncDef, None]]:
         # module name, for example json
         source = MyFile.set_path(module)
@@ -130,7 +140,7 @@ class PytMod:
             module_docstring=module_docstring,
             priv=self.__priv
         )
-        # Visite all module in the package
+        # Visit all module in the package
         doc.visit(doc.get_tree(source.read()))
         return doc.node_lst
 
@@ -151,7 +161,7 @@ class PytMod:
                     module.append(imp_pkg.__path__[0] + "/" + modname + ".py")
         return module
 
-    def __get_doc_from_pkg(self, package: str)\
+    def __get_doc_from_pkg(self, package: str) \
             -> deque[Union[ModuleDef, ClassDef, FuncDef, None]]:
         node_lst: deque[Union[ModuleDef, ClassDef, FuncDef, None]] = deque()
         logger.info("Package : %s", package)
@@ -165,4 +175,5 @@ class PytMod:
 
 if __name__ == "__main__":
     import doctest
+
     doctest.testmod()

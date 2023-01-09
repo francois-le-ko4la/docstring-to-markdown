@@ -56,7 +56,6 @@ CHK_PYT_MIN: tuple[int, int, int]
 ROOT_DIR: str
 PID: int
 EX_OK: int
-EX_USAGE: int
 EX_OSFILE: int
 EX_CANTCREAT: int
 EX_IOERR: int

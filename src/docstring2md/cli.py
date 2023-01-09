@@ -21,8 +21,8 @@ from docstring2md.__about__ import __version__, __script_descr__, \
 from docstring2md.__config__ import CHK_PYT_MIN, LOGGING_MSG, ARG_STYLE, \
     ARG_HIGHLIGHT, EX_CONFIG, EX_OK
 from docstring2md.doc2md import DocString2MD, DocString2MDOptions
-from docstring2md.log import logger, define_logfile
 from docstring2md.file import MyFile
+from docstring2md.log import logger, define_logfile
 
 
 # ------------------------------------------------------------------------------
@@ -33,7 +33,7 @@ def check_python() -> bool:
     True/False.
 
     Returns:
-        True if successful, False otherwise.
+                True if successful, False otherwise.
 
     """
     # Python __version__
@@ -56,12 +56,12 @@ def get_argparser() -> argparse.ArgumentParser:
     This function describe the argument parser and return it.
 
     Returns:
-        ArgumentParser
+                ArgumentParser
 
     Examples:
-    >>> a = get_argparser()
-    >>> type(a)
-    <class 'argparse.ArgumentParser'>
+                >>> a = get_argparser()
+                >>> type(a)
+                <class 'argparse.ArgumentParser'>
 
     """
 
@@ -128,12 +128,19 @@ def get_argparser() -> argparse.ArgumentParser:
 def run() -> int:
     """
     This function is called by the CLI runner and manage options.
+    It exits 0 on success, and >0 if an error occurs.
 
     Args:
-        None.
+                None
 
     Returns:
-        print screen|file
+                int: status
+                                    - EX_OK: 0 -> success
+                                    - EX_CONFIG: 78 -> config error
+                                    - EX_OSFILE: 72 -> Module not found
+                                    - EX_CANTCREAT: 73 -> can't create the file
+                                    - EX_IOERR: 74 -> write error
+
     """
 
     parser: argparse.ArgumentParser = get_argparser()

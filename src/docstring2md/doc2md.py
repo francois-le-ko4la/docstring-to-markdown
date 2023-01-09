@@ -42,23 +42,23 @@ class DocString2MD:
     """
     Class DocString2MD : export Google docstring to MD File.
 
-    Use:
-        >>> options: DocString2MDOptions = DocString2MDOptions(\
-                    toml=MyFile.set_path(None),\
-                    uml=MyFile.set_path(None),\
-                    export_file=MyFile.set_path(None),\
-                    toc=False,\
-                    private_def=False)
-        >>> doc = DocString2MD("oups", options)
-        >>> doc.import_module()
-        72
-        >>> doc = DocString2MD("docstring2md", options)
-        >>> doc.import_module()
-        0
-        >>> result = doc.get_doc()
-        >>> result = result.split("\\n")
-        >>> print(result[0])
-        # docstring2md
+    Examples:
+                >>> options: DocString2MDOptions = DocString2MDOptions(\
+                            toml=MyFile.set_path(None),\
+                            uml=MyFile.set_path(None),\
+                            export_file=MyFile.set_path(None),\
+                            toc=False,\
+                            private_def=False)
+                >>> doc = DocString2MD("oups", options)
+                >>> doc.import_module()
+                72
+                >>> doc = DocString2MD("docstring2md", options)
+                >>> doc.import_module()
+                0
+                >>> result = doc.get_doc()
+                >>> result = result.split("\\n")
+                >>> print(result[0])
+                # docstring2md
     """
     __options: DocString2MDOptions
     __my_module: PytMod
@@ -69,7 +69,7 @@ class DocString2MD:
         This function define default attributs.
 
         Args:
-            module_name (str): /path/to/module/ or <module_name>
+                    module_name (str): /path/to/module/ or <module_name>
 
         """
         self.__options = options
@@ -77,7 +77,14 @@ class DocString2MD:
 
     def import_module(self) -> int:
         """
-        import all infos
+        Import the module.
+        It exits 0 on success, and >0 if an error occurs.
+
+        Returns:
+                    int: status
+                                    - EX_OK: 0 -> success
+                                    - EX_OSFILE: 72 -> Module not found
+
         """
         try:
             self.__my_module.read()
@@ -116,7 +123,7 @@ class DocString2MD:
         """Returns the documentation
 
         Returns:
-            str: doc
+                    str: doc
 
         """
         return self.__output
@@ -124,12 +131,16 @@ class DocString2MD:
     def writedoc(self) -> int:
         """
         Writes the doc: screen or files.
+        It exits 0 on success, and >0 if an error occurs.
 
         args:
-            None
+                    None
 
         Returns:
-            bool: The return value. True for success, False otherwise.
+                    int: status
+                                    - EX_OK: 0 -> success
+                                    - EX_CANTCREAT: 73 -> can't create the file
+                                    - EX_IOERR: 74 -> write error
 
         """
         if self.__options.export_file:

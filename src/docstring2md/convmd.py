@@ -14,9 +14,9 @@ from __future__ import annotations
 
 import re
 from functools import wraps
-from typing import Callable, ParamSpec
+from typing import Callable, TypeVar, Any, cast
 
-P = ParamSpec('P')
+F = TypeVar('F', bound=Callable[..., Any])
 
 
 class ConvMD:
@@ -24,87 +24,83 @@ class ConvMD:
     Prepare MD string
     """
     @staticmethod
-    def repl_str(
-            old_string: str,
-            new_string: str) -> Callable[[Callable[P, str]], Callable[P, str]]:
+    def repl_str(old_string: str, new_string: str) -> Callable[[F], F]:
         """
         Decorator - search & replace a string by another string
         Examples: replace space by an HTML tag.
 
         Args:
-            old_string (str): string to search
-            new_string (str): new string
+                    old_string (str): string to search
+                    new_string (str): new string
 
         Returns:
-            decorated function
+                    decorated function
 
         """
-        def tags_decorator(func: Callable[P, str]) -> Callable[P, str]:
+        def tags_decorator(func: F) -> F:
             """ decorator """
             @wraps(func)
-            def func_wrapper(*args: P.args, **kwargs: P.kwargs) -> str:
+            def func_wrapper(*args: Any, **kwargs: Any) -> Any:
                 """ wrapper """
                 return (func(*args, **kwargs)).replace(old_string, new_string)
-            return func_wrapper
+            return cast(F, func_wrapper)
         return tags_decorator
 
     @staticmethod
     def repl_beg_end(
-            begin_regexp: str, end_regexp: str, begin_tag: str,
-            end_tag: str) -> Callable[[Callable[P, str]], Callable[P, str]]:
+            begin_regexp: str, end_regexp: str, begin_tag: str, end_tag: str)\
+            -> Callable[[F], F]:
         """
-        Decorator - replace the beggining and the end
+        Decorator - replace the beginning and the end.
 
         Args:
-            begin_regexp (str)
-            end_regexp (str)
-            begin_tag (str)
-            end_tag (str)
+                    begin_regexp (str)
+                    end_regexp (str)
+                    begin_tag (str)
+                    end_tag (str)
 
         Returns:
-            decorated function
+                    decorated function
 
         Examples:
-            All new lines must be provided with a specific tag
-            > 'Line' <br />
+                    All new lines must be provided with a specific tag
+                    > 'Line' <br />
 
         """
-        def tags_decorator(func: Callable[P, str]) -> Callable[P, str]:
+        def tags_decorator(func: F) -> F:
             """ decorator """
             @wraps(func)
-            def func_wrapper(*args: P.args, **kwargs: P.kwargs) -> str:
+            def func_wrapper(*args: Any, **kwargs: Any) -> Any:
                 """ wrapper """
                 return re.sub(
                     begin_regexp + '(.*)' + end_regexp,
                     begin_tag + r'\1' + end_tag,
                     func(*args, **kwargs),
                     flags=re.MULTILINE)
-            return func_wrapper
+            return cast(F, func_wrapper)
         return tags_decorator
 
     @staticmethod
-    def add_tag(
-            begin_tag: str,
-            end_tag: str) -> Callable[[Callable[P, str]], Callable[P, str]]:
+    def add_tag(begin_tag: str, end_tag: str) -> Callable[[F], F]:
         """
         Decorator - add a tag
 
         Args:
-            begin_tag (str)
-            end_tag (str)
+                    begin_tag (str)
+                    end_tag (str)
 
         Returns:
-            decorated function
+                    decorated function
 
         Examples:
-            ('__', '__') => __ TXT __
+                    ('__', '__') => __ TXT __
 
         """
-        def tags_decorator(func: Callable[P, str]) -> Callable[P, str]:
+        def tags_decorator(func: F) -> F:
             """ decorator """
             @wraps(func)
-            def func_wrapper(*args: P.args, **kwargs: P.kwargs) -> str:
+            def func_wrapper(*args: Any, **kwargs: Any) -> Any:
                 """ wrapper """
                 return f"{begin_tag}{func(*args, **kwargs)}{end_tag}"
-            return func_wrapper
+            return cast(F, func_wrapper)
         return tags_decorator

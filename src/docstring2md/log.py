@@ -45,6 +45,12 @@ logger: logging.Logger = logging.getLogger(__name__)
 def define_logfile(path: str) -> None:
     """
     This function set up the log to push log events in the report file.
+
+    Args:
+                path:str    /path/to/logfile
+    Returns:
+                None
+
     """
     log_formatter = logging.Formatter(LOGGING_SETUP.file_format)
     file_handler = logging.FileHandler(path)
