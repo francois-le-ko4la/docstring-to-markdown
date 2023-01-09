@@ -247,12 +247,15 @@ class ObjVisitor(ast.NodeVisitor):
             self, node: Union[ast.Module, ast.ClassDef, ast.FunctionDef],
             level=0, parent=None) -> None:
         if level == 0:
+            logger.info("start node link analysys: begin")
             self.__link_lst = {}
         self.__link_lst[node] = NodeLink(level=level, parent=parent)
 
         for child in ast.iter_child_nodes(node):
             if isinstance(child, (ast.ClassDef, ast.FunctionDef)):
                 self.__set_level(child, (level+1), node)
+        if level == 0:
+            logger.info("start node link analysys: end")
 
     # -------------------------------------------------------------------------
     # Generic
@@ -295,12 +298,16 @@ class ObjVisitor(ast.NodeVisitor):
     def __get_value_from_attribute(node: ast.Attribute) -> str:
         if isinstance(node.value, ast.Name):
             return f"{node.value.id}.{node.attr}"
+        logger.warning("__get_value_from_attribute - another object: %s",
+                       str(ast.dump(node)))
         return ""
 
     @staticmethod
     def __get_value_from_unary(node: ast.UnaryOp) -> str:
         if isinstance(node.operand, ast.Name):
             return f"-{node.operand.id}"
+        logger.warning("__get_value_from_unary - another object: %s",
+                       str(ast.dump(node)))
         return ""
 
     def __get_value_from_subscript(self, node: ast.Subscript) -> str:
@@ -327,11 +334,15 @@ class ObjVisitor(ast.NodeVisitor):
                         _elts = f"{_elts}{self.__get_value_from_node(elt)}, "
                 _elts = _elts[:-2] if _elts.endswith(", ") else _elts
                 return f"{curr_value.id}[{_elts}]"
+            if isinstance(curr_slice, ast.Subscript):
+                _elts = f"[{self.__get_value_from_node(curr_slice)}]"
             if isinstance(curr_slice, (ast.Name, ast.Attribute)):
                 _elts = f"{self.__get_value_from_node(curr_slice)}"
             if isinstance(curr_slice, ast.Name):
                 _elts = f"[{_elts}]"
             return f"{curr_value.id}{_elts}"
+        logger.warning("__get_value_from_subscript - another object: %s",
+                       str(ast.dump(node)))
         return ""
 
     @logger_ast
@@ -353,7 +364,8 @@ class ObjVisitor(ast.NodeVisitor):
         if type(node) in methode_by_type:
             func: Callable[..., str] = methode_by_type[type(node)]
             return func(node)
-        logger.warning("another object: %s", str(ast.dump(node)))
+        logger.warning("__get_value_from_node - another object: %s",
+                       str(ast.dump(node)))
         return ""
 
     # -------------------------------------------------------------------------
