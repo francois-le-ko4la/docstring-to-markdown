@@ -66,7 +66,7 @@ generate README.
 
 Options:
   -h, --help            show this help message and exit
-  --version             show program's version number and exit
+  --version             show version and exit
   --debug               print debug messages to stderr
   --quiet               print error messages to stderr
   --logfile LOGFILE     /path/to/file.log
@@ -89,7 +89,12 @@ COMPATIBILITY:
     Python 3.7+ - https://www.python.org/
 
 EXIT STATUS:
-    This script exits 0 on success, and >0 if an error occurs.
+    This script exits 0 on success, and >0 if an error occurs:
+    - EX_OK: 0 -> success
+    - EX_CONFIG: 78 -> config error
+    - EX_OSFILE: 72 -> Module not found
+    - EX_CANTCREAT: 73 -> can not create the file
+    - EX_IOERR: 74 -> write error
 ```
 
 ## Todo:

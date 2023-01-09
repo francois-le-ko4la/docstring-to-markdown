@@ -175,6 +175,13 @@ class FuncDef(NodeDef):
     @ConvMD.repl_str(TAG.tab, TAG.html_tab)
     @ConvMD.add_tag(TAG.cr, TAG.cr)
     def get_docstring(self) -> str:
+        """
+        Generate the Function's Docstring with MD Tag.
+
+        Returns:
+                    str: Docstring
+
+        """
         return self.docstring
 
 

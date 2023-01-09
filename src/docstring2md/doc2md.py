@@ -82,8 +82,8 @@ class DocString2MD:
 
         Returns:
                     int: status
-                                    - EX_OK: 0 -> success
-                                    - EX_OSFILE: 72 -> Module not found
+                    - EX_OK: 0 -> success
+                    - EX_OSFILE: 72 -> Module not found
 
         """
         try:
@@ -138,9 +138,9 @@ class DocString2MD:
 
         Returns:
                     int: status
-                                    - EX_OK: 0 -> success
-                                    - EX_CANTCREAT: 73 -> can't create the file
-                                    - EX_IOERR: 74 -> write error
+                    - EX_OK: 0 -> success
+                    - EX_CANTCREAT: 73 -> can't create the file
+                    - EX_IOERR: 74 -> write error
 
         """
         if self.__options.export_file:

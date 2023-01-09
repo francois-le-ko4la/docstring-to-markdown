@@ -73,7 +73,10 @@ def get_argparser() -> argparse.ArgumentParser:
         description=__script_descr__,
         epilog=__script_epilog__,
         formatter_class=RawDescriptionRichHelpFormatter)
-    parser.add_argument('--version', action='version', version=version)
+    parser.add_argument(
+        '--version',
+        help="show version and exit",
+        action='version', version=version)
     exclusive_group: argparse._MutuallyExclusiveGroup = \
         parser.add_mutually_exclusive_group(required=False)
     exclusive_group.add_argument(
@@ -130,16 +133,13 @@ def run() -> int:
     This function is called by the CLI runner and manage options.
     It exits 0 on success, and >0 if an error occurs.
 
-    Args:
-                None
-
     Returns:
                 int: status
-                                    - EX_OK: 0 -> success
-                                    - EX_CONFIG: 78 -> config error
-                                    - EX_OSFILE: 72 -> Module not found
-                                    - EX_CANTCREAT: 73 -> can't create the file
-                                    - EX_IOERR: 74 -> write error
+                - EX_OK: 0 -> success
+                - EX_CONFIG: 78 -> config error
+                - EX_OSFILE: 72 -> Module not found
+                - EX_CANTCREAT: 73 -> can't create the file
+                - EX_IOERR: 74 -> write error
 
     """
 
