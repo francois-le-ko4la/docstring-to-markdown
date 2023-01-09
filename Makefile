@@ -35,7 +35,7 @@ uninstall:
 
 doc:
 	@pyreverse $(PACKAGE_NAME) -ASmy -o mmd -p $(PACKAGE_NAME) -d doc
-	@export_docstring2md -p $(PACKAGE_DIR) --output-file README.md -mmd doc/classes_docstring2md.mmd -t pyproject.toml --private-def
+	@export_docstring2md -p $(PACKAGE_DIR) --output-file README.md -mmd doc/classes_docstring2md.mmd -t pyproject.toml --private-def --toc
 
 stubs:
 	@stubgen src/docstring2md -o stubs

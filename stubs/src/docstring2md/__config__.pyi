@@ -63,7 +63,6 @@ EX_IOERR: int
 EX_CONFIG: int
 CONST: Const
 TAG: Tag
-BLACKLIST: list
 LOGGING_SETUP: LoggingSetup
 LOGGING_MSG: LoggingMSGCollection
 ARG_STYLE: dict[str, str]

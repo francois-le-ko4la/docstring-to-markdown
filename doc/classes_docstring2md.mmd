@@ -6,6 +6,18 @@ classDiagram
     toml
     uml
   }
+  class DocString2MDOptions {
+    export_file
+    private_def
+    toc
+    toml
+    uml
+  }
+  class LoggingMSG {
+    debug
+    error
+    info
+  }
   class LoggingMSG {
     debug
     error
@@ -21,18 +33,32 @@ classDiagram
     set_path(path: Union[str, None]) MyFile
     write(data: str) int
   }
+  class NodeDef {
+    definition
+    docstring
+    level
+    title
+    get_definition() str
+    get_docstring() str
+    get_summary() str
+    get_title() str
+    get_toc_elem() str
+  }
+  class NodeDef {
+    definition
+    docstring
+    level
+    title
+    get_definition() str
+    get_docstring() str
+    get_summary() str
+    get_title() str
+    get_toc_elem() str
+  }
   class NodeVisitor {
     generic_visit(node)
     visit(node)
     visit_Constant(node)
-  }
-  class PytMod {
-    docstring
-    module
-    pkg_main_docstring
-    toc
-    ismodule() bool
-    read() None
   }
   class Const {
     decorator_tag : str
@@ -85,22 +111,136 @@ classDiagram
     quote : str
     tab : str
   }
+  class Const {
+    decorator_tag : str
+    dev_head : str
+    dev_obj : str
+    dev_toml : str
+    dev_uml : str
+    docstring_empty : str
+    function_tag : str
+    head_tag : str
+    property_tag : str
+  }
+  class LoggingMSG {
+    debug : str
+    error : str
+    info : str
+  }
+  class LoggingMSGCollection {
+    args
+    dump
+    elapse_time
+    logfile
+    python
+    result
+  }
+  class LoggingSetup {
+    default_format : str
+    default_level : str
+    encoding : str
+    file_format : str
+    logfile : str
+    simple_format : str
+    set_logfile(path: str) 'LoggingSetup'
+  }
+  class Tag {
+    beg_b : str
+    beg_co : str
+    beg_mermaid : str
+    beg_py : str
+    beg_str : str
+    cr : str
+    end_b : str
+    end_bh : str
+    end_co : str
+    end_py : str
+    end_str : str
+    end_strh : str
+    html_cr : str
+    html_tab : str
+    quote : str
+    tab : str
+  }
+  class ClassDef {
+  }
+  class FuncDef {
+    get_docstring() str
+  }
+  class ModuleDef {
+  }
+  class NodeDef {
+    definition : str
+    docstring : str
+    level : int
+    title : str
+    get_definition() str
+    get_docstring() str
+    get_summary() str
+    get_title() str
+    get_toc_elem() str
+  }
   class NodeLink {
     level : int
     parent : Union[ast.FunctionDef, ast.ClassDef, ast.Module]
   }
   class ObjVisitor {
-    output
-    toc
+    node_lst
+    get_tree(source: str) ast.AST
+    visit_ClassDef(node: ast.ClassDef) None
+    visit_FunctionDef(node: ast.FunctionDef) None
+    visit_Module(node: ast.Module) None
+  }
+  class ClassDef {
+  }
+  class FuncDef {
+    get_docstring() str
+  }
+  class ModuleDef {
+  }
+  class NodeDef {
+    definition : str
+    docstring : str
+    level : int
+    title : str
+    get_definition() str
+    get_docstring() str
+    get_summary() str
+    get_title() str
+    get_toc_elem() str
+  }
+  class NodeLink {
+    level : int
+    parent : Union[ast.FunctionDef, ast.ClassDef, ast.Module]
+  }
+  class ObjVisitor {
+    node_lst
     get_tree(source: str) ast.AST
     visit_ClassDef(node: ast.ClassDef) None
     visit_FunctionDef(node: ast.FunctionDef) None
     visit_Module(node: ast.Module) None
   }
   class ConvMD {
-    add_tag(begin_tag, end_tag)
-    repl_beg_end(begin_regexp: str, end_regexp: str, begin_tag: str, end_tag: str)
-    repl_str(old_string, new_string)
+    add_tag(begin_tag: str, end_tag: str) Callable[[Callable[P, str]], Callable[P, str]]
+    repl_beg_end(begin_regexp: str, end_regexp: str, begin_tag: str, end_tag: str) Callable[[Callable[P, str]], Callable[P, str]]
+    repl_str(old_string: str, new_string: str) Callable[[Callable[P, str]], Callable[P, str]]
+  }
+  class ConvMD {
+    add_tag(begin_tag: str, end_tag: str) Callable[[Callable[P, str]], Callable[P, str]]
+    repl_beg_end(begin_regexp: str, end_regexp: str, begin_tag: str, end_tag: str) Callable[[Callable[P, str]], Callable[P, str]]
+    repl_str(old_string: str, new_string: str) Callable[[Callable[P, str]], Callable[P, str]]
+  }
+  class DocString2MD {
+    get_doc() str
+    import_module() int
+    writedoc() int
+  }
+  class DocString2MDOptions {
+    export_file
+    private_def : bool
+    toc : bool
+    toml
+    uml
   }
   class DocString2MD {
     get_doc() str
@@ -124,11 +264,27 @@ classDiagram
     set_path(path: Union[str, None]) MyFile
     write(data: str) int
   }
+  class MyFile {
+    exists : bool
+    path : Union[Path, None]
+    status : int
+    absolute() str
+    read() str
+    resolve() str
+    set_path(path: Union[str, None]) MyFile
+    write(data: str) int
+  }
   class PytMod {
-    docstring
     module
+    node_lst
     pkg_main_docstring
-    toc
+    ismodule() bool
+    read() None
+  }
+  class PytMod {
+    module
+    node_lst
+    pkg_main_docstring
     ismodule() bool
     read() None
   }
@@ -139,12 +295,37 @@ classDiagram
   LoggingMSGCollection --|> NamedTuple
   LoggingSetup --|> NamedTuple
   Tag --|> NamedTuple
+  Const --|> NamedTuple
+  LoggingMSG --|> NamedTuple
+  LoggingMSGCollection --|> NamedTuple
+  LoggingSetup --|> NamedTuple
+  Tag --|> NamedTuple
+  ClassDef --|> NodeDef
+  FuncDef --|> NodeDef
+  ModuleDef --|> NodeDef
+  NodeDef --|> NamedTuple
+  NodeLink --|> NamedTuple
+  ObjVisitor --|> NodeVisitor
+  ClassDef --|> NodeDef
+  FuncDef --|> NodeDef
+  ModuleDef --|> NodeDef
+  NodeDef --|> NamedTuple
   NodeLink --|> NamedTuple
   ObjVisitor --|> NodeVisitor
   DocString2MDOptions --|> NamedTuple
+  DocString2MDOptions --|> NamedTuple
+  MyFile --|> NamedTuple
   MyFile --|> NamedTuple
   DocString2MDOptions --* DocString2MD : __options
   DocString2MDOptions --* DocString2MD : __options
+  DocString2MDOptions --* DocString2MD : __options
+  DocString2MDOptions --* DocString2MD : __options
+  LoggingMSG --* LoggingMSGCollection : logfile
+  LoggingMSG --* LoggingMSGCollection : args
+  LoggingMSG --* LoggingMSGCollection : python
+  LoggingMSG --* LoggingMSGCollection : dump
+  LoggingMSG --* LoggingMSGCollection : result
+  LoggingMSG --* LoggingMSGCollection : elapse_time
   LoggingMSG --* LoggingMSGCollection : logfile
   LoggingMSG --* LoggingMSGCollection : args
   LoggingMSG --* LoggingMSGCollection : python
@@ -154,5 +335,10 @@ classDiagram
   MyFile --* DocString2MDOptions : toml
   MyFile --* DocString2MDOptions : uml
   MyFile --* DocString2MDOptions : export_file
+  MyFile --* DocString2MDOptions : toml
+  MyFile --* DocString2MDOptions : uml
+  MyFile --* DocString2MDOptions : export_file
+  PytMod --* DocString2MD : __my_module
+  PytMod --* DocString2MD : __my_module
   PytMod --* DocString2MD : __my_module
   PytMod --* DocString2MD : __my_module

@@ -14,9 +14,10 @@ from __future__ import annotations
 
 import pkgutil
 import importlib
-from typing import Union, Any
+from typing import Union
+from collections import deque
 
-from docstring2md.ast_engine import ObjVisitor
+from docstring2md.ast_engine import ObjVisitor, ModuleDef, ClassDef, FuncDef
 from docstring2md.file import MyFile
 from docstring2md.log import logger
 
@@ -35,14 +36,11 @@ class PytMod:
         >>> mod = PytMod("json")
         >>> mod.read()
         >>> #print(mod.pkg_main_docstring)
-        >>> print(mod.docstring)
-        #### JSONDecodeError()
-        ```python
+        >>> print(mod.node_lst[0].definition)
         class JSONDecodeError(ValueError):
-        ...
         >>> mod = PytMod(__file__)
         >>> mod.read()
-        >>> print(mod.docstring)
+        >>> print(mod.node_lst[0].docstring)
         This script is free software; you can redistribute it and/or
         modify it under the terms of the GNU Lesser General Public
         License as published by the Free Software Foundation; either
@@ -51,28 +49,22 @@ class PytMod:
         This script is provided in the hope that it will be useful,
         but WITHOUT ANY WARRANTY; without even the implied warranty of
         MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-        #### PytMod()
-        ...
         >>> mod = PytMod('docstring2md')
         >>> mod.read()
-        >>> print(mod.docstring)
-        #### NodeLink()
-        ```python
-        class NodeLink(NamedTuple):
-        ...
+        >>> print(mod.node_lst[0].definition)
+        def logger_ast(cur_func: Callable[Ellipsis, Any]) -> Any:
+
     """
-    __doc: str
     __path: Union[str, None]
     __module: str
     __priv: bool
-    __toc: list[Any]
 
     def __init__(self, module_name: str, priv: bool = False) -> None:
-        self.__doc = ""
         self.__path = ""
         self.__module = module_name
         self.__priv = priv
-        self.__toc = []
+        self.__node_lst: deque[
+            Union[ModuleDef, ClassDef, FuncDef, None]] = deque()
         logger.debug("PytMod: module=%s", module_name)
 
     @property
@@ -86,31 +78,25 @@ class PytMod:
         return self.__module
 
     @property
-    def docstring(self) -> str:
+    def node_lst(self) -> deque[Union[ModuleDef, ClassDef, FuncDef, None]]:
         """
         returns all the docstrings.
         """
-        return self.__doc
+        return self.__node_lst
 
     @property
-    def pkg_main_docstring(self) -> str:
+    def pkg_main_docstring(self)\
+            -> deque[Union[ModuleDef, ClassDef, FuncDef, None]]:
         """
         PKG only.
         Returns the main docstring.
         """
         if self.ismodule():
             logger.debug("PytMod: %s is a module", self.module)
-            return ""
+            return deque()
         logger.debug("PytMod: %s is a mod =>", self.module)
         return self.__get_doc_from_module(
              f"{self.__path}/__init__.py", module_docstring=True)
-
-    @property
-    def toc(self) -> str:
-        """
-        Returns the TOC
-        """
-        return "\n".join(self.__toc)
 
     def ismodule(self) -> bool:
         """
@@ -125,28 +111,28 @@ class PytMod:
         """
         Reads all files and store the result.
         """
-        logger.debug("PytMod - start reading %s", self.module)
+        logger.info("PytMod - start reading %s", self.module)
         if self.ismodule():
-            logger.debug("PytMod - This is a python module : %s", self.module)
-            self.__doc = self.__get_doc_from_module(
+            logger.info("PytMod - This is a python module : %s", self.module)
+            self.__node_lst += self.__get_doc_from_module(
                 self.module, module_docstring=True)
         else:
-            logger.debug("PytMod: This is a package folder : %s", self.module)
-            self.__doc = self.__get_doc_from_pkg(self.module)
+            logger.info("PytMod: This is a package folder : %s", self.module)
+            self.__node_lst += self.__get_doc_from_pkg(self.module)
 
     def __get_doc_from_module(
-            self, module: str, module_docstring: bool = False) -> str:
+            self, module: str, module_docstring: bool = False)\
+            -> deque[Union[ModuleDef, ClassDef, FuncDef, None]]:
         # module name, for example json
         source = MyFile.set_path(module)
         # create an ObjVisitor to search in the module
-        doc = ObjVisitor(
+        doc: ObjVisitor = ObjVisitor(
             module_docstring=module_docstring,
             priv=self.__priv
         )
         # Visite all module in the package
         doc.visit(doc.get_tree(source.read()))
-        self.__toc.append(doc.toc)
-        return doc.output
+        return doc.node_lst
 
     def __get_module_list(self, package: str) -> list[str]:
         module = []
@@ -165,15 +151,16 @@ class PytMod:
                     module.append(imp_pkg.__path__[0] + "/" + modname + ".py")
         return module
 
-    def __get_doc_from_pkg(self, package: str) -> str:
-        output = []
-        logger.debug("Package : %s", package)
+    def __get_doc_from_pkg(self, package: str)\
+            -> deque[Union[ModuleDef, ClassDef, FuncDef, None]]:
+        node_lst: deque[Union[ModuleDef, ClassDef, FuncDef, None]] = deque()
+        logger.info("Package : %s", package)
         modules = self.__get_module_list(package)
-        logger.debug("PytMod: %s", str(modules))
+        logger.info("PytMod: %s", str(modules))
         for module in modules:
-            logger.debug("PytMod - extract %s", str(module))
-            output.append(self.__get_doc_from_module(module))
-        return "\n".join(output)
+            logger.info("PytMod - extract %s", str(module))
+            node_lst += self.__get_doc_from_module(module)
+        return node_lst
 
 
 if __name__ == "__main__":

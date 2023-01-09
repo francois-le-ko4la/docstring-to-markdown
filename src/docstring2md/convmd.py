@@ -12,8 +12,11 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 """
 from __future__ import annotations
 
-from functools import wraps
 import re
+from functools import wraps
+from typing import Callable, ParamSpec
+
+P = ParamSpec('P')
 
 
 class ConvMD:
@@ -21,10 +24,12 @@ class ConvMD:
     Prepare MD string
     """
     @staticmethod
-    def repl_str(old_string, new_string):
+    def repl_str(
+            old_string: str,
+            new_string: str) -> Callable[[Callable[P, str]], Callable[P, str]]:
         """
         Decorator - search & replace a string by another string
-        Examples: replace space by a HTML tag.
+        Examples: replace space by an HTML tag.
 
         Args:
             old_string (str): string to search
@@ -34,18 +39,19 @@ class ConvMD:
             decorated function
 
         """
-        def tags_decorator(func):
+        def tags_decorator(func: Callable[P, str]) -> Callable[P, str]:
             """ decorator """
             @wraps(func)
-            def func_wrapper(*args, **kwargs):
+            def func_wrapper(*args: P.args, **kwargs: P.kwargs) -> str:
                 """ wrapper """
                 return (func(*args, **kwargs)).replace(old_string, new_string)
             return func_wrapper
         return tags_decorator
 
     @staticmethod
-    def repl_beg_end(begin_regexp: str, end_regexp: str, begin_tag: str,
-                     end_tag: str):
+    def repl_beg_end(
+            begin_regexp: str, end_regexp: str, begin_tag: str,
+            end_tag: str) -> Callable[[Callable[P, str]], Callable[P, str]]:
         """
         Decorator - replace the beggining and the end
 
@@ -63,10 +69,10 @@ class ConvMD:
             > 'Line' <br />
 
         """
-        def tags_decorator(func):
+        def tags_decorator(func: Callable[P, str]) -> Callable[P, str]:
             """ decorator """
             @wraps(func)
-            def func_wrapper(*args, **kwargs):
+            def func_wrapper(*args: P.args, **kwargs: P.kwargs) -> str:
                 """ wrapper """
                 return re.sub(
                     begin_regexp + '(.*)' + end_regexp,
@@ -77,7 +83,9 @@ class ConvMD:
         return tags_decorator
 
     @staticmethod
-    def add_tag(begin_tag, end_tag):
+    def add_tag(
+            begin_tag: str,
+            end_tag: str) -> Callable[[Callable[P, str]], Callable[P, str]]:
         """
         Decorator - add a tag
 
@@ -92,11 +100,11 @@ class ConvMD:
             ('__', '__') => __ TXT __
 
         """
-        def tags_decorator(func):
+        def tags_decorator(func: Callable[P, str]) -> Callable[P, str]:
             """ decorator """
             @wraps(func)
-            def func_wrapper(*args):
+            def func_wrapper(*args: P.args, **kwargs: P.kwargs) -> str:
                 """ wrapper """
-                return f"{begin_tag}{func(*args)}{end_tag}"
+                return f"{begin_tag}{func(*args, **kwargs)}{end_tag}"
             return func_wrapper
         return tags_decorator

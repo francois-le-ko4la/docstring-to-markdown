@@ -141,7 +141,6 @@ EX_CONFIG: int = getattr(os, 'EX_CONFIG', 78)
 # Const
 CONST: Const = Const()
 TAG: Tag = Tag()
-BLACKLIST: list = ["wrapper"]
 LOGGING_SETUP: LoggingSetup = LoggingSetup()
 LOGGING_MSG: LoggingMSGCollection = LoggingMSGCollection()
 ARG_STYLE: dict[str, str] = {

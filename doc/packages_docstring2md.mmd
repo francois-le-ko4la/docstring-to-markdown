@@ -3,19 +3,73 @@ classDiagram
   }
   class __about__ {
   }
+  class __about__ 2 {
+  }
   class __config__ {
+  }
+  class __config__ 2 {
+  }
+  class __init__ 2 {
   }
   class ast_engine {
   }
+  class ast_engine 2 {
+  }
   class cli {
+  }
+  class cli 2 {
   }
   class convmd {
   }
+  class convmd 2 {
+  }
   class doc2md {
+  }
+  class doc2md 2 {
   }
   class file {
   }
+  class file 2 {
+  }
   class log {
+  }
+  class log 2 {
   }
   class mod {
   }
+  class mod 2 {
+  }
+  ast_engine --> __config__
+  ast_engine --> convmd
+  ast_engine --> log
+  ast_engine 2 --> __config__
+  ast_engine 2 --> convmd
+  ast_engine 2 --> log
+  cli --> __about__
+  cli --> __config__
+  cli --> doc2md
+  cli --> file
+  cli --> log
+  cli 2 --> __about__
+  cli 2 --> __config__
+  cli 2 --> doc2md
+  cli 2 --> file
+  cli 2 --> log
+  doc2md --> __config__
+  doc2md --> file
+  doc2md --> mod
+  doc2md 2 --> __config__
+  doc2md 2 --> file
+  doc2md 2 --> mod
+  file --> __config__
+  file --> log
+  file 2 --> __config__
+  file 2 --> log
+  log --> __config__
+  log 2 --> __config__
+  mod --> ast_engine
+  mod --> file
+  mod --> log
+  mod 2 --> ast_engine
+  mod 2 --> file
+  mod 2 --> log

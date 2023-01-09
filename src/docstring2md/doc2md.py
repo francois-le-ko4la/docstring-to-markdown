@@ -85,7 +85,10 @@ class DocString2MD:
             return EX_OSFILE
 
         # module / README
-        _output = [self.__my_module.pkg_main_docstring]
+        _output: list = []
+        if self.__my_module.pkg_main_docstring[0]:
+            _output.append(self.__my_module.pkg_main_docstring[0].docstring)
+
         _output.extend([CONST.dev_head])
         # TOML
         if (self.__options.toml.path and
@@ -100,11 +103,13 @@ class DocString2MD:
         # children
         _output.append(f"{CONST.dev_obj}\n")
         if self.__options.toc:
-            _output.append(f"{self.__my_module.toc}\n")
+            _output.extend([elem.get_toc_elem() for elem in
+                            self.__my_module.node_lst if elem is not None])
 
-        _output.append(self.__my_module.docstring)
+        _output.extend([elem.get_summary() for elem in
+                        self.__my_module.node_lst if elem is not None])
+
         self.__output = "\n".join(_output)
-
         return EX_OK
 
     def get_doc(self) -> str:
@@ -129,6 +134,7 @@ class DocString2MD:
         """
         if self.__options.export_file:
             return self.__options.export_file.write(self.__output)
+        print(self.__output)
         return EX_OK
 
 
