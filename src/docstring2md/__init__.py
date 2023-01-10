@@ -13,12 +13,13 @@ Generating documentation from code can be a tedious and time-consuming task.
 By offering a simple and easy-to-use tool, this package aims to make the
 process of creating documentation more efficient. It allows users to extract
 useful information, such as function descriptions and input/output
-specifications, directly from the source code (Google DocStrings). This can
+specifications, directly from the source code (DocStrings). This can
 save a  lot of time  and effort that would otherwise be spent manually
 writing documentation. In addition, having documentation automatically
 generated from code ensures that it stays up-to-date as the codebase
 changes. Overall, this package provides a convenient solution for generating
 high-quality documentation for Python projects.
+All the installation process has been rebuilt with Makefile and pyproject.toml.
 
 ## Why ?:
 
@@ -33,22 +34,47 @@ not yet widespread. There have also been significant changes in the deployment
 of packages, and since the script setup.py has no reason to exist. I have
 therefore migrated to the TOML file and adapted the META import libraries.
 It's true that I might have done this sooner, but I ran out of time and was
- always using somewhat outdated versions of Python. Changes in the language are
- constant. This new version is therefore a complete refresh, allowing me to be
- more in line with what is currently being done in the Python ecosystem.
+always using somewhat outdated versions of Python. Changes in the language are
+constant. This new version is therefore a complete refresh, allowing me to be
+more in line with what is currently being done in the Python ecosystem.
+
 
 ## Setup:
+### User:
+
+- Get the package:
 ```shell
-$ git clone https://github.com/francois-le-ko4la/docstring-to-markdown.git
-$ cd docstring-to-markdown
-$ make install
+git clone https://github.com/francois-le-ko4la/docstring-to-markdown.git
+```
+- Enter in the directory:
+```shell
+cd docstring-to-markdown
+```
+- Install with make on Linux/Unix/MacOS or use pip3 otherwise:
+```shell
+make install
 ```
 
-## Test:
-
-This module has been tested and validated on Ubuntu 17.10/18.04.
+### Dev:
+- Get the package:
 ```shell
-$ make test
+git clone https://github.com/francois-le-ko4la/docstring-to-markdown.git
+```
+- Enter in the directory:
+```shell
+cd docstring-to-markdown
+```
+- Create your environment with all dev prerequisites and install the package:
+```shell
+make venv
+source venv/bin/activate
+make dev
+```shell
+
+### Test:
+This module has been tested and validated on Ubuntu.
+```shell
+make test
 ```
 
 ## Use:
@@ -118,9 +144,10 @@ EXIT STATUS:
 - [X] Rebuild logging management and add more debug
 - [X] Rebuild the package management through pyproject.toml
 - [X] Rebuild the Makefile
-- [X] Add-on : typing
-- [ ] Finish the typing
-- [ ] AST optimisation
+- [X] Add-on : typing analysis
+- [X] Create JSON example
+- [X] Finish the typing
+- [X] AST optimisation
 - [ ] Improve CONST
 - [ ] Release 0.5.0
 
