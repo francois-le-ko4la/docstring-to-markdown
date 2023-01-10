@@ -66,7 +66,7 @@ cd docstring-to-markdown
 make venv
 source venv/bin/activate
 make dev
-```shell
+```
 
 ### Test:
 This module has been tested and validated on Ubuntu.
