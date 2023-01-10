@@ -1,0 +1,16 @@
+classDiagram
+  class json {
+  }
+  class decoder {
+  }
+  class encoder {
+  }
+  class scanner {
+  }
+  class tool {
+  }
+  json --> decoder
+  json --> encoder
+  decoder --> json
+  decoder --> scanner
+  tool --> json
