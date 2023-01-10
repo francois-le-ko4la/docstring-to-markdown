@@ -95,6 +95,56 @@ Using json.tool from the shell to validate and pretty-print::
     $ echo '{ 1.2:3.4}' | python -m json.tool
     Expecting property name enclosed in double quotes: line 1 column 3 (char 2)
 ## Dev notes
+### UML Diagram:
+
+```mermaid
+
+classDiagram
+  class Scanner {
+  }
+  class JSONDecodeError {
+    colno
+    doc
+    lineno
+    msg
+    pos
+  }
+  class JSONDecoder {
+    memo : dict
+    object_hook : NoneType
+    object_pairs_hook : NoneType
+    parse_array
+    parse_constant
+    parse_float : float
+    parse_int : int
+    parse_object
+    parse_string
+    scan_once
+    strict : bool
+    decode(s, _w)
+    raw_decode(s, idx)
+  }
+  class JSONEncoder {
+    allow_nan : bool
+    check_circular : bool
+    default
+    ensure_ascii : bool
+    indent : NoneType
+    item_separator : str
+    item_separator : str
+    key_separator
+    key_separator : str
+    skipkeys : bool
+    sort_keys : bool
+    default(o)
+    encode(o)
+    iterencode(o, _one_shot)
+  }
+  Scanner --* JSONDecoder : scan_once
+
+
+```
+
 ### Objects:
 
 [JSONDecodeError()](#jsondecodeerror)<br />
