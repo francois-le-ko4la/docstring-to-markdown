@@ -135,11 +135,11 @@ def run() -> int:
 
     Returns:
                 int: status
-                - EX_OK: 0 -> success
-                - EX_CONFIG: 78 -> config error
-                - EX_OSFILE: 72 -> Module not found
-                - EX_CANTCREAT: 73 -> can't create the file
-                - EX_IOERR: 74 -> write error
+                return EX_OK: 0 -> success
+                return EX_CONFIG: 78 -> config error
+                return EX_OSFILE: 72 -> Module not found
+                return EX_CANTCREAT: 73 -> can't create the file
+                return EX_IOERR: 74 -> write error
 
     """
 

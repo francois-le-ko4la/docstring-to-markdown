@@ -98,9 +98,9 @@ class MyFile(NamedTuple):
 
         Returns:
                     int: status
-                    - EX_OK: 0 -> success
-                    - EX_CANTCREAT: 73 -> can't create the file
-                    - EX_IOERR: 74 -> write error
+                    return EX_OK: 0 -> success
+                    return EX_CANTCREAT: 73 -> can't create the file
+                    return EX_IOERR: 74 -> write error
 
         """
         if not self.path:
