@@ -77,7 +77,7 @@ make test
 ## Use:
 
 Use the script:
-```shell
+```
 Usage: export_docstring2md [-h] [--version] [--debug | --quiet]
                            [--logfile LOGFILE] [--toc] [--private-def] -p
                            PACKAGE [-o OUTPUT_FILE] [-t TOML_FILE]
@@ -145,7 +145,8 @@ EXIT STATUS:
 - [X] Create JSON example
 - [X] Finish the typing
 - [X] AST optimisation
-- [ ] Improve CONST
+- [X] Improve CONST
+- [ ] Test
 - [ ] Release 0.5.0
 
 ## License
@@ -154,7 +155,7 @@ This package is distributed under the [GPLv3 license](./LICENSE)
 ## Dev notes
 ### TOML file:
 
-```
+```toml
 
 # -*- coding: utf-8 -*-
 [project]
@@ -234,6 +235,7 @@ classDiagram
     debug
     error
     info
+    warning
   }
   class MyFile {
     exists
@@ -269,6 +271,7 @@ classDiagram
     read() None
   }
   class Const {
+    coma : str
     decorator_tag : str
     dev_head : str
     dev_obj : str
@@ -283,14 +286,28 @@ classDiagram
     debug : str
     error : str
     info : str
+    warning : str
   }
   class LoggingMSGCollection {
     args
     dump
     elapse_time
+    file_not_found
+    io_err
     logfile
+    new_class
+    new_func
+    new_module
+    node_link_analysis_beg
+    node_link_analysis_end
     python
+    pytmod
+    pytmod_extract
+    pytmod_mod
+    pytmod_script
     result
+    unknown_type_of_node
+    write_doc
   }
   class LoggingSetup {
     default_format : str
@@ -307,6 +324,8 @@ classDiagram
     beg_mermaid : str
     beg_py : str
     beg_str : str
+    beg_toml : str
+    coma : str
     cr : str
     end_b : str
     end_bh : str
@@ -405,6 +424,19 @@ classDiagram
   LoggingMSG --* LoggingMSGCollection : dump
   LoggingMSG --* LoggingMSGCollection : result
   LoggingMSG --* LoggingMSGCollection : elapse_time
+  LoggingMSG --* LoggingMSGCollection : pytmod
+  LoggingMSG --* LoggingMSGCollection : pytmod_mod
+  LoggingMSG --* LoggingMSGCollection : pytmod_script
+  LoggingMSG --* LoggingMSGCollection : pytmod_extract
+  LoggingMSG --* LoggingMSGCollection : new_module
+  LoggingMSG --* LoggingMSGCollection : new_class
+  LoggingMSG --* LoggingMSGCollection : new_func
+  LoggingMSG --* LoggingMSGCollection : node_link_analysis_beg
+  LoggingMSG --* LoggingMSGCollection : node_link_analysis_end
+  LoggingMSG --* LoggingMSGCollection : unknown_type_of_node
+  LoggingMSG --* LoggingMSGCollection : io_err
+  LoggingMSG --* LoggingMSGCollection : file_not_found
+  LoggingMSG --* LoggingMSGCollection : write_doc
   MyFile --* DocString2MDOptions : toml
   MyFile --* DocString2MDOptions : uml
   MyFile --* DocString2MDOptions : export_file

@@ -166,6 +166,6 @@ def run() -> int:
     module: DocString2MD = DocString2MD(module_name, options)
     status: int = module.import_module()
     if status is not EX_OK:
-        logger.error("check your module.")
+        logger.error(LOGGING_MSG.new_module.error)
         return status
     return module.writedoc()

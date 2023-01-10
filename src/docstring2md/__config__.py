@@ -27,6 +27,7 @@ class Const(NamedTuple):
     decorator_tag: str = '@'
     function_tag: str = 'def '
     property_tag: str = '@Property'
+    coma: str = ", "
 
 
 class Tag(NamedTuple):
@@ -34,6 +35,7 @@ class Tag(NamedTuple):
     beg_co: str = "\n```\n"
     end_co: str = "\n```\n"
     beg_mermaid: str = "\n```mermaid\n"
+    beg_toml: str = "\n```toml\n"
     beg_py: str = "```python\n"
     end_py: str = "\n```"
     beg_str: str = "^"
@@ -47,6 +49,7 @@ class Tag(NamedTuple):
     cr: str = "\n"
     html_cr: str = "<br />"
     quote: str = "> "
+    coma: str = ", "
 
 
 # logging
@@ -96,6 +99,7 @@ class LoggingMSG(NamedTuple):
 
     """
     info: str = ""
+    warning: str = ""
     error: str = ""
     debug: str = ""
 
@@ -125,6 +129,36 @@ class LoggingMSGCollection(NamedTuple):
         info="Result:\n%s")
     elapse_time: LoggingMSG = LoggingMSG(
         info="Elapse time: %s s")
+    pytmod: LoggingMSG = LoggingMSG(
+        info="PytMod: start reading %s",
+        debug="PytMod: module=%s")
+    pytmod_mod: LoggingMSG = LoggingMSG(
+        info="PytMod: This is a python module (%s)")
+    pytmod_script: LoggingMSG = LoggingMSG(
+        info="PytMod: This is a script or a folder (%s)",
+        debug="PytMod: details => %s")
+    pytmod_extract: LoggingMSG = LoggingMSG(
+        info="PytMod - extract %s")
+    new_module: LoggingMSG = LoggingMSG(
+        info="PytMod - new module => %s",
+        error="check your module.",
+        debug="New ModuleDef - title: %s / def: %s / doc: %s / lvl: %s")
+    new_class: LoggingMSG = LoggingMSG(
+        debug="New ClassDef - title: %s / def: %s / doc: %s / lvl: %s")
+    new_func: LoggingMSG = LoggingMSG(
+        debug="New FuncDef - title: %s / def: %s / doc: %s / lvl: %s")
+    node_link_analysis_beg: LoggingMSG = LoggingMSG(
+        info="Node link analysis: started")
+    node_link_analysis_end: LoggingMSG = LoggingMSG(
+        info="Node link analysis: finished")
+    unknown_type_of_node: LoggingMSG = LoggingMSG(
+        warning="__get_value_from_node - another object: %s")
+    io_err: LoggingMSG = LoggingMSG(
+        error="Error writing to the file.")
+    file_not_found: LoggingMSG = LoggingMSG(
+        error="Error opening file")
+    write_doc: LoggingMSG = LoggingMSG(
+        info="Doc has been created")
 
 
 # python

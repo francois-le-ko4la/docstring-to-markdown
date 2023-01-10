@@ -41,6 +41,7 @@ stubs:
 	@stubgen src/docstring2md -o stubs
 
 test:
+	@stubgen src/docstring2md -o stubs
 	@pytest
 
 example:

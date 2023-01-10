@@ -17,6 +17,7 @@ import pkgutil
 from collections import deque
 from typing import Union
 
+from docstring2md.__config__ import LOGGING_MSG
 from docstring2md.ast_engine import ObjVisitor, ModuleDef, ClassDef, FuncDef
 from docstring2md.file import MyFile
 from docstring2md.log import logger
@@ -60,7 +61,7 @@ class PytMod:
         self.__priv = priv
         self.__node_lst: deque[
             Union[ModuleDef, ClassDef, FuncDef, None]] = deque()
-        logger.debug("PytMod: module=%s", module_name)
+        logger.debug(LOGGING_MSG.pytmod.debug, module_name)
 
     @property
     def module(self) -> str:
@@ -94,9 +95,9 @@ class PytMod:
 
         """
         if self.ismodule():
-            logger.debug("PytMod: %s is a module", self.module)
+            logger.debug(LOGGING_MSG.pytmod_mod.info, self.module)
             return deque()
-        logger.debug("PytMod: %s is a mod =>", self.module)
+        logger.debug(LOGGING_MSG.pytmod_script.info, self.module)
         return self.__get_doc_from_module(
             f"{self.__path}/__init__.py", module_docstring=True)
 
@@ -121,13 +122,13 @@ class PytMod:
                     None
 
         """
-        logger.info("PytMod - start reading %s", self.module)
+        logger.info(LOGGING_MSG.pytmod.info, self.module)
         if self.ismodule():
-            logger.info("PytMod - This is a python module : %s", self.module)
+            logger.info(LOGGING_MSG.pytmod_mod.info, self.module)
             self.__node_lst += self.__get_doc_from_module(
                 self.module, module_docstring=True)
         else:
-            logger.info("PytMod: This is a package folder : %s", self.module)
+            logger.info(LOGGING_MSG.pytmod_script.info, self.module)
             self.__node_lst += self.__get_doc_from_pkg(self.module)
 
     def __get_doc_from_module(
@@ -154,21 +155,20 @@ class PytMod:
             fullname = f"{package}.{modname}"
             if ispkg:
                 logger.info(
-                    "PytMod - new module => %s", fullname)
+                    LOGGING_MSG.new_module.info, fullname)
                 module += self.__get_module_list(fullname)
             else:
                 if modname.startswith("__") is False:
-                    module.append(imp_pkg.__path__[0] + "/" + modname + ".py")
+                    module.append(f"{imp_pkg.__path__[0]}/{modname}.py")
         return module
 
     def __get_doc_from_pkg(self, package: str) \
             -> deque[Union[ModuleDef, ClassDef, FuncDef, None]]:
         node_lst: deque[Union[ModuleDef, ClassDef, FuncDef, None]] = deque()
-        logger.info("Package : %s", package)
         modules = self.__get_module_list(package)
-        logger.info("PytMod: %s", str(modules))
+        logger.debug(LOGGING_MSG.pytmod_script.debug, str(modules))
         for module in modules:
-            logger.info("PytMod - extract %s", str(module))
+            logger.info(LOGGING_MSG.pytmod_extract.info, str(module))
             node_lst += self.__get_doc_from_module(module)
         return node_lst
 

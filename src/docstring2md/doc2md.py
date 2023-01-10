@@ -100,7 +100,7 @@ class DocString2MD:
         # TOML
         if (self.__options.toml.path and
                 self.__options.toml.exists):
-            _output.extend([CONST.dev_toml, TAG.beg_co,
+            _output.extend([CONST.dev_toml, TAG.beg_toml,
                             self.__options.toml.read(), TAG.end_co])
         # UML
         if self.__options.uml.path and self.__options.uml.exists:
@@ -108,7 +108,7 @@ class DocString2MD:
                             self.__options.uml.read(), TAG.end_co])
 
         # children
-        _output.append(f"{CONST.dev_obj}\n")
+        _output.append(f"{CONST.dev_obj}{TAG.cr}")
         if self.__options.toc:
             _output.extend([elem.get_toc_elem() for elem in
                             self.__my_module.node_lst if elem is not None])
@@ -116,7 +116,7 @@ class DocString2MD:
         _output.extend([elem.get_summary() for elem in
                         self.__my_module.node_lst if elem is not None])
 
-        self.__output = "\n".join(_output)
+        self.__output = TAG.cr.join(_output)
         return EX_OK
 
     def get_doc(self) -> str:

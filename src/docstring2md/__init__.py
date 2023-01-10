@@ -80,7 +80,7 @@ make test
 ## Use:
 
 Use the script:
-```shell
+```
 Usage: export_docstring2md [-h] [--version] [--debug | --quiet]
                            [--logfile LOGFILE] [--toc] [--private-def] -p
                            PACKAGE [-o OUTPUT_FILE] [-t TOML_FILE]
@@ -148,7 +148,8 @@ EXIT STATUS:
 - [X] Create JSON example
 - [X] Finish the typing
 - [X] AST optimisation
-- [ ] Improve CONST
+- [X] Improve CONST
+- [ ] Test
 - [ ] Release 0.5.0
 
 ## License

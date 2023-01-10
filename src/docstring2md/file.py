@@ -16,7 +16,7 @@ from pathlib import Path
 from typing import NamedTuple, Union
 
 from docstring2md.__config__ import EX_OK, EX_OSFILE, EX_IOERR, EX_CANTCREAT, \
-    LOGGING_SETUP
+    LOGGING_SETUP, LOGGING_MSG
 from docstring2md.log import logger
 
 
@@ -110,12 +110,12 @@ class MyFile(NamedTuple):
                 try:
                     file.write(data)
                 except (IOError, OSError):
-                    logger.error("Error writing to the file.")
+                    logger.error(LOGGING_MSG.io_err.error)
                     return EX_IOERR
         except (FileNotFoundError, PermissionError, OSError):
-            logger.error("Error opening file")
+            logger.error(LOGGING_MSG.file_not_found.error)
             return EX_CANTCREAT
-        logger.info("Doc has been created")
+        logger.info(LOGGING_MSG.write_doc.info)
         return EX_OK
 
     def resolve(self) -> str:
