@@ -98,8 +98,7 @@ class DocString2MD:
 
         _output.extend([CONST.dev_head])
         # TOML
-        if (self.__options.toml.path and
-                self.__options.toml.exists):
+        if self.__options.toml.path and self.__options.toml.exists:
             _output.extend([CONST.dev_toml, TAG.beg_toml,
                             self.__options.toml.read(), TAG.end_co])
         # UML

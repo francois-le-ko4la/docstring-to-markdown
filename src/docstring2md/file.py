@@ -88,9 +88,7 @@ class MyFile(NamedTuple):
                     str: Text if successful else ""
 
         """
-        if self.path:
-            return self.path.read_text()
-        return ""
+        return self.path.read_text() if self.path else ""
 
     def write(self, data: str) -> int:
         """
@@ -126,9 +124,7 @@ class MyFile(NamedTuple):
                     str
 
         """
-        if self.path:
-            return str(self.path.resolve())
-        return ""
+        return str(self.path.resolve()) if self.path else ""
 
     def absolute(self) -> str:
         """

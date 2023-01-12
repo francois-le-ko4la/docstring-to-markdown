@@ -19,7 +19,7 @@ from rich_argparse import RawDescriptionRichHelpFormatter
 from docstring2md.__about__ import __version__, __script_descr__, \
     __script_epilog__
 from docstring2md.__config__ import CHK_PYT_MIN, LOGGING_MSG, ARG_STYLE, \
-    ARG_HIGHLIGHT, EX_CONFIG, EX_OK
+    CONST, ARG_HIGHLIGHT, EX_CONFIG, EX_OK
 from docstring2md.doc2md import DocString2MD, DocString2MDOptions
 from docstring2md.file import MyFile
 from docstring2md.log import logger, define_logfile
@@ -40,10 +40,12 @@ def check_python() -> bool:
     current_version: tuple = sys.version_info[:3]
     if current_version < CHK_PYT_MIN:
         logger.error(
-            LOGGING_MSG.python.error, ".".join(map(str, current_version)))
+            LOGGING_MSG.python.error,
+            CONST.dot.join(map(str, current_version)))
         return False
     logger.info(
-        LOGGING_MSG.python.info, ".".join(map(str, current_version)))
+        LOGGING_MSG.python.info,
+        CONST.dot.join(map(str, current_version)))
     logger.debug(LOGGING_MSG.python.debug, sys.version)
     return True
 

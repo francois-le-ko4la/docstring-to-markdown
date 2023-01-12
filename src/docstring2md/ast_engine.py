@@ -32,27 +32,28 @@ def logger_ast(func: F) -> F:
     This function is a decorator to use in the AST Navigator Class.
 
     Args:
-                func: Callable[P, Any]
+                func: F (Callable[..., Any])
 
     Returns:
-                Callable[P, Any]
+                F (Callable[..., Any])
 
     """
 
     @wraps(func)
     def func_wrapper(*args: Any, **kwargs: Any) -> Any:
-        msg = f"{func.__name__}"
+        target: str = ""
         msg_debug: Union[None, str] = None
-
         for arg in args:
             if isinstance(arg, (ast.FunctionDef, ast.ClassDef)):
-                msg = f"{msg}: {arg.name}"
+                target = arg.name
                 msg_debug = ast.dump(arg)
         if str(func.__name__).startswith("visit_"):
-            logger.info(msg)
+            logger.info("%s(): %s", func.__name__, target)
             if msg_debug:
                 logger.debug(msg_debug)
         else:
+            msg = f"{func.__name__}(): {target}" if target != "" \
+                else f"{func.__name__}()"
             logger.debug(msg)
         return func(*args, **kwargs)
 
@@ -66,7 +67,7 @@ class NodeLink(NamedTuple):
 
 
 class NodeDef(NamedTuple):
-    """NamedTuple to link a node with a parent Node"""
+    """NamedTuple to define a node"""
     title: str
     definition: str
     docstring: str
@@ -464,7 +465,7 @@ class ObjVisitor(ast.NodeVisitor):
         """
         This function is automatically called by AST mechanism
         when the current node is a function.
-        We update self.node_lst.
+        We add FuncDef obj in self.node_lst.
 
         Args:
                     node (ast.FunctionDef): current node
@@ -498,7 +499,7 @@ class ObjVisitor(ast.NodeVisitor):
             if (hasattr(node, "decorator_list")
                 and len(node.decorator_list) > 0) else ""
         return f"{deco}def {self.__get_fullname(node)}" + \
-               f"({self.__func_get_args(node)}){self.__func_get_return(node)}:"
+            f"({self.__func_get_args(node)}){self.__func_get_return(node)}:"
 
     @logger_ast
     def __func_get_args(self, node: ast.FunctionDef) -> str:
@@ -523,12 +524,12 @@ class ObjVisitor(ast.NodeVisitor):
 
     @logger_ast
     def __func_get_args_annotation(self, node: ast.arg) -> str:
-        if (hasattr(node, "annotation")
+        return f": {self.__get_value_from_node(node.annotation)}" \
+            if (hasattr(node, "annotation")
                 and isinstance(node.annotation, (ast.Name,
                                                  ast.Attribute,
-                                                 ast.Subscript))):
-            return f": {self.__get_value_from_node(node.annotation)}"
-        return ""
+                                                 ast.Subscript))) \
+            else ""
 
     @logger_ast
     def __func_get_args_default(self, node: ast.FunctionDef) -> list[str]:
@@ -561,10 +562,10 @@ class ObjVisitor(ast.NodeVisitor):
     @logger_ast
     def __func_get_decorator_args(self, node: ast.Call) -> str:
         # node = Args from Call node
-        args: list[str] = [self.__get_value_from_node(attribute)
-                           for attribute in node.args
-                           if isinstance(attribute, (ast.Name, ast.Attribute))]
-        return f"({TAG.coma.join(args)})"
+        return TAG.coma.join([self.__get_value_from_node(attribute)
+                              for attribute in node.args
+                              if
+                              isinstance(attribute, (ast.Name, ast.Attribute))])
 
     @logger_ast
     def __func_get_return(self, node: ast.FunctionDef) -> str:
@@ -573,7 +574,8 @@ class ObjVisitor(ast.NodeVisitor):
                 and isinstance(node.returns, (ast.Name,
                                               ast.Constant,
                                               ast.Attribute,
-                                              ast.Subscript))) else ""
+                                              ast.Subscript))) \
+            else ""
 
     @logger_ast
     def __func_get_docstring(self, node: ast.FunctionDef) -> str:

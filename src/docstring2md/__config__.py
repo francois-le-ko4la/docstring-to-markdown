@@ -28,6 +28,7 @@ class Const(NamedTuple):
     function_tag: str = 'def '
     property_tag: str = '@Property'
     coma: str = ", "
+    dot: str = "."
 
 
 class Tag(NamedTuple):

@@ -118,7 +118,7 @@ EXIT STATUS:
     This script exits 0 on success, and >0 if an error occurs:
     - EX_OK: 0 -> success
     - EX_CONFIG: 78 -> config error
-    - EX_OSFILE: 72 -> Module not found
+    - EX_OSFILE: 72 -> module not found
     - EX_CANTCREAT: 73 -> can not create the file
     - EX_IOERR: 74 -> write error
 ```

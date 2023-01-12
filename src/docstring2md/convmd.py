@@ -34,7 +34,16 @@ class ConvMD:
                     new_string (str): new string
 
         Returns:
-                    decorated function
+                    Callable[[F], F]
+
+        Examples:
+
+                    >>> from docstring2md.convmd import ConvMD
+                    >>> @ConvMD.repl_str("docstring", "is ok !")
+                    ... def return_test() -> str:
+                    ...     return "my function docstring"
+                    >>> print(return_test())
+                    my function is ok !
 
         """
         def tags_decorator(func: F) -> F:
@@ -63,8 +72,16 @@ class ConvMD:
                     decorated function
 
         Examples:
+
                     All new lines must be provided with a specific tag
                     > 'Line' <br />
+
+                    >>> from docstring2md.convmd import ConvMD
+                    >>> @ConvMD.repl_beg_end("^", "$", ">", "<br />")
+                    ... def return_test() -> str:
+                    ...     return "my function docstring"
+                    >>> print(return_test())
+                    >my function docstring<br />
 
         """
         def tags_decorator(func: F) -> F:
@@ -94,6 +111,13 @@ class ConvMD:
 
         Examples:
                     ('__', '__') => __ TXT __
+
+                    >>> from docstring2md.convmd import ConvMD
+                    >>> @ConvMD.add_tag("__", "__")
+                    ... def return_test() -> str:
+                    ...     return "test"
+                    >>> print(return_test())
+                    __test__
 
         """
         def tags_decorator(func: F) -> F:
