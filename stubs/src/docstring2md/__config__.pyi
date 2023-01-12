@@ -11,6 +11,7 @@ class Const(NamedTuple):
     function_tag: str
     property_tag: str
     coma: str
+    dot: str
 
 class Tag(NamedTuple):
     beg_co: str

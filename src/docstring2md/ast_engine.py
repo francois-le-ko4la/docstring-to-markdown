@@ -564,8 +564,8 @@ class ObjVisitor(ast.NodeVisitor):
         # node = Args from Call node
         return TAG.coma.join([self.__get_value_from_node(attribute)
                               for attribute in node.args
-                              if
-                              isinstance(attribute, (ast.Name, ast.Attribute))])
+                              if isinstance(attribute, (ast.Name,
+                                                        ast.Attribute))])
 
     @logger_ast
     def __func_get_return(self, node: ast.FunctionDef) -> str:
