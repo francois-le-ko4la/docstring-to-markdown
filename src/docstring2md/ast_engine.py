@@ -121,6 +121,8 @@ class NodeDef(NamedTuple):
 
     @ConvMD.repl_beg_end(TAG.beg_str, TAG.end_strh, TAG.beg_b, TAG.end_bh)
     @ConvMD.colorize_examples()
+    @ConvMD.repl_str("\nReturns:\n", "\n</pre>\nReturns:\n<pre>\n")
+    @ConvMD.repl_str("\nArgs:\n", "\n</pre>\nArgs:\n<pre>\n")
     @ConvMD.add_tag(TAG.cr, TAG.cr)
     def get_docstring(self) -> str:
         """
