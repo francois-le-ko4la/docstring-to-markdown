@@ -22,17 +22,6 @@ classDiagram
     set_path(path: Union[str, None]) MyFile
     write(data: str) int
   }
-  class NodeDef {
-    definition
-    docstring
-    level
-    title
-    get_definition() str
-    get_docstring() str
-    get_summary() str
-    get_title() str
-    get_toc_elem() str
-  }
   class NodeVisitor {
     generic_visit(node)
     visit(node)
@@ -98,6 +87,7 @@ classDiagram
     beg_b : str
     beg_co : str
     beg_mermaid : str
+    beg_pre : str
     beg_py : str
     beg_str : str
     beg_toml : str
@@ -106,6 +96,7 @@ classDiagram
     end_b : str
     end_bh : str
     end_co : str
+    end_pre : str
     end_py : str
     end_str : str
     end_strh : str
@@ -113,13 +104,6 @@ classDiagram
     html_tab : str
     quote : str
     tab : str
-  }
-  class ClassDef {
-  }
-  class FuncDef {
-    get_docstring() str
-  }
-  class ModuleDef {
   }
   class NodeDef {
     definition : str
@@ -145,6 +129,8 @@ classDiagram
   }
   class ConvMD {
     add_tag(begin_tag: str, end_tag: str) Callable[[F], F]
+    colorize_examples() Callable[[F], F]
+    html_escape() Callable[[F], F]
     repl_beg_end(begin_regexp: str, end_regexp: str, begin_tag: str, end_tag: str) Callable[[F], F]
     repl_str(old_string: str, new_string: str) Callable[[F], F]
   }
@@ -184,9 +170,6 @@ classDiagram
   LoggingMSGCollection --|> NamedTuple
   LoggingSetup --|> NamedTuple
   Tag --|> NamedTuple
-  ClassDef --|> NodeDef
-  FuncDef --|> NodeDef
-  ModuleDef --|> NodeDef
   NodeDef --|> NamedTuple
   NodeLink --|> NamedTuple
   ObjVisitor --|> NodeVisitor

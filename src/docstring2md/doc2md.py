@@ -43,12 +43,12 @@ class DocString2MD:
     Class DocString2MD : export Google docstring to MD File.
 
     Examples:
-                >>> options: DocString2MDOptions = DocString2MDOptions(\
-                            toml=MyFile.set_path(None),\
-                            uml=MyFile.set_path(None),\
-                            export_file=MyFile.set_path(None),\
-                            toc=False,\
-                            private_def=False)
+                >>> options: DocString2MDOptions = DocString2MDOptions(
+                ...         toml=MyFile.set_path(None),
+                ...         uml=MyFile.set_path(None),
+                ...         export_file=MyFile.set_path(None),
+                ...         toc=False,
+                ...         private_def=False)
                 >>> doc = DocString2MD("oups", options)
                 >>> doc.import_module()
                 72

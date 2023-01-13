@@ -247,17 +247,6 @@ classDiagram
     set_path(path: Union[str, None]) MyFile
     write(data: str) int
   }
-  class NodeDef {
-    definition
-    docstring
-    level
-    title
-    get_definition() str
-    get_docstring() str
-    get_summary() str
-    get_title() str
-    get_toc_elem() str
-  }
   class NodeVisitor {
     generic_visit(node)
     visit(node)
@@ -323,6 +312,7 @@ classDiagram
     beg_b : str
     beg_co : str
     beg_mermaid : str
+    beg_pre : str
     beg_py : str
     beg_str : str
     beg_toml : str
@@ -331,6 +321,7 @@ classDiagram
     end_b : str
     end_bh : str
     end_co : str
+    end_pre : str
     end_py : str
     end_str : str
     end_strh : str
@@ -338,13 +329,6 @@ classDiagram
     html_tab : str
     quote : str
     tab : str
-  }
-  class ClassDef {
-  }
-  class FuncDef {
-    get_docstring() str
-  }
-  class ModuleDef {
   }
   class NodeDef {
     definition : str
@@ -370,6 +354,8 @@ classDiagram
   }
   class ConvMD {
     add_tag(begin_tag: str, end_tag: str) Callable[[F], F]
+    colorize_examples() Callable[[F], F]
+    html_escape() Callable[[F], F]
     repl_beg_end(begin_regexp: str, end_regexp: str, begin_tag: str, end_tag: str) Callable[[F], F]
     repl_str(old_string: str, new_string: str) Callable[[F], F]
   }
@@ -409,9 +395,6 @@ classDiagram
   LoggingMSGCollection --|> NamedTuple
   LoggingSetup --|> NamedTuple
   Tag --|> NamedTuple
-  ClassDef --|> NodeDef
-  FuncDef --|> NodeDef
-  ModuleDef --|> NodeDef
   NodeDef --|> NamedTuple
   NodeLink --|> NamedTuple
   ObjVisitor --|> NodeVisitor
@@ -458,16 +441,6 @@ classDiagram
 [NodeDef.get_title()](#nodedefget_title)<br />
 [NodeDef.get_definition()](#nodedefget_definition)<br />
 [NodeDef.get_docstring()](#nodedefget_docstring)<br />
-[ClassDef()](#classdef)<br />
-[ClassDef.__new__()](#classdefnew)<br />
-[ClassDef.__init__()](#classdefinit)<br />
-[FuncDef()](#funcdef)<br />
-[FuncDef.__new__()](#funcdefnew)<br />
-[FuncDef.__init__()](#funcdefinit)<br />
-[FuncDef.get_docstring()](#funcdefget_docstring)<br />
-[ModuleDef()](#moduledef)<br />
-[ModuleDef.__new__()](#moduledefnew)<br />
-[ModuleDef.__init__()](#moduledefinit)<br />
 [ObjVisitor()](#objvisitor)<br />
 [ObjVisitor.__init__()](#objvisitorinit)<br />
 [@Property ObjVisitor.node_lst()](#property-objvisitornode_lst)<br />
@@ -515,6 +488,12 @@ classDiagram
 [ConvMD.add_tag()](#convmdadd_tag)<br />
 [ConvMD.add_tag.tags_decorator()](#convmdadd_tagtags_decorator)<br />
 [ConvMD.add_tag.tags_decorator.func_wrapper()](#convmdadd_tagtags_decoratorfunc_wrapper)<br />
+[ConvMD.html_escape()](#convmdhtml_escape)<br />
+[ConvMD.html_escape.tags_decorator()](#convmdhtml_escapetags_decorator)<br />
+[ConvMD.html_escape.tags_decorator.func_wrapper()](#convmdhtml_escapetags_decoratorfunc_wrapper)<br />
+[ConvMD.colorize_examples()](#convmdcolorize_examples)<br />
+[ConvMD.colorize_examples.tags_decorator()](#convmdcolorize_examplestags_decorator)<br />
+[ConvMD.colorize_examples.tags_decorator.func_wrapper()](#convmdcolorize_examplestags_decoratorfunc_wrapper)<br />
 [DocString2MDOptions()](#docstring2mdoptions)<br />
 [DocString2MD()](#docstring2md)<br />
 [DocString2MD.__init__()](#docstring2mdinit)<br />
@@ -543,191 +522,116 @@ classDiagram
 ```python
 def logger_ast(func: F) -> F:
 ```
-> <br />
-> This function is a decorator to use in the AST Navigator Class.<br />
-> <br />
-> <b>Args:</b><br />
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  func: F (Callable[..., Any])<br />
-> <br />
-> <b>Returns:</b><br />
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  F (Callable[..., Any])<br />
-> <br />
+<pre>
+
+This function is a decorator to use in the AST Navigator Class.
+
+<b>Args:</b>
+            func: F (Callable[..., Any])
+
+<b>Returns:</b>
+            F (Callable[..., Any])
+
+</pre>
 ##### logger_ast.func_wrapper()
 ```python
 @wrapsfunc
 def logger_ast.func_wrapper(*args: Any, **kwargs: Any) -> Any:
 ```
-> <br />
-> None<br />
-> <br />
+<pre>
+
+None
+
+</pre>
 #### NodeLink()
 ```python
 class NodeLink(NamedTuple):
 ```
+<pre>
 
-```
 NamedTuple to link a node with a parent Node
-```
 
+</pre>
 #### NodeDef()
 ```python
 class NodeDef(NamedTuple):
 ```
+<pre>
 
-```
 NamedTuple to define a node
-```
 
+</pre>
 ##### NodeDef.get_summary()
 ```python
 def NodeDef.get_summary(self) -> str:
 ```
-> <br />
-> Node summary<br />
-> <br />
-> <b>Returns:</b><br />
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  str<br />
-> <br />
+<pre>
+
+Node summary
+
+<b>Returns:</b>
+            str
+
+</pre>
 ##### NodeDef.get_toc_elem()
 ```python
 def NodeDef.get_toc_elem(self) -> str:
 ```
-> <br />
-> Return a TOC entry for this node<br />
-> <br />
-> <b>Returns:</b><br />
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  str<br />
-> <br />
+<pre>
+
+Return a TOC entry for this node
+
+<b>Returns:</b>
+            str
+
+</pre>
 ##### NodeDef.get_title()
 ```python
 def NodeDef.get_title(self) -> str:
 ```
-> <br />
-> Return the node's title<br />
-> <br />
-> <b>Returns:</b><br />
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  str<br />
-> <br />
+<pre>
+
+Return the node&#x27;s title
+
+<b>Returns:</b>
+            str
+
+</pre>
 ##### NodeDef.get_definition()
 ```python
 @ConvMD.add_tagTAG.beg_py, TAG.end_py
 def NodeDef.get_definition(self) -> str:
 ```
-> <br />
-> Return a TOC entry for this node<br />
-> <br />
-> <b>Returns:</b><br />
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  str<br />
-> <br />
+<pre>
+
+Return a TOC entry for this node
+
+<b>Returns:</b>
+            str
+
+</pre>
 ##### NodeDef.get_docstring()
 ```python
-@ConvMD.add_tagTAG.beg_co, TAG.end_co
+@ConvMD.repl_beg_endTAG.beg_str, TAG.end_strh, TAG.beg_b, TAG.end_bh
+@ConvMD.colorize_examples
+@ConvMD.html_escape
+@ConvMD.add_tagTAG.cr, TAG.cr
 def NodeDef.get_docstring(self) -> str:
 ```
-> <br />
-> Return the node's docstring.<br />
-> <br />
-> <b>Returns:</b><br />
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  str<br />
-> <br />
-#### ClassDef()
-```python
-class ClassDef(NodeDef):
-```
+<pre>
 
-```
-Define a Class node.
+Generate the Function&#x27;s Docstring with MD Tag.
 
-Returns:
-            ClassDef
-```
+<b>Returns:</b>
+            str: Docstring
 
-##### ClassDef.__new__()
-```python
-def ClassDef.__new__(cls, *args: Any, **kwargs: Any) -> ClassDef:
-```
-> <br />
-> None<br />
-> <br />
-##### ClassDef.__init__()
-```python
-def ClassDef.__init__(self, title: str, definition: str, docstring: str, level: int) -> None:
-```
-> <br />
-> None<br />
-> <br />
-#### FuncDef()
-```python
-class FuncDef(NodeDef):
-```
-
-```
-Define a Function node.
-
-Returns:
-            FuncDef
-```
-
-##### FuncDef.__new__()
-```python
-def FuncDef.__new__(cls, *args: Any, **kwargs: Any) -> FuncDef:
-```
-> <br />
-> None<br />
-> <br />
-##### FuncDef.__init__()
-```python
-def FuncDef.__init__(self, title: str, definition: str, docstring: str, level: int) -> None:
-```
-> <br />
-> None<br />
-> <br />
-##### FuncDef.get_docstring()
-```python
-@ConvMD.repl_beg_endTAG.beg_str, TAG.end_str, TAG.quote, TAG.html_cr
-@ConvMD.repl_beg_endTAG.beg_str, TAG.end_strh, TAG.beg_b, TAG.end_bh
-@ConvMD.repl_strTAG.tab, TAG.html_tab
-@ConvMD.add_tagTAG.cr, TAG.cr
-def FuncDef.get_docstring(self) -> str:
-```
-> <br />
-> Generate the Function's Docstring with MD Tag.<br />
-> <br />
-> <b>Returns:</b><br />
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  str: Docstring<br />
-> <br />
-#### ModuleDef()
-```python
-class ModuleDef(NodeDef):
-```
-
-```
-Define a Module node.
-
-Returns:
-            ModuleDef
-```
-
-##### ModuleDef.__new__()
-```python
-def ModuleDef.__new__(cls, *args: Any, **kwargs: Any) -> ModuleDef:
-```
-> <br />
-> None<br />
-> <br />
-##### ModuleDef.__init__()
-```python
-def ModuleDef.__init__(self, title: str, definition: str, docstring: str, level: int) -> None:
-```
-> <br />
-> None<br />
-> <br />
+</pre>
 #### ObjVisitor()
 ```python
 class ObjVisitor(ast.NodeVisitor):
 ```
+<pre>
 
-```
 This Class is an ast.NodeVisitor class and allow us to parse
 code tree.
 All methods are called according to node type.
@@ -735,620 +639,820 @@ We define other private method in order to manage string format.
 We use decorator to keep a clean code without MD Tag.
 
 ObjVisitor(module_docstring=True|False)
-    module_docstring: true => retrieve the module docstring
+    module_docstring: true =&gt; retrieve the module docstring
     This parameter is usefull to use the first docstring module
     in a package.
 
-Examples:
-            >>> from docstring2md.file import MyFile
-            >>> import pathlib
-            >>> module = str(pathlib.Path(__file__).resolve())
-            >>> source = MyFile.set_path(module)
-            >>> # init
-            >>> doc = ObjVisitor(module_docstring=False)
-            >>> # provide source, generate the tree and use visit mechanism
-            >>> doc.visit(doc.get_tree(source.read()))
-            >>> result = doc.node_lst
-            >>> result[0].title
-            'logger_ast()'
-            >>> result[0].get_toc_elem()
-            '[logger_ast()](#logger_ast)<br />'
-            >>> result[0].definition
-            'def logger_ast(func: F) -> F:'
+</pre>
+<b>Examples:</b>
+```python
+
+            &gt;&gt;&gt; from docstring2md.file import MyFile
+            &gt;&gt;&gt; import pathlib
+            &gt;&gt;&gt; module = str(pathlib.Path(__file__).resolve())
+            &gt;&gt;&gt; source = MyFile.set_path(module)
+            &gt;&gt;&gt; # init
+            &gt;&gt;&gt; doc = ObjVisitor(module_docstring=False)
+            &gt;&gt;&gt; # provide source, generate the tree and use visit mechanism
+            &gt;&gt;&gt; doc.visit(doc.get_tree(source.read()))
+            &gt;&gt;&gt; result = doc.node_lst
+            &gt;&gt;&gt; result[0].title
+            &#x27;logger_ast()&#x27;
+            &gt;&gt;&gt; result[0].get_toc_elem()
+            &#x27;[logger_ast()](#logger_ast)&lt;br /&gt;&#x27;
+            &gt;&gt;&gt; result[0].definition
+            &#x27;def logger_ast(func: F) -&gt; F:&#x27;
+
+
 ```
 
 ##### ObjVisitor.__init__()
 ```python
 def ObjVisitor.__init__(self, module_docstring: bool = False, priv: bool = False) -> None:
 ```
-> <br />
-> None<br />
-> <br />
+<pre>
+
+None
+
+</pre>
 ##### @Property ObjVisitor.node_lst()
 ```python
 @property
-def ObjVisitor.node_lst(self) -> deque[Union[ModuleDef, ClassDef, FuncDef, None]]:
+def ObjVisitor.node_lst(self) -> deque[Union[NodeDef, None]]:
 ```
-> <br />
-> Return node list<br />
-> <br />
+<pre>
+
+Return node list
+
+</pre>
 ##### ObjVisitor.get_tree()
 ```python
 @staticmethod
 def ObjVisitor.get_tree(source: str) -> ast.AST:
 ```
-> <br />
-> This function allow us to parse the source and build the<br />
-> tree.<br />
-> <br />
-> <b>Args:</b><br />
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  source (str): source code<br />
-> <br />
-> <b>Returns:</b><br />
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  AST tree<br />
-> <br />
+<pre>
+
+This function allow us to parse the source and build the
+tree.
+
+<b>Args:</b>
+            source (str): source code
+
+<b>Returns:</b>
+            AST tree
+
+</pre>
 ##### ObjVisitor.__set_level()
 ```python
 @logger_ast
 def ObjVisitor.__set_level(self, node: Union[ast.Module, ast.ClassDef, ast.FunctionDef], level = 0, parent = None) -> None:
 ```
-> <br />
-> None<br />
-> <br />
+<pre>
+
+None
+
+</pre>
 ##### ObjVisitor.__get_fullname()
 ```python
 @logger_ast
 def ObjVisitor.__get_fullname(self, node: Union[ast.FunctionDef, ast.ClassDef]) -> str:
 ```
-> <br />
-> None<br />
-> <br />
+<pre>
+
+None
+
+</pre>
 ##### ObjVisitor.__get_docstring()
 ```python
 @staticmethod
 @logger_ast
 def ObjVisitor.__get_docstring(node: Union[ast.Module, ast.ClassDef, ast.FunctionDef]) -> str:
 ```
-> <br />
-> None<br />
-> <br />
+<pre>
+
+None
+
+</pre>
 ##### ObjVisitor.__get_value_from_name()
 ```python
 @staticmethod
 def ObjVisitor.__get_value_from_name(node: ast.Name) -> str:
 ```
-> <br />
-> None<br />
-> <br />
+<pre>
+
+None
+
+</pre>
 ##### ObjVisitor.__get_value_from_constant()
 ```python
 @staticmethod
 def ObjVisitor.__get_value_from_constant(node: Union[ast.Constant, ast.NameConstant]) -> str:
 ```
-> <br />
-> None<br />
-> <br />
+<pre>
+
+None
+
+</pre>
 ##### ObjVisitor.__get_value_from_num()
 ```python
 @staticmethod
 def ObjVisitor.__get_value_from_num(node: ast.Num) -> str:
 ```
-> <br />
-> None<br />
-> <br />
+<pre>
+
+None
+
+</pre>
 ##### ObjVisitor.__get_value_from_str()
 ```python
 @staticmethod
 def ObjVisitor.__get_value_from_str(node: ast.Str) -> str:
 ```
-> <br />
-> None<br />
-> <br />
+<pre>
+
+None
+
+</pre>
 ##### ObjVisitor.__get_value_from_attribute()
 ```python
 @staticmethod
 def ObjVisitor.__get_value_from_attribute(node: ast.Attribute) -> str:
 ```
-> <br />
-> None<br />
-> <br />
+<pre>
+
+None
+
+</pre>
 ##### ObjVisitor.__get_value_from_unary()
 ```python
 @staticmethod
 def ObjVisitor.__get_value_from_unary(node: ast.UnaryOp) -> str:
 ```
-> <br />
-> None<br />
-> <br />
+<pre>
+
+None
+
+</pre>
 ##### ObjVisitor.__get_value_from_list()
 ```python
 def ObjVisitor.__get_value_from_list(self, node: ast.List) -> str:
 ```
-> <br />
-> None<br />
-> <br />
+<pre>
+
+None
+
+</pre>
 ##### ObjVisitor.__get_value_from_subscript()
 ```python
 def ObjVisitor.__get_value_from_subscript(self, node: ast.Subscript) -> str:
 ```
-> <br />
-> None<br />
-> <br />
+<pre>
+
+None
+
+</pre>
 ##### ObjVisitor.__get_value_from_node()
 ```python
 @logger_ast
 def ObjVisitor.__get_value_from_node(self, node: Union[ast.Name, ast.Constant, ast.NameConstant, ast.Num, ast.Str, ast.Attribute, ast.Subscript, ast.UnaryOp, ast.List]) -> str:
 ```
-> <br />
-> None<br />
-> <br />
+<pre>
+
+None
+
+</pre>
 ##### ObjVisitor.visit_Module()
 ```python
 @logger_ast
 def ObjVisitor.visit_Module(self, node: ast.Module) -> None:
 ```
-> <br />
-> This function is automatically called by AST mechanism<br />
-> when the current node is a module.<br />
-> We update self.node_lst.<br />
-> <br />
-> <b>Args:</b><br />
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  node (ast.AST): current node<br />
-> <br />
-> <b>Returns:</b><br />
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  None<br />
-> <br />
+<pre>
+
+This function is automatically called by AST mechanism
+when the current node is a module.
+We update self.node_lst.
+
+<b>Args:</b>
+            node (ast.AST): current node
+
+<b>Returns:</b>
+            None
+
+</pre>
 ##### ObjVisitor.__mod_get_docstring()
 ```python
 def ObjVisitor.__mod_get_docstring(self, node: ast.Module) -> str:
 ```
-> <br />
-> None<br />
-> <br />
+<pre>
+
+None
+
+</pre>
 ##### ObjVisitor.visit_ClassDef()
 ```python
 @logger_ast
 def ObjVisitor.visit_ClassDef(self, node: ast.ClassDef) -> None:
 ```
-> <br />
-> This function is automatically called by AST mechanism<br />
-> when the current node is a class.<br />
-> We update self.node_lst.<br />
-> <br />
-> <b>Args:</b><br />
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  node (ast.ClassDef): current node<br />
-> <br />
-> <b>Returns:</b><br />
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  None<br />
-> <br />
+<pre>
+
+This function is automatically called by AST mechanism
+when the current node is a class.
+We update self.node_lst.
+
+<b>Args:</b>
+            node (ast.ClassDef): current node
+
+<b>Returns:</b>
+            None
+
+</pre>
 ##### ObjVisitor.__cla_get_title()
 ```python
 @logger_ast
 def ObjVisitor.__cla_get_title(self, node: ast.ClassDef) -> str:
 ```
-> <br />
-> None<br />
-> <br />
+<pre>
+
+None
+
+</pre>
 ##### ObjVisitor.__cla_get_def()
 ```python
 @logger_ast
 def ObjVisitor.__cla_get_def(self, node: ast.ClassDef) -> str:
 ```
-> <br />
-> None<br />
-> <br />
+<pre>
+
+None
+
+</pre>
 ##### ObjVisitor.__cla_get_inheritance()
 ```python
 @logger_ast
 def ObjVisitor.__cla_get_inheritance(self, node: ast.ClassDef) -> str:
 ```
-> <br />
-> None<br />
-> <br />
+<pre>
+
+None
+
+</pre>
 ##### ObjVisitor.__cla_get_docstring()
 ```python
 @logger_ast
 def ObjVisitor.__cla_get_docstring(self, node: ast.ClassDef) -> str:
 ```
-> <br />
-> None<br />
-> <br />
+<pre>
+
+None
+
+</pre>
 ##### ObjVisitor.visit_FunctionDef()
 ```python
 @logger_ast
 def ObjVisitor.visit_FunctionDef(self, node: ast.FunctionDef) -> None:
 ```
-> <br />
-> This function is automatically called by AST mechanism<br />
-> when the current node is a function.<br />
-> We add FuncDef obj in self.node_lst.<br />
-> <br />
-> <b>Args:</b><br />
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  node (ast.FunctionDef): current node<br />
-> <br />
-> <b>Returns:</b><br />
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  None<br />
-> <br />
+<pre>
+
+This function is automatically called by AST mechanism
+when the current node is a function.
+We add FuncDef obj in self.node_lst.
+
+<b>Args:</b>
+            node (ast.FunctionDef): current node
+
+<b>Returns:</b>
+            None
+
+</pre>
 ##### ObjVisitor.__func_valid_name()
 ```python
 @logger_ast
 def ObjVisitor.__func_valid_name(self, node: ast.FunctionDef) -> bool:
 ```
-> <br />
-> None<br />
-> <br />
+<pre>
+
+None
+
+</pre>
 ##### ObjVisitor.__func_get_title()
 ```python
 @logger_ast
 def ObjVisitor.__func_get_title(self, node: ast.FunctionDef) -> str:
 ```
-> <br />
-> None<br />
-> <br />
+<pre>
+
+None
+
+</pre>
 ##### ObjVisitor.__func_get_def()
 ```python
 @logger_ast
 def ObjVisitor.__func_get_def(self, node: ast.FunctionDef) -> str:
 ```
-> <br />
-> None<br />
-> <br />
+<pre>
+
+None
+
+</pre>
 ##### ObjVisitor.__func_get_args()
 ```python
 @logger_ast
 def ObjVisitor.__func_get_args(self, node: ast.FunctionDef) -> str:
 ```
-> <br />
-> None<br />
-> <br />
+<pre>
+
+None
+
+</pre>
 ##### ObjVisitor.__func_get_args_annotation()
 ```python
 @logger_ast
 def ObjVisitor.__func_get_args_annotation(self, node: ast.arg) -> str:
 ```
-> <br />
-> None<br />
-> <br />
+<pre>
+
+None
+
+</pre>
 ##### ObjVisitor.__func_get_args_default()
 ```python
 @logger_ast
 def ObjVisitor.__func_get_args_default(self, node: ast.FunctionDef) -> list[str]:
 ```
-> <br />
-> None<br />
-> <br />
+<pre>
+
+None
+
+</pre>
 ##### ObjVisitor.__func_get_decorator()
 ```python
 @logger_ast
 def ObjVisitor.__func_get_decorator(self, node: ast.FunctionDef) -> list[str]:
 ```
-> <br />
-> None<br />
-> <br />
+<pre>
+
+None
+
+</pre>
 ##### ObjVisitor.__func_get_decorator_args()
 ```python
 @logger_ast
 def ObjVisitor.__func_get_decorator_args(self, node: ast.Call) -> str:
 ```
-> <br />
-> None<br />
-> <br />
+<pre>
+
+None
+
+</pre>
 ##### ObjVisitor.__func_get_return()
 ```python
 @logger_ast
 def ObjVisitor.__func_get_return(self, node: ast.FunctionDef) -> str:
 ```
-> <br />
-> None<br />
-> <br />
+<pre>
+
+None
+
+</pre>
 ##### ObjVisitor.__func_get_docstring()
 ```python
 @logger_ast
 def ObjVisitor.__func_get_docstring(self, node: ast.FunctionDef) -> str:
 ```
-> <br />
-> None<br />
-> <br />
+<pre>
+
+None
+
+</pre>
 #### check_python()
 ```python
 def check_python() -> bool:
 ```
-> <br />
-> This function check Python version, log the result and return a status<br />
-> True/False.<br />
-> <br />
-> <b>Returns:</b><br />
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  True if successful, False otherwise.<br />
-> <br />
+<pre>
+
+This function check Python version, log the result and return a status
+True/False.
+
+<b>Returns:</b>
+            True if successful, False otherwise.
+
+</pre>
 #### get_argparser()
 ```python
 def get_argparser() -> argparse.ArgumentParser:
 ```
-> <br />
-> This function describe the argument parser and return it.<br />
-> <br />
-> <b>Returns:</b><br />
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  ArgumentParser<br />
-> <br />
-> <b>Examples:</b><br />
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  >>> a = get_argparser()<br />
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  >>> type(a)<br />
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  <class 'argparse.ArgumentParser'><br />
-> <br />
+<pre>
+
+This function describe the argument parser and return it.
+
+<b>Returns:</b>
+            ArgumentParser
+
+</pre>
+<b>Examples:</b>
+```python
+
+            &gt;&gt;&gt; a = get_argparser()
+            &gt;&gt;&gt; type(a)
+            &lt;class &#x27;argparse.ArgumentParser&#x27;&gt;
+
+
+```
+
 #### run()
 ```python
 def run() -> int:
 ```
-> <br />
-> This function is called by the CLI runner and manage options.<br />
-> It exits 0 on success, and >0 if an error occurs.<br />
-> <br />
-> <b>Returns:</b><br />
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  int: status<br />
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  return EX_OK: 0 -> success<br />
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  return EX_CONFIG: 78 -> config error<br />
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  return EX_OSFILE: 72 -> Module not found<br />
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  return EX_CANTCREAT: 73 -> can't create the file<br />
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  return EX_IOERR: 74 -> write error<br />
-> <br />
+<pre>
+
+This function is called by the CLI runner and manage options.
+It exits 0 on success, and &gt;0 if an error occurs.
+
+<b>Returns:</b>
+            int: status
+            return EX_OK: 0 -&gt; success
+            return EX_CONFIG: 78 -&gt; config error
+            return EX_OSFILE: 72 -&gt; Module not found
+            return EX_CANTCREAT: 73 -&gt; can&#x27;t create the file
+            return EX_IOERR: 74 -&gt; write error
+
+</pre>
 #### ConvMD()
 ```python
 class ConvMD():
 ```
+<pre>
 
-```
 Prepare MD string
-```
 
+</pre>
 ##### ConvMD.repl_str()
 ```python
 @staticmethod
 def ConvMD.repl_str(old_string: str, new_string: str) -> Callable[[F], F]:
 ```
-> <br />
-> Decorator - search & replace a string by another string<br />
-> Examples: replace space by an HTML tag.<br />
-> <br />
-> <b>Args:</b><br />
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  old_string (str): string to search<br />
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  new_string (str): new string<br />
-> <br />
-> <b>Returns:</b><br />
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  Callable[[F], F]<br />
-> <br />
-> <b>Examples:</b><br />
-> <br />
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  >>> from docstring2md.convmd import ConvMD<br />
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  >>> @ConvMD.repl_str("docstring", "is ok !")<br />
-> <b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  ... def return_test() -> str:</b><br />
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  ...&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;   return "my function docstring"<br />
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  >>> print(return_test())<br />
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  my function is ok !<br />
-> <br />
+<pre>
+
+Decorator - search &amp; replace a string by another string
+Examples: replace space by an HTML tag.
+
+<b>Args:</b>
+            old_string (str): string to search
+            new_string (str): new string
+
+<b>Returns:</b>
+            Callable[[F], F]
+
+</pre>
+<b>Examples:</b>
+```python
+
+
+            &gt;&gt;&gt; from docstring2md.convmd import ConvMD
+            &gt;&gt;&gt; @ConvMD.repl_str(&quot;docstring&quot;, &quot;is ok !&quot;)
+            ... def return_test() -&gt; str:
+            ...     return &quot;my function docstring&quot;
+            &gt;&gt;&gt; print(return_test())
+            my function is ok !
+
+
+```
+
 ###### ConvMD.repl_str.tags_decorator()
 ```python
 def ConvMD.repl_str.tags_decorator(func: F) -> F:
 ```
-> <br />
-> decorator <br />
-> <br />
+<pre>
+
+decorator 
+
+</pre>
 ####### ConvMD.repl_str.tags_decorator.func_wrapper()
 ```python
 @wrapsfunc
 def ConvMD.repl_str.tags_decorator.func_wrapper(*args: Any, **kwargs: Any) -> Any:
 ```
-> <br />
-> wrapper <br />
-> <br />
+<pre>
+
+wrapper 
+
+</pre>
 ##### ConvMD.repl_beg_end()
 ```python
 @staticmethod
 def ConvMD.repl_beg_end(begin_regexp: str, end_regexp: str, begin_tag: str, end_tag: str) -> Callable[[F], F]:
 ```
-> <br />
-> Decorator - replace the beginning and the end.<br />
-> <br />
-> <b>Args:</b><br />
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  begin_regexp (str)<br />
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  end_regexp (str)<br />
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  begin_tag (str)<br />
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  end_tag (str)<br />
-> <br />
-> <b>Returns:</b><br />
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  decorated function<br />
-> <br />
-> <b>Examples:</b><br />
-> <br />
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  All new lines must be provided with a specific tag<br />
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  > 'Line' <br /><br />
-> <br />
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  >>> from docstring2md.convmd import ConvMD<br />
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  >>> @ConvMD.repl_beg_end("^", "$", ">", "<br />")<br />
-> <b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  ... def return_test() -> str:</b><br />
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  ...&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;   return "my function docstring"<br />
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  >>> print(return_test())<br />
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  >my function docstring<br /><br />
-> <br />
+<pre>
+
+Decorator - replace the beginning and the end.
+
+<b>Args:</b>
+            begin_regexp (str)
+            end_regexp (str)
+            begin_tag (str)
+            end_tag (str)
+
+<b>Returns:</b>
+            decorated function
+
+</pre>
+<b>Examples:</b>
+```python
+
+
+            &gt;&gt;&gt; # All new lines must be provided with a specific tag
+            &gt;&gt;&gt; # &gt; &#x27;Line&#x27; &lt;br /&gt;
+            &gt;&gt;&gt; from docstring2md.convmd import ConvMD
+            &gt;&gt;&gt; @ConvMD.repl_beg_end(&quot;^&quot;, &quot;$&quot;, &quot;&gt;&quot;, &quot;&lt;br /&gt;&quot;)
+            ... def return_test() -&gt; str:
+            ...     return &quot;my function docstring&quot;
+            &gt;&gt;&gt; print(return_test())
+            &gt;my function docstring&lt;br /&gt;
+
+
+```
+
 ###### ConvMD.repl_beg_end.tags_decorator()
 ```python
 def ConvMD.repl_beg_end.tags_decorator(func: F) -> F:
 ```
-> <br />
-> decorator <br />
-> <br />
+<pre>
+
+decorator 
+
+</pre>
 ####### ConvMD.repl_beg_end.tags_decorator.func_wrapper()
 ```python
 @wrapsfunc
 def ConvMD.repl_beg_end.tags_decorator.func_wrapper(*args: Any, **kwargs: Any) -> Any:
 ```
-> <br />
-> wrapper <br />
-> <br />
+<pre>
+
+wrapper 
+
+</pre>
 ##### ConvMD.add_tag()
 ```python
 @staticmethod
 def ConvMD.add_tag(begin_tag: str, end_tag: str) -> Callable[[F], F]:
 ```
-> <br />
-> Decorator - add a tag<br />
-> <br />
-> <b>Args:</b><br />
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  begin_tag (str)<br />
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  end_tag (str)<br />
-> <br />
-> <b>Returns:</b><br />
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  decorated function<br />
-> <br />
-> <b>Examples:</b><br />
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  ('__', '__') => __ TXT __<br />
-> <br />
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  >>> from docstring2md.convmd import ConvMD<br />
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  >>> @ConvMD.add_tag("__", "__")<br />
-> <b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  ... def return_test() -> str:</b><br />
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  ...&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;   return "test"<br />
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  >>> print(return_test())<br />
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  __test__<br />
-> <br />
+<pre>
+
+Decorator - add a tag
+
+<b>Args:</b>
+            begin_tag (str)
+            end_tag (str)
+
+<b>Returns:</b>
+            decorated function
+
+</pre>
+<b>Examples:</b>
+```python
+
+            &gt;&gt;&gt; # (&#x27;__&#x27;, &#x27;__&#x27;) =&gt; __ TXT __
+            &gt;&gt;&gt; from docstring2md.convmd import ConvMD
+            &gt;&gt;&gt; @ConvMD.add_tag(&quot;__&quot;, &quot;__&quot;)
+            ... def return_test() -&gt; str:
+            ...     return &quot;test&quot;
+            &gt;&gt;&gt; print(return_test())
+            __test__
+
+
+```
+
 ###### ConvMD.add_tag.tags_decorator()
 ```python
 def ConvMD.add_tag.tags_decorator(func: F) -> F:
 ```
-> <br />
-> decorator <br />
-> <br />
+<pre>
+
+decorator 
+
+</pre>
 ####### ConvMD.add_tag.tags_decorator.func_wrapper()
 ```python
 @wrapsfunc
 def ConvMD.add_tag.tags_decorator.func_wrapper(*args: Any, **kwargs: Any) -> Any:
 ```
-> <br />
-> wrapper <br />
-> <br />
+<pre>
+
+wrapper 
+
+</pre>
+##### ConvMD.html_escape()
+```python
+@staticmethod
+def ConvMD.html_escape() -> Callable[[F], F]:
+```
+<pre>
+
+Escape the HTML tag.
+
+<b>Returns:</b>
+            decorated function
+
+</pre>
+###### ConvMD.html_escape.tags_decorator()
+```python
+def ConvMD.html_escape.tags_decorator(func: F) -> F:
+```
+<pre>
+
+decorator 
+
+</pre>
+####### ConvMD.html_escape.tags_decorator.func_wrapper()
+```python
+@wrapsfunc
+def ConvMD.html_escape.tags_decorator.func_wrapper(*args: Any, **kwargs: Any) -> Any:
+```
+<pre>
+
+wrapper 
+
+</pre>
+##### ConvMD.colorize_examples()
+```python
+@staticmethod
+def ConvMD.colorize_examples() -> Callable[[F], F]:
+```
+<pre>
+
+Colorize python example.
+
+<b>Returns:</b>
+            decorated function
+
+</pre>
+###### ConvMD.colorize_examples.tags_decorator()
+```python
+def ConvMD.colorize_examples.tags_decorator(func: F) -> F:
+```
+<pre>
+
+decorator 
+
+</pre>
+####### ConvMD.colorize_examples.tags_decorator.func_wrapper()
+```python
+@wrapsfunc
+def ConvMD.colorize_examples.tags_decorator.func_wrapper(*args: Any, **kwargs: Any) -> Any:
+```
+<pre>
+
+wrapper 
+
+</pre>
 #### DocString2MDOptions()
 ```python
 class DocString2MDOptions(NamedTuple):
 ```
+<pre>
 
-```
 This NamedTuple organizes all options with one NamedTuple
     export_file (str): /path/to/doc/file - None by default
     runtime_file (str): /path/to/runtime/file - None by default
     requirements_file (str): /path/to/requiremnt/file - None by default
     uml_file (str): /path/to/uml/file - None by default
-    toc (bool): True -> get a table of content
-    priv (bool): True -> get private function
-```
+    toc (bool): True -&gt; get a table of content
+    priv (bool): True -&gt; get private function
 
+</pre>
 #### DocString2MD()
 ```python
 class DocString2MD():
 ```
+<pre>
 
-```
 Class DocString2MD : export Google docstring to MD File.
 
-Examples:
-            >>> options: DocString2MDOptions = DocString2MDOptions(                            toml=MyFile.set_path(None),                            uml=MyFile.set_path(None),                            export_file=MyFile.set_path(None),                            toc=False,                            private_def=False)
-            >>> doc = DocString2MD("oups", options)
-            >>> doc.import_module()
+</pre>
+<b>Examples:</b>
+```python
+
+            &gt;&gt;&gt; options: DocString2MDOptions = DocString2MDOptions(
+            ...         toml=MyFile.set_path(None),
+            ...         uml=MyFile.set_path(None),
+            ...         export_file=MyFile.set_path(None),
+            ...         toc=False,
+            ...         private_def=False)
+            &gt;&gt;&gt; doc = DocString2MD(&quot;oups&quot;, options)
+            &gt;&gt;&gt; doc.import_module()
             72
-            >>> doc = DocString2MD("docstring2md", options)
-            >>> doc.import_module()
+            &gt;&gt;&gt; doc = DocString2MD(&quot;docstring2md&quot;, options)
+            &gt;&gt;&gt; doc.import_module()
             0
-            >>> result = doc.get_doc()
-            >>> result = result.split("\n")
-            >>> print(result[0])
+            &gt;&gt;&gt; result = doc.get_doc()
+            &gt;&gt;&gt; result = result.split(&quot;\n&quot;)
+            &gt;&gt;&gt; print(result[0])
             # docstring2md
+
+
 ```
 
 ##### DocString2MD.__init__()
 ```python
 def DocString2MD.__init__(self, module_name: str, options: DocString2MDOptions) -> None:
 ```
-> <br />
-> Init the class<br />
-> This function define default attributs.<br />
-> <br />
-> <b>Args:</b><br />
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  module_name (str): /path/to/module/ or <module_name><br />
-> <br />
+<pre>
+
+Init the class
+This function define default attributs.
+
+<b>Args:</b>
+            module_name (str): /path/to/module/ or &lt;module_name&gt;
+
+</pre>
 ##### DocString2MD.import_module()
 ```python
 def DocString2MD.import_module(self) -> int:
 ```
-> <br />
-> Import the module.<br />
-> It exits 0 on success, and >0 if an error occurs.<br />
-> <br />
-> <b>Returns:</b><br />
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  int: status<br />
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  return EX_OK: 0 -> success<br />
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  return EX_OSFILE: 72 -> Module not found<br />
-> <br />
+<pre>
+
+Import the module.
+It exits 0 on success, and &gt;0 if an error occurs.
+
+<b>Returns:</b>
+            int: status
+            return EX_OK: 0 -&gt; success
+            return EX_OSFILE: 72 -&gt; Module not found
+
+</pre>
 ##### DocString2MD.get_doc()
 ```python
 def DocString2MD.get_doc(self) -> str:
 ```
-> <br />
-> Returns the documentation<br />
-> <br />
-> <b>Returns:</b><br />
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  str: doc<br />
-> <br />
+<pre>
+
+Returns the documentation
+
+<b>Returns:</b>
+            str: doc
+
+</pre>
 ##### DocString2MD.writedoc()
 ```python
 def DocString2MD.writedoc(self) -> int:
 ```
-> <br />
-> Writes the doc: screen or files.<br />
-> It exits 0 on success, and >0 if an error occurs.<br />
-> <br />
-> <b>args:</b><br />
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  None<br />
-> <br />
-> <b>Returns:</b><br />
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  int: status<br />
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  return EX_OK: 0 -> success<br />
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  return EX_CANTCREAT: 73 -> can't create the file<br />
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  return EX_IOERR: 74 -> write error<br />
-> <br />
+<pre>
+
+Writes the doc: screen or files.
+It exits 0 on success, and &gt;0 if an error occurs.
+
+<b>args:</b>
+            None
+
+<b>Returns:</b>
+            int: status
+            return EX_OK: 0 -&gt; success
+            return EX_CANTCREAT: 73 -&gt; can&#x27;t create the file
+            return EX_IOERR: 74 -&gt; write error
+
+</pre>
 #### MyFile()
 ```python
 class MyFile(NamedTuple):
 ```
+<pre>
 
-```
 This class describe a file with a NamedTuple
 @classmethod is used to init the objects correctly.
 
-Notes:
+<b>Notes:</b>
             The objective is to define a file with only one NamedTuple.
             The NamedTuple will be created by the set_path function to
             define the path.
 
-Examples:
-            >>> data_file = MyFile.set_path("lorem")
-            >>> data_file.status
+</pre>
+<b>Examples:</b>
+```python
+
+            &gt;&gt;&gt; data_file = MyFile.set_path(&quot;lorem&quot;)
+            &gt;&gt;&gt; data_file.status
             72
-            >>> fstab = MyFile.set_path("/etc/fstab")
-            >>> fstab.path.stem
-            'fstab'
-            >>> fstab
-            MyFile(path=PosixPath('/etc/fstab'), exists=False, status=72)
-            >>> fstab.absolute()
-            '/etc/fstab'
-            >>> # pathlib to run the test everywhere
-            >>> import pathlib
-            >>> path = str(pathlib.Path(__file__).resolve().parent) + "/"
-            >>> lic = MyFile.set_path(f"{path}../../LICENSE")
-            >>> lic.path.stem
-            'LICENSE'
-            >>> lic.exists
+            &gt;&gt;&gt; fstab = MyFile.set_path(&quot;/etc/fstab&quot;)
+            &gt;&gt;&gt; fstab.path.stem
+            &#x27;fstab&#x27;
+            &gt;&gt;&gt; fstab
+            MyFile(path=PosixPath(&#x27;/etc/fstab&#x27;), exists=False, status=72)
+            &gt;&gt;&gt; fstab.absolute()
+            &#x27;/etc/fstab&#x27;
+            &gt;&gt;&gt; # pathlib to run the test everywhere
+            &gt;&gt;&gt; import pathlib
+            &gt;&gt;&gt; path = str(pathlib.Path(__file__).resolve().parent) + &quot;/&quot;
+            &gt;&gt;&gt; lic = MyFile.set_path(f&quot;{path}../../LICENSE&quot;)
+            &gt;&gt;&gt; lic.path.stem
+            &#x27;LICENSE&#x27;
+            &gt;&gt;&gt; lic.exists
             True
-            >>> result = lic.read()
-            >>> result = result.split("\n")
-            >>> result[0]
-            '                    GNU GENERAL PUBLIC LICENSE'
+            &gt;&gt;&gt; result = lic.read()
+            &gt;&gt;&gt; result = result.split(&quot;\n&quot;)
+            &gt;&gt;&gt; result[0]
+            &#x27;                    GNU GENERAL PUBLIC LICENSE&#x27;
+
+
 ```
 
 ##### MyFile.set_path()
@@ -1356,189 +1460,226 @@ Examples:
 @classmethod
 def MyFile.set_path(cls, path: Union[str, None]) -> MyFile:
 ```
-> <br />
-> This function create the MyFile object with the file's path.<br />
-> if path = None then return None<br />
-> <br />
-> <b>Args:</b><br />
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  path: The file's path.<br />
-> <br />
-> <b>Returns:</b><br />
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  MyFile or None<br />
-> <br />
+<pre>
+
+This function create the MyFile object with the file&#x27;s path.
+if path = None then return None
+
+<b>Args:</b>
+            path: The file&#x27;s path.
+
+<b>Returns:</b>
+            MyFile or None
+
+</pre>
 ##### MyFile.__repr__()
 ```python
 def MyFile.__repr__(self) -> str:
 ```
-> <br />
-> None<br />
-> <br />
+<pre>
+
+None
+
+</pre>
 ##### MyFile.read()
 ```python
 def MyFile.read(self) -> str:
 ```
-> <br />
-> read the text<br />
-> <br />
-> <b>Returns:</b><br />
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  str: Text if successful else ""<br />
-> <br />
+<pre>
+
+read the text
+
+<b>Returns:</b>
+            str: Text if successful else &quot;&quot;
+
+</pre>
 ##### MyFile.write()
 ```python
 def MyFile.write(self, data: str) -> int:
 ```
-> <br />
-> Write data in the file<br />
-> <br />
-> <b>Returns:</b><br />
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  int: status<br />
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  return EX_OK: 0 -> success<br />
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  return EX_CANTCREAT: 73 -> can't create the file<br />
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  return EX_IOERR: 74 -> write error<br />
-> <br />
+<pre>
+
+Write data in the file
+
+<b>Returns:</b>
+            int: status
+            return EX_OK: 0 -&gt; success
+            return EX_CANTCREAT: 73 -&gt; can&#x27;t create the file
+            return EX_IOERR: 74 -&gt; write error
+
+</pre>
 ##### MyFile.resolve()
 ```python
 def MyFile.resolve(self) -> str:
 ```
-> <br />
-> get path.resolve()<br />
-> <br />
-> <b>Returns:</b><br />
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  str<br />
-> <br />
+<pre>
+
+get path.resolve()
+
+<b>Returns:</b>
+            str
+
+</pre>
 ##### MyFile.absolute()
 ```python
 def MyFile.absolute(self) -> str:
 ```
-> <br />
-> get path.absolute()<br />
-> <br />
-> <b>Returns:</b><br />
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  str<br />
-> <br />
+<pre>
+
+get path.absolute()
+
+<b>Returns:</b>
+            str
+
+</pre>
 #### define_logfile()
 ```python
 def define_logfile(path: str) -> None:
 ```
-> <br />
-> This function set up the log to push log events in the report file.<br />
-> <br />
-> <b>Args:</b><br />
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  path:str&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  /path/to/logfile<br />
-> <b>Returns:</b><br />
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  None<br />
-> <br />
+<pre>
+
+This function set up the log to push log events in the report file.
+
+<b>Args:</b>
+            path:str    /path/to/logfile
+<b>Returns:</b>
+            None
+
+</pre>
 #### PytMod()
 ```python
 class PytMod():
 ```
+<pre>
 
-```
 Object in order to extract Python functions, class....
 
-Examples:
-            >>> mod = PytMod("oups...")
-            >>> mod.read()
+</pre>
+<b>Examples:</b>
+```python
+
+            &gt;&gt;&gt; mod = PytMod(&quot;oups...&quot;)
+            &gt;&gt;&gt; mod.read()
             Traceback (most recent call last):
             ...
-            ModuleNotFoundError: No module named 'oups'
-            >>> mod = PytMod("json")
-            >>> mod.read()
-            >>> print(mod.node_lst[0].definition)
+            ModuleNotFoundError: No module named &#x27;oups&#x27;
+            &gt;&gt;&gt; mod = PytMod(&quot;json&quot;)
+            &gt;&gt;&gt; mod.read()
+            &gt;&gt;&gt; print(mod.node_lst[0].definition)
             class JSONDecodeError(ValueError):
-            >>> mod = PytMod(__file__)
-            >>> mod.read()
-            >>> print(mod.node_lst[0].docstring)
+            &gt;&gt;&gt; mod = PytMod(__file__)
+            &gt;&gt;&gt; mod.read()
+            &gt;&gt;&gt; print(mod.node_lst[0].docstring)
             This script is free software; you can redistribute it and/or
             modify it under the terms of the GNU Lesser General Public
             License as published by the Free Software Foundation; either
             ...
             MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-            >>> mod = PytMod('docstring2md')
-            >>> mod.read()
-            >>> print(mod.node_lst[0].definition)
-            def logger_ast(func: F) -> F:
+            &gt;&gt;&gt; mod = PytMod(&#x27;docstring2md&#x27;)
+            &gt;&gt;&gt; mod.read()
+            &gt;&gt;&gt; print(mod.node_lst[0].definition)
+            def logger_ast(func: F) -&gt; F:
+
+
 ```
 
 ##### PytMod.__init__()
 ```python
 def PytMod.__init__(self, module_name: str, priv: bool = False) -> None:
 ```
-> <br />
-> None<br />
-> <br />
+<pre>
+
+None
+
+</pre>
 ##### @Property PytMod.module()
 ```python
 @property
 def PytMod.module(self) -> str:
 ```
-> <br />
-> <b>module name (str):</b><br />
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  modulename<br />
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  /path/to/the/mod<br />
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  ./path/to/the/mod<br />
-> <br />
+<pre>
+
+module name (str):
+    modulename
+    /path/to/the/mod
+    ./path/to/the/mod
+
+</pre>
 ##### @Property PytMod.node_lst()
 ```python
 @property
-def PytMod.node_lst(self) -> deque[Union[ModuleDef, ClassDef, FuncDef, None]]:
+def PytMod.node_lst(self) -> deque[Union[NodeDef, None]]:
 ```
-> <br />
-> returns all the docstrings.<br />
-> <br />
-> <b>Returns:</b><br />
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  str: Docstring<br />
-> <br />
+<pre>
+
+returns all the docstrings.
+
+<b>Returns:</b>
+            str: Docstring
+
+</pre>
 ##### @Property PytMod.pkg_main_docstring()
 ```python
 @property
-def PytMod.pkg_main_docstring(self) -> deque[Union[ModuleDef, ClassDef, FuncDef, None]]:
+def PytMod.pkg_main_docstring(self) -> deque[Union[NodeDef, None]]:
 ```
-> <br />
-> PKG only.<br />
-> <br />
-> <b>Returns:</b><br />
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  str: Main docstring<br />
-> <br />
+<pre>
+
+PKG only.
+
+<b>Returns:</b>
+            str: Main docstring
+
+</pre>
 ##### PytMod.ismodule()
 ```python
 def PytMod.ismodule(self) -> bool:
 ```
-> <br />
-> If module name is a module file => True<br />
-> Else if the module name is a package => False<br />
-> <br />
-> <b>Returns:</b><br />
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  bool: It exits True on success, and False otherwise.<br />
-> <br />
+<pre>
+
+If module name is a module file =&gt; True
+Else if the module name is a package =&gt; False
+
+<b>Returns:</b>
+            bool: It exits True on success, and False otherwise.
+
+</pre>
 ##### PytMod.read()
 ```python
 def PytMod.read(self) -> None:
 ```
-> <br />
-> Reads all files and store the result.<br />
-> <br />
-> <b>Returns:</b><br />
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  None<br />
-> <br />
+<pre>
+
+Reads all files and store the result.
+
+<b>Returns:</b>
+            None
+
+</pre>
 ##### PytMod.__get_doc_from_module()
 ```python
-def PytMod.__get_doc_from_module(self, module: str, module_docstring: bool = False) -> deque[Union[ModuleDef, ClassDef, FuncDef, None]]:
+def PytMod.__get_doc_from_module(self, module: str, module_docstring: bool = False) -> deque[Union[NodeDef, None]]:
 ```
-> <br />
-> None<br />
-> <br />
+<pre>
+
+None
+
+</pre>
 ##### PytMod.__get_module_list()
 ```python
 def PytMod.__get_module_list(self, package: str) -> list[str]:
 ```
-> <br />
-> None<br />
-> <br />
+<pre>
+
+None
+
+</pre>
 ##### PytMod.__get_doc_from_pkg()
 ```python
-def PytMod.__get_doc_from_pkg(self, package: str) -> deque[Union[ModuleDef, ClassDef, FuncDef, None]]:
+def PytMod.__get_doc_from_pkg(self, package: str) -> deque[Union[NodeDef, None]]:
 ```
-> <br />
-> None<br />
-> <br />
+<pre>
+
+None
+
+</pre>

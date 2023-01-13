@@ -39,6 +39,8 @@ class Tag(NamedTuple):
     beg_toml: str = "\n```toml\n"
     beg_py: str = "```python\n"
     end_py: str = "\n```"
+    beg_pre: str = "<pre>"
+    end_pre: str = "</pre>"
     beg_str: str = "^"
     end_str: str = "$"
     end_strh: str = ":$"

@@ -15,6 +15,9 @@ from __future__ import annotations
 import re
 from functools import wraps
 from typing import Callable, TypeVar, Any, cast
+import html
+
+from docstring2md.__config__ import TAG
 
 F = TypeVar('F', bound=Callable[..., Any])
 
@@ -73,9 +76,8 @@ class ConvMD:
 
         Examples:
 
-                    All new lines must be provided with a specific tag
-                    > 'Line' <br />
-
+                    >>> # All new lines must be provided with a specific tag
+                    >>> # > 'Line' <br />
                     >>> from docstring2md.convmd import ConvMD
                     >>> @ConvMD.repl_beg_end("^", "$", ">", "<br />")
                     ... def return_test() -> str:
@@ -89,8 +91,10 @@ class ConvMD:
             @wraps(func)
             def func_wrapper(*args: Any, **kwargs: Any) -> Any:
                 """ wrapper """
+                # r'\n(?P<groups>[^\s](.+:))\n',
+
                 return re.sub(
-                    begin_regexp + '(.*)' + end_regexp,
+                    begin_regexp + r'(\S*)' + end_regexp,
                     begin_tag + r'\1' + end_tag,
                     func(*args, **kwargs),
                     flags=re.MULTILINE)
@@ -110,8 +114,7 @@ class ConvMD:
                     decorated function
 
         Examples:
-                    ('__', '__') => __ TXT __
-
+                    >>> # ('__', '__') => __ TXT __
                     >>> from docstring2md.convmd import ConvMD
                     >>> @ConvMD.add_tag("__", "__")
                     ... def return_test() -> str:
@@ -126,5 +129,50 @@ class ConvMD:
             def func_wrapper(*args: Any, **kwargs: Any) -> Any:
                 """ wrapper """
                 return f"{begin_tag}{func(*args, **kwargs)}{end_tag}"
+            return cast(F, func_wrapper)
+        return tags_decorator
+
+    @staticmethod
+    def html_escape() -> Callable[[F], F]:
+        """
+        Escape the HTML tag.
+
+        Returns:
+                    decorated function
+
+        """
+        def tags_decorator(func: F) -> F:
+            """ decorator """
+            @wraps(func)
+            def func_wrapper(*args: Any, **kwargs: Any) -> Any:
+                """ wrapper """
+                return html.escape(func(*args, **kwargs))
+            return cast(F, func_wrapper)
+        return tags_decorator
+
+    @staticmethod
+    def colorize_examples() -> Callable[[F], F]:
+        """
+        Colorize python example.
+
+        Returns:
+                    decorated function
+
+        """
+        def tags_decorator(func: F) -> F:
+            """ decorator """
+            @wraps(func)
+            def func_wrapper(*args: Any, **kwargs: Any) -> Any:
+                """ wrapper """
+                ret = func(*args, **kwargs)
+                if re.search(r"\nExamples:\n", ret):
+                    ret = f"{TAG.beg_pre}{TAG.cr}{ret}{TAG.cr}{TAG.end_co}"
+                    ret = ret.replace(f"\nExamples:\n",
+                                      f"\n{TAG.end_pre}\n" +
+                                      f"Examples:\n{TAG.beg_py}{TAG.cr}")
+                    return ret
+                else:
+                    return f"{TAG.beg_pre}{TAG.cr}{ret}{TAG.cr}{TAG.end_pre}"
+
             return cast(F, func_wrapper)
         return tags_decorator

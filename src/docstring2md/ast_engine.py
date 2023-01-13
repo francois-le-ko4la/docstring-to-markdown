@@ -119,59 +119,9 @@ class NodeDef(NamedTuple):
         """
         return self.definition
 
-    @ConvMD.add_tag(TAG.beg_co, TAG.end_co)
-    def get_docstring(self) -> str:
-        """
-        Return the node's docstring.
-
-        Returns:
-                    str
-
-        """
-
-        return self.docstring
-
-
-class ClassDef(NodeDef):
-    """
-    Define a Class node.
-
-    Returns:
-                ClassDef
-
-    """
-
-    def __new__(cls, *args: Any, **kwargs: Any) -> ClassDef:
-        return super().__new__(ClassDef, *args, **kwargs)
-
-    def __init__(
-            self, title: str, definition: str, docstring: str, level: int) \
-            -> None:
-        logger.debug(
-            LOGGING_MSG.new_class.debug, title, definition, docstring, level)
-
-
-class FuncDef(NodeDef):
-    """
-    Define a Function node.
-
-    Returns:
-                FuncDef
-
-    """
-
-    def __new__(cls, *args: Any, **kwargs: Any) -> FuncDef:
-        return super().__new__(FuncDef, *args, **kwargs)
-
-    def __init__(
-            self, title: str, definition: str, docstring: str, level: int) \
-            -> None:
-        logger.debug(
-            LOGGING_MSG.new_func.debug, title, definition, docstring, level)
-
-    @ConvMD.repl_beg_end(TAG.beg_str, TAG.end_str, TAG.quote, TAG.html_cr)
     @ConvMD.repl_beg_end(TAG.beg_str, TAG.end_strh, TAG.beg_b, TAG.end_bh)
-    @ConvMD.repl_str(TAG.tab, TAG.html_tab)
+    @ConvMD.colorize_examples()
+    @ConvMD.html_escape()
     @ConvMD.add_tag(TAG.cr, TAG.cr)
     def get_docstring(self) -> str:
         """
@@ -182,24 +132,6 @@ class FuncDef(NodeDef):
 
         """
         return self.docstring
-
-
-class ModuleDef(NodeDef):
-    """Define a Module node.
-
-    Returns:
-                ModuleDef
-
-    """
-
-    def __new__(cls, *args: Any, **kwargs: Any) -> ModuleDef:
-        return super().__new__(ModuleDef, *args, **kwargs)
-
-    def __init__(
-            self, title: str, definition: str, docstring: str, level: int) \
-            -> None:
-        logger.debug(
-            LOGGING_MSG.new_module.debug, title, definition, docstring, level)
 
 
 class ObjVisitor(ast.NodeVisitor):
@@ -245,10 +177,10 @@ class ObjVisitor(ast.NodeVisitor):
         self.__link_lst: dict[
             Union[ast.FunctionDef, ast.ClassDef, ast.Module], NodeLink]
         self.__node_lst: deque[
-            Union[ModuleDef, ClassDef, FuncDef, None]] = deque()
+            Union[NodeDef, None]] = deque()
 
     @property
-    def node_lst(self) -> deque[Union[ModuleDef, ClassDef, FuncDef, None]]:
+    def node_lst(self) -> deque[Union[NodeDef, None]]:
         """Return node list"""
         return self.__node_lst
 
@@ -406,7 +338,7 @@ class ObjVisitor(ast.NodeVisitor):
         self.__set_level(node)
         # Get docstring if available
         if self.__module_docstring:
-            self.__node_lst.append(ModuleDef(
+            self.__node_lst.append(NodeDef(
                 title="Module", definition="",
                 docstring=self.__mod_get_docstring(node), level=0))
         # Continue the visit
@@ -432,7 +364,7 @@ class ObjVisitor(ast.NodeVisitor):
                     None
         """
         self.__node_lst.append(
-            ClassDef(
+            NodeDef(
                 title=self.__cla_get_title(node),
                 definition=self.__cla_get_def(node),
                 docstring=self.__cla_get_docstring(node),
@@ -475,7 +407,7 @@ class ObjVisitor(ast.NodeVisitor):
 
         """
         if self.__func_valid_name(node):
-            self.__node_lst.append(FuncDef(
+            self.__node_lst.append(NodeDef(
                 title=self.__func_get_title(node),
                 definition=self.__func_get_def(node),
                 docstring=self.__func_get_docstring(node),

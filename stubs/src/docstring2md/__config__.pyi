@@ -20,6 +20,8 @@ class Tag(NamedTuple):
     beg_toml: str
     beg_py: str
     end_py: str
+    beg_pre: str
+    end_pre: str
     beg_str: str
     end_str: str
     end_strh: str

@@ -18,7 +18,7 @@ from collections import deque
 from typing import Union
 
 from docstring2md.__config__ import LOGGING_MSG
-from docstring2md.ast_engine import ObjVisitor, ModuleDef, ClassDef, FuncDef
+from docstring2md.ast_engine import ObjVisitor, NodeDef
 from docstring2md.file import MyFile
 from docstring2md.log import logger
 
@@ -60,7 +60,7 @@ class PytMod:
         self.__module = module_name
         self.__priv = priv
         self.__node_lst: deque[
-            Union[ModuleDef, ClassDef, FuncDef, None]] = deque()
+            Union[NodeDef, None]] = deque()
         logger.debug(LOGGING_MSG.pytmod.debug, module_name)
 
     @property
@@ -74,7 +74,7 @@ class PytMod:
         return self.__module
 
     @property
-    def node_lst(self) -> deque[Union[ModuleDef, ClassDef, FuncDef, None]]:
+    def node_lst(self) -> deque[Union[NodeDef, None]]:
         """
         returns all the docstrings.
 
@@ -86,7 +86,7 @@ class PytMod:
 
     @property
     def pkg_main_docstring(self) \
-            -> deque[Union[ModuleDef, ClassDef, FuncDef, None]]:
+            -> deque[Union[NodeDef, None]]:
         """
         PKG only.
 
@@ -133,7 +133,7 @@ class PytMod:
 
     def __get_doc_from_module(
             self, module: str, module_docstring: bool = False) \
-            -> deque[Union[ModuleDef, ClassDef, FuncDef, None]]:
+            -> deque[Union[NodeDef, None]]:
         # module name, for example json
         source = MyFile.set_path(module)
         # create an ObjVisitor to search in the module
@@ -163,8 +163,8 @@ class PytMod:
         return module
 
     def __get_doc_from_pkg(self, package: str) \
-            -> deque[Union[ModuleDef, ClassDef, FuncDef, None]]:
-        node_lst: deque[Union[ModuleDef, ClassDef, FuncDef, None]] = deque()
+            -> deque[Union[NodeDef, None]]:
+        node_lst: deque[Union[NodeDef, None]] = deque()
         modules = self.__get_module_list(package)
         logger.debug(LOGGING_MSG.pytmod_script.debug, str(modules))
         for module in modules:
