@@ -91,10 +91,8 @@ class ConvMD:
             @wraps(func)
             def func_wrapper(*args: Any, **kwargs: Any) -> Any:
                 """ wrapper """
-                # r'\n(?P<groups>[^\s](.+:))\n',
-
                 return re.sub(
-                    begin_regexp + r'(\S*)' + end_regexp,
+                    begin_regexp + r'(.*)' + end_regexp,
                     begin_tag + r'\1' + end_tag,
                     func(*args, **kwargs),
                     flags=re.MULTILINE)
@@ -167,12 +165,10 @@ class ConvMD:
                 ret = func(*args, **kwargs)
                 if re.search(r"\nExamples:\n", ret):
                     ret = f"{TAG.beg_pre}{TAG.cr}{ret}{TAG.cr}{TAG.end_co}"
-                    ret = ret.replace(f"\nExamples:\n",
+                    ret = ret.replace("\nExamples:\n",
                                       f"\n{TAG.end_pre}\n" +
                                       f"Examples:\n{TAG.beg_py}{TAG.cr}")
                     return ret
-                else:
-                    return f"{TAG.beg_pre}{TAG.cr}{ret}{TAG.cr}{TAG.end_pre}"
-
+                return f"{TAG.beg_pre}{TAG.cr}{ret}{TAG.cr}{TAG.end_pre}"
             return cast(F, func_wrapper)
         return tags_decorator

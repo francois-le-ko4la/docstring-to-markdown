@@ -526,14 +526,10 @@ def logger_ast(func: F) -> F:
 
 This function is a decorator to use in the AST Navigator Class.
 
-</pre>
 <b>Args:</b>
-<pre>
             func: F (Callable[..., Any])
 
-</pre>
 <b>Returns:</b>
-<pre>
             F (Callable[..., Any])
 
 </pre>
@@ -573,9 +569,7 @@ def NodeDef.get_summary(self) -> str:
 
 Node summary
 
-</pre>
 <b>Returns:</b>
-<pre>
             str
 
 </pre>
@@ -587,9 +581,7 @@ def NodeDef.get_toc_elem(self) -> str:
 
 Return a TOC entry for this node
 
-</pre>
 <b>Returns:</b>
-<pre>
             str
 
 </pre>
@@ -601,9 +593,7 @@ def NodeDef.get_title(self) -> str:
 
 Return the node's title
 
-</pre>
 <b>Returns:</b>
-<pre>
             str
 
 </pre>
@@ -616,9 +606,7 @@ def NodeDef.get_definition(self) -> str:
 
 Return a TOC entry for this node
 
-</pre>
 <b>Returns:</b>
-<pre>
             str
 
 </pre>
@@ -626,8 +614,6 @@ Return a TOC entry for this node
 ```python
 @ConvMD.repl_beg_endTAG.beg_str, TAG.end_strh, TAG.beg_b, TAG.end_bh
 @ConvMD.colorize_examples
-@ConvMD.repl_str
-@ConvMD.repl_str
 @ConvMD.add_tagTAG.cr, TAG.cr
 def NodeDef.get_docstring(self) -> str:
 ```
@@ -635,9 +621,7 @@ def NodeDef.get_docstring(self) -> str:
 
 Generate the Function's Docstring with MD Tag.
 
-</pre>
 <b>Returns:</b>
-<pre>
             str: Docstring
 
 </pre>
@@ -710,14 +694,10 @@ def ObjVisitor.get_tree(source: str) -> ast.AST:
 This function allow us to parse the source and build the
 tree.
 
-</pre>
 <b>Args:</b>
-<pre>
             source (str): source code
 
-</pre>
 <b>Returns:</b>
-<pre>
             AST tree
 
 </pre>
@@ -851,14 +831,10 @@ This function is automatically called by AST mechanism
 when the current node is a module.
 We update self.node_lst.
 
-</pre>
 <b>Args:</b>
-<pre>
             node (ast.AST): current node
 
-</pre>
 <b>Returns:</b>
-<pre>
             None
 
 </pre>
@@ -882,14 +858,10 @@ This function is automatically called by AST mechanism
 when the current node is a class.
 We update self.node_lst.
 
-</pre>
 <b>Args:</b>
-<pre>
             node (ast.ClassDef): current node
 
-</pre>
 <b>Returns:</b>
-<pre>
             None
 
 </pre>
@@ -944,14 +916,10 @@ This function is automatically called by AST mechanism
 when the current node is a function.
 We add FuncDef obj in self.node_lst.
 
-</pre>
 <b>Args:</b>
-<pre>
             node (ast.FunctionDef): current node
 
-</pre>
 <b>Returns:</b>
-<pre>
             None
 
 </pre>
@@ -1064,9 +1032,7 @@ def check_python() -> bool:
 This function check Python version, log the result and return a status
 True/False.
 
-</pre>
 <b>Returns:</b>
-<pre>
             True if successful, False otherwise.
 
 </pre>
@@ -1078,9 +1044,7 @@ def get_argparser() -> argparse.ArgumentParser:
 
 This function describe the argument parser and return it.
 
-</pre>
 <b>Returns:</b>
-<pre>
             ArgumentParser
 
 </pre>
@@ -1103,9 +1067,7 @@ def run() -> int:
 This function is called by the CLI runner and manage options.
 It exits 0 on success, and >0 if an error occurs.
 
-</pre>
 <b>Returns:</b>
-<pre>
             int: status
             return EX_OK: 0 -> success
             return EX_CONFIG: 78 -> config error
@@ -1133,15 +1095,11 @@ def ConvMD.repl_str(old_string: str, new_string: str) -> Callable[[F], F]:
 Decorator - search & replace a string by another string
 Examples: replace space by an HTML tag.
 
-</pre>
 <b>Args:</b>
-<pre>
             old_string (str): string to search
             new_string (str): new string
 
-</pre>
 <b>Returns:</b>
-<pre>
             Callable[[F], F]
 
 </pre>
@@ -1151,7 +1109,7 @@ Examples: replace space by an HTML tag.
 
             >>> from docstring2md.convmd import ConvMD
             >>> @ConvMD.repl_str("docstring", "is ok !")
-            ... def return_test() -> str:
+<b>            ... def return_test() -> str:</b>
             ...     return "my function docstring"
             >>> print(return_test())
             my function is ok !
@@ -1187,17 +1145,13 @@ def ConvMD.repl_beg_end(begin_regexp: str, end_regexp: str, begin_tag: str, end_
 
 Decorator - replace the beginning and the end.
 
-</pre>
 <b>Args:</b>
-<pre>
             begin_regexp (str)
             end_regexp (str)
             begin_tag (str)
             end_tag (str)
 
-</pre>
 <b>Returns:</b>
-<pre>
             decorated function
 
 </pre>
@@ -1209,7 +1163,7 @@ Decorator - replace the beginning and the end.
             >>> # > 'Line' <br />
             >>> from docstring2md.convmd import ConvMD
             >>> @ConvMD.repl_beg_end("^", "$", ">", "<br />")
-            ... def return_test() -> str:
+<b>            ... def return_test() -> str:</b>
             ...     return "my function docstring"
             >>> print(return_test())
             >my function docstring<br />
@@ -1245,15 +1199,11 @@ def ConvMD.add_tag(begin_tag: str, end_tag: str) -> Callable[[F], F]:
 
 Decorator - add a tag
 
-</pre>
 <b>Args:</b>
-<pre>
             begin_tag (str)
             end_tag (str)
 
-</pre>
 <b>Returns:</b>
-<pre>
             decorated function
 
 </pre>
@@ -1263,7 +1213,7 @@ Decorator - add a tag
             >>> # ('__', '__') => __ TXT __
             >>> from docstring2md.convmd import ConvMD
             >>> @ConvMD.add_tag("__", "__")
-            ... def return_test() -> str:
+<b>            ... def return_test() -> str:</b>
             ...     return "test"
             >>> print(return_test())
             __test__
@@ -1299,9 +1249,7 @@ def ConvMD.html_escape() -> Callable[[F], F]:
 
 Escape the HTML tag.
 
-</pre>
 <b>Returns:</b>
-<pre>
             decorated function
 
 </pre>
@@ -1333,9 +1281,7 @@ def ConvMD.colorize_examples() -> Callable[[F], F]:
 
 Colorize python example.
 
-</pre>
 <b>Returns:</b>
-<pre>
             decorated function
 
 </pre>
@@ -1414,9 +1360,7 @@ def DocString2MD.__init__(self, module_name: str, options: DocString2MDOptions) 
 Init the class
 This function define default attributs.
 
-</pre>
 <b>Args:</b>
-<pre>
             module_name (str): /path/to/module/ or <module_name>
 
 </pre>
@@ -1429,9 +1373,7 @@ def DocString2MD.import_module(self) -> int:
 Import the module.
 It exits 0 on success, and >0 if an error occurs.
 
-</pre>
 <b>Returns:</b>
-<pre>
             int: status
             return EX_OK: 0 -> success
             return EX_OSFILE: 72 -> Module not found
@@ -1445,9 +1387,7 @@ def DocString2MD.get_doc(self) -> str:
 
 Returns the documentation
 
-</pre>
 <b>Returns:</b>
-<pre>
             str: doc
 
 </pre>
@@ -1463,9 +1403,7 @@ It exits 0 on success, and >0 if an error occurs.
 <b>args:</b>
             None
 
-</pre>
 <b>Returns:</b>
-<pre>
             int: status
             return EX_OK: 0 -> success
             return EX_CANTCREAT: 73 -> can't create the file
@@ -1526,14 +1464,10 @@ def MyFile.set_path(cls, path: Union[str, None]) -> MyFile:
 This function create the MyFile object with the file's path.
 if path = None then return None
 
-</pre>
 <b>Args:</b>
-<pre>
             path: The file's path.
 
-</pre>
 <b>Returns:</b>
-<pre>
             MyFile or None
 
 </pre>
@@ -1554,9 +1488,7 @@ def MyFile.read(self) -> str:
 
 read the text
 
-</pre>
 <b>Returns:</b>
-<pre>
             str: Text if successful else ""
 
 </pre>
@@ -1568,9 +1500,7 @@ def MyFile.write(self, data: str) -> int:
 
 Write data in the file
 
-</pre>
 <b>Returns:</b>
-<pre>
             int: status
             return EX_OK: 0 -> success
             return EX_CANTCREAT: 73 -> can't create the file
@@ -1585,9 +1515,7 @@ def MyFile.resolve(self) -> str:
 
 get path.resolve()
 
-</pre>
 <b>Returns:</b>
-<pre>
             str
 
 </pre>
@@ -1599,9 +1527,7 @@ def MyFile.absolute(self) -> str:
 
 get path.absolute()
 
-</pre>
 <b>Returns:</b>
-<pre>
             str
 
 </pre>
@@ -1613,13 +1539,9 @@ def define_logfile(path: str) -> None:
 
 This function set up the log to push log events in the report file.
 
-</pre>
 <b>Args:</b>
-<pre>
             path:str    /path/to/logfile
-</pre>
 <b>Returns:</b>
-<pre>
             None
 
 </pre>
@@ -1637,13 +1559,13 @@ Object in order to extract Python functions, class....
 
             >>> mod = PytMod("oups...")
             >>> mod.read()
-            Traceback (most recent call last):
+<b>            Traceback (most recent call last):</b>
             ...
             ModuleNotFoundError: No module named 'oups'
             >>> mod = PytMod("json")
             >>> mod.read()
             >>> print(mod.node_lst[0].definition)
-            class JSONDecodeError(ValueError):
+<b>            class JSONDecodeError(ValueError):</b>
             >>> mod = PytMod(__file__)
             >>> mod.read()
             >>> print(mod.node_lst[0].docstring)
@@ -1655,7 +1577,7 @@ Object in order to extract Python functions, class....
             >>> mod = PytMod('docstring2md')
             >>> mod.read()
             >>> print(mod.node_lst[0].definition)
-            def logger_ast(func: F) -> F:
+<b>            def logger_ast(func: F) -> F:</b>
 
 
 ```
@@ -1676,7 +1598,7 @@ def PytMod.module(self) -> str:
 ```
 <pre>
 
-module name (str):
+<b>module name (str):</b>
     modulename
     /path/to/the/mod
     ./path/to/the/mod
@@ -1691,9 +1613,7 @@ def PytMod.node_lst(self) -> deque[Union[NodeDef, None]]:
 
 returns all the docstrings.
 
-</pre>
 <b>Returns:</b>
-<pre>
             str: Docstring
 
 </pre>
@@ -1706,9 +1626,7 @@ def PytMod.pkg_main_docstring(self) -> deque[Union[NodeDef, None]]:
 
 PKG only.
 
-</pre>
 <b>Returns:</b>
-<pre>
             str: Main docstring
 
 </pre>
@@ -1721,9 +1639,7 @@ def PytMod.ismodule(self) -> bool:
 If module name is a module file => True
 Else if the module name is a package => False
 
-</pre>
 <b>Returns:</b>
-<pre>
             bool: It exits True on success, and False otherwise.
 
 </pre>
@@ -1735,9 +1651,7 @@ def PytMod.read(self) -> None:
 
 Reads all files and store the result.
 
-</pre>
 <b>Returns:</b>
-<pre>
             None
 
 </pre>
