@@ -92,7 +92,7 @@ class ConvMD:
             def func_wrapper(*args: Any, **kwargs: Any) -> Any:
                 """ wrapper """
                 return re.sub(
-                    begin_regexp + r'(.*)' + end_regexp,
+                    begin_regexp + r'([^ ].*)' + end_regexp,
                     begin_tag + r'\1' + end_tag,
                     func(*args, **kwargs),
                     flags=re.MULTILINE)
