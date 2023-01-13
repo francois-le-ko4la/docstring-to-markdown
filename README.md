@@ -591,7 +591,7 @@ def NodeDef.get_title(self) -> str:
 ```
 <pre>
 
-Return the node&#x27;s title
+Return the node's title
 
 <b>Returns:</b>
             str
@@ -614,13 +614,12 @@ Return a TOC entry for this node
 ```python
 @ConvMD.repl_beg_endTAG.beg_str, TAG.end_strh, TAG.beg_b, TAG.end_bh
 @ConvMD.colorize_examples
-@ConvMD.html_escape
 @ConvMD.add_tagTAG.cr, TAG.cr
 def NodeDef.get_docstring(self) -> str:
 ```
 <pre>
 
-Generate the Function&#x27;s Docstring with MD Tag.
+Generate the Function's Docstring with MD Tag.
 
 <b>Returns:</b>
             str: Docstring
@@ -639,7 +638,7 @@ We define other private method in order to manage string format.
 We use decorator to keep a clean code without MD Tag.
 
 ObjVisitor(module_docstring=True|False)
-    module_docstring: true =&gt; retrieve the module docstring
+    module_docstring: true => retrieve the module docstring
     This parameter is usefull to use the first docstring module
     in a package.
 
@@ -647,21 +646,21 @@ ObjVisitor(module_docstring=True|False)
 <b>Examples:</b>
 ```python
 
-            &gt;&gt;&gt; from docstring2md.file import MyFile
-            &gt;&gt;&gt; import pathlib
-            &gt;&gt;&gt; module = str(pathlib.Path(__file__).resolve())
-            &gt;&gt;&gt; source = MyFile.set_path(module)
-            &gt;&gt;&gt; # init
-            &gt;&gt;&gt; doc = ObjVisitor(module_docstring=False)
-            &gt;&gt;&gt; # provide source, generate the tree and use visit mechanism
-            &gt;&gt;&gt; doc.visit(doc.get_tree(source.read()))
-            &gt;&gt;&gt; result = doc.node_lst
-            &gt;&gt;&gt; result[0].title
-            &#x27;logger_ast()&#x27;
-            &gt;&gt;&gt; result[0].get_toc_elem()
-            &#x27;[logger_ast()](#logger_ast)&lt;br /&gt;&#x27;
-            &gt;&gt;&gt; result[0].definition
-            &#x27;def logger_ast(func: F) -&gt; F:&#x27;
+            >>> from docstring2md.file import MyFile
+            >>> import pathlib
+            >>> module = str(pathlib.Path(__file__).resolve())
+            >>> source = MyFile.set_path(module)
+            >>> # init
+            >>> doc = ObjVisitor(module_docstring=False)
+            >>> # provide source, generate the tree and use visit mechanism
+            >>> doc.visit(doc.get_tree(source.read()))
+            >>> result = doc.node_lst
+            >>> result[0].title
+            'logger_ast()'
+            >>> result[0].get_toc_elem()
+            '[logger_ast()](#logger_ast)<br />'
+            >>> result[0].definition
+            'def logger_ast(func: F) -> F:'
 
 
 ```
@@ -1052,9 +1051,9 @@ This function describe the argument parser and return it.
 <b>Examples:</b>
 ```python
 
-            &gt;&gt;&gt; a = get_argparser()
-            &gt;&gt;&gt; type(a)
-            &lt;class &#x27;argparse.ArgumentParser&#x27;&gt;
+            >>> a = get_argparser()
+            >>> type(a)
+            <class 'argparse.ArgumentParser'>
 
 
 ```
@@ -1066,15 +1065,15 @@ def run() -> int:
 <pre>
 
 This function is called by the CLI runner and manage options.
-It exits 0 on success, and &gt;0 if an error occurs.
+It exits 0 on success, and >0 if an error occurs.
 
 <b>Returns:</b>
             int: status
-            return EX_OK: 0 -&gt; success
-            return EX_CONFIG: 78 -&gt; config error
-            return EX_OSFILE: 72 -&gt; Module not found
-            return EX_CANTCREAT: 73 -&gt; can&#x27;t create the file
-            return EX_IOERR: 74 -&gt; write error
+            return EX_OK: 0 -> success
+            return EX_CONFIG: 78 -> config error
+            return EX_OSFILE: 72 -> Module not found
+            return EX_CANTCREAT: 73 -> can't create the file
+            return EX_IOERR: 74 -> write error
 
 </pre>
 #### ConvMD()
@@ -1093,7 +1092,7 @@ def ConvMD.repl_str(old_string: str, new_string: str) -> Callable[[F], F]:
 ```
 <pre>
 
-Decorator - search &amp; replace a string by another string
+Decorator - search & replace a string by another string
 Examples: replace space by an HTML tag.
 
 <b>Args:</b>
@@ -1108,11 +1107,11 @@ Examples: replace space by an HTML tag.
 ```python
 
 
-            &gt;&gt;&gt; from docstring2md.convmd import ConvMD
-            &gt;&gt;&gt; @ConvMD.repl_str(&quot;docstring&quot;, &quot;is ok !&quot;)
-            ... def return_test() -&gt; str:
-            ...     return &quot;my function docstring&quot;
-            &gt;&gt;&gt; print(return_test())
+            >>> from docstring2md.convmd import ConvMD
+            >>> @ConvMD.repl_str("docstring", "is ok !")
+            ... def return_test() -> str:
+            ...     return "my function docstring"
+            >>> print(return_test())
             my function is ok !
 
 
@@ -1160,14 +1159,14 @@ Decorator - replace the beginning and the end.
 ```python
 
 
-            &gt;&gt;&gt; # All new lines must be provided with a specific tag
-            &gt;&gt;&gt; # &gt; &#x27;Line&#x27; &lt;br /&gt;
-            &gt;&gt;&gt; from docstring2md.convmd import ConvMD
-            &gt;&gt;&gt; @ConvMD.repl_beg_end(&quot;^&quot;, &quot;$&quot;, &quot;&gt;&quot;, &quot;&lt;br /&gt;&quot;)
-            ... def return_test() -&gt; str:
-            ...     return &quot;my function docstring&quot;
-            &gt;&gt;&gt; print(return_test())
-            &gt;my function docstring&lt;br /&gt;
+            >>> # All new lines must be provided with a specific tag
+            >>> # > 'Line' <br />
+            >>> from docstring2md.convmd import ConvMD
+            >>> @ConvMD.repl_beg_end("^", "$", ">", "<br />")
+            ... def return_test() -> str:
+            ...     return "my function docstring"
+            >>> print(return_test())
+            >my function docstring<br />
 
 
 ```
@@ -1211,12 +1210,12 @@ Decorator - add a tag
 <b>Examples:</b>
 ```python
 
-            &gt;&gt;&gt; # (&#x27;__&#x27;, &#x27;__&#x27;) =&gt; __ TXT __
-            &gt;&gt;&gt; from docstring2md.convmd import ConvMD
-            &gt;&gt;&gt; @ConvMD.add_tag(&quot;__&quot;, &quot;__&quot;)
-            ... def return_test() -&gt; str:
-            ...     return &quot;test&quot;
-            &gt;&gt;&gt; print(return_test())
+            >>> # ('__', '__') => __ TXT __
+            >>> from docstring2md.convmd import ConvMD
+            >>> @ConvMD.add_tag("__", "__")
+            ... def return_test() -> str:
+            ...     return "test"
+            >>> print(return_test())
             __test__
 
 
@@ -1316,8 +1315,8 @@ This NamedTuple organizes all options with one NamedTuple
     runtime_file (str): /path/to/runtime/file - None by default
     requirements_file (str): /path/to/requiremnt/file - None by default
     uml_file (str): /path/to/uml/file - None by default
-    toc (bool): True -&gt; get a table of content
-    priv (bool): True -&gt; get private function
+    toc (bool): True -> get a table of content
+    priv (bool): True -> get private function
 
 </pre>
 #### DocString2MD()
@@ -1332,21 +1331,21 @@ Class DocString2MD : export Google docstring to MD File.
 <b>Examples:</b>
 ```python
 
-            &gt;&gt;&gt; options: DocString2MDOptions = DocString2MDOptions(
+            >>> options: DocString2MDOptions = DocString2MDOptions(
             ...         toml=MyFile.set_path(None),
             ...         uml=MyFile.set_path(None),
             ...         export_file=MyFile.set_path(None),
             ...         toc=False,
             ...         private_def=False)
-            &gt;&gt;&gt; doc = DocString2MD(&quot;oups&quot;, options)
-            &gt;&gt;&gt; doc.import_module()
+            >>> doc = DocString2MD("oups", options)
+            >>> doc.import_module()
             72
-            &gt;&gt;&gt; doc = DocString2MD(&quot;docstring2md&quot;, options)
-            &gt;&gt;&gt; doc.import_module()
+            >>> doc = DocString2MD("docstring2md", options)
+            >>> doc.import_module()
             0
-            &gt;&gt;&gt; result = doc.get_doc()
-            &gt;&gt;&gt; result = result.split(&quot;\n&quot;)
-            &gt;&gt;&gt; print(result[0])
+            >>> result = doc.get_doc()
+            >>> result = result.split("\n")
+            >>> print(result[0])
             # docstring2md
 
 
@@ -1362,7 +1361,7 @@ Init the class
 This function define default attributs.
 
 <b>Args:</b>
-            module_name (str): /path/to/module/ or &lt;module_name&gt;
+            module_name (str): /path/to/module/ or <module_name>
 
 </pre>
 ##### DocString2MD.import_module()
@@ -1372,12 +1371,12 @@ def DocString2MD.import_module(self) -> int:
 <pre>
 
 Import the module.
-It exits 0 on success, and &gt;0 if an error occurs.
+It exits 0 on success, and >0 if an error occurs.
 
 <b>Returns:</b>
             int: status
-            return EX_OK: 0 -&gt; success
-            return EX_OSFILE: 72 -&gt; Module not found
+            return EX_OK: 0 -> success
+            return EX_OSFILE: 72 -> Module not found
 
 </pre>
 ##### DocString2MD.get_doc()
@@ -1399,16 +1398,16 @@ def DocString2MD.writedoc(self) -> int:
 <pre>
 
 Writes the doc: screen or files.
-It exits 0 on success, and &gt;0 if an error occurs.
+It exits 0 on success, and >0 if an error occurs.
 
 <b>args:</b>
             None
 
 <b>Returns:</b>
             int: status
-            return EX_OK: 0 -&gt; success
-            return EX_CANTCREAT: 73 -&gt; can&#x27;t create the file
-            return EX_IOERR: 74 -&gt; write error
+            return EX_OK: 0 -> success
+            return EX_CANTCREAT: 73 -> can't create the file
+            return EX_IOERR: 74 -> write error
 
 </pre>
 #### MyFile()
@@ -1429,28 +1428,28 @@ This class describe a file with a NamedTuple
 <b>Examples:</b>
 ```python
 
-            &gt;&gt;&gt; data_file = MyFile.set_path(&quot;lorem&quot;)
-            &gt;&gt;&gt; data_file.status
+            >>> data_file = MyFile.set_path("lorem")
+            >>> data_file.status
             72
-            &gt;&gt;&gt; fstab = MyFile.set_path(&quot;/etc/fstab&quot;)
-            &gt;&gt;&gt; fstab.path.stem
-            &#x27;fstab&#x27;
-            &gt;&gt;&gt; fstab
-            MyFile(path=PosixPath(&#x27;/etc/fstab&#x27;), exists=False, status=72)
-            &gt;&gt;&gt; fstab.absolute()
-            &#x27;/etc/fstab&#x27;
-            &gt;&gt;&gt; # pathlib to run the test everywhere
-            &gt;&gt;&gt; import pathlib
-            &gt;&gt;&gt; path = str(pathlib.Path(__file__).resolve().parent) + &quot;/&quot;
-            &gt;&gt;&gt; lic = MyFile.set_path(f&quot;{path}../../LICENSE&quot;)
-            &gt;&gt;&gt; lic.path.stem
-            &#x27;LICENSE&#x27;
-            &gt;&gt;&gt; lic.exists
+            >>> fstab = MyFile.set_path("/etc/fstab")
+            >>> fstab.path.stem
+            'fstab'
+            >>> fstab
+            MyFile(path=PosixPath('/etc/fstab'), exists=False, status=72)
+            >>> fstab.absolute()
+            '/etc/fstab'
+            >>> # pathlib to run the test everywhere
+            >>> import pathlib
+            >>> path = str(pathlib.Path(__file__).resolve().parent) + "/"
+            >>> lic = MyFile.set_path(f"{path}../../LICENSE")
+            >>> lic.path.stem
+            'LICENSE'
+            >>> lic.exists
             True
-            &gt;&gt;&gt; result = lic.read()
-            &gt;&gt;&gt; result = result.split(&quot;\n&quot;)
-            &gt;&gt;&gt; result[0]
-            &#x27;                    GNU GENERAL PUBLIC LICENSE&#x27;
+            >>> result = lic.read()
+            >>> result = result.split("\n")
+            >>> result[0]
+            '                    GNU GENERAL PUBLIC LICENSE'
 
 
 ```
@@ -1462,11 +1461,11 @@ def MyFile.set_path(cls, path: Union[str, None]) -> MyFile:
 ```
 <pre>
 
-This function create the MyFile object with the file&#x27;s path.
+This function create the MyFile object with the file's path.
 if path = None then return None
 
 <b>Args:</b>
-            path: The file&#x27;s path.
+            path: The file's path.
 
 <b>Returns:</b>
             MyFile or None
@@ -1490,7 +1489,7 @@ def MyFile.read(self) -> str:
 read the text
 
 <b>Returns:</b>
-            str: Text if successful else &quot;&quot;
+            str: Text if successful else ""
 
 </pre>
 ##### MyFile.write()
@@ -1503,9 +1502,9 @@ Write data in the file
 
 <b>Returns:</b>
             int: status
-            return EX_OK: 0 -&gt; success
-            return EX_CANTCREAT: 73 -&gt; can&#x27;t create the file
-            return EX_IOERR: 74 -&gt; write error
+            return EX_OK: 0 -> success
+            return EX_CANTCREAT: 73 -> can't create the file
+            return EX_IOERR: 74 -> write error
 
 </pre>
 ##### MyFile.resolve()
@@ -1558,27 +1557,27 @@ Object in order to extract Python functions, class....
 <b>Examples:</b>
 ```python
 
-            &gt;&gt;&gt; mod = PytMod(&quot;oups...&quot;)
-            &gt;&gt;&gt; mod.read()
+            >>> mod = PytMod("oups...")
+            >>> mod.read()
             Traceback (most recent call last):
             ...
-            ModuleNotFoundError: No module named &#x27;oups&#x27;
-            &gt;&gt;&gt; mod = PytMod(&quot;json&quot;)
-            &gt;&gt;&gt; mod.read()
-            &gt;&gt;&gt; print(mod.node_lst[0].definition)
+            ModuleNotFoundError: No module named 'oups'
+            >>> mod = PytMod("json")
+            >>> mod.read()
+            >>> print(mod.node_lst[0].definition)
             class JSONDecodeError(ValueError):
-            &gt;&gt;&gt; mod = PytMod(__file__)
-            &gt;&gt;&gt; mod.read()
-            &gt;&gt;&gt; print(mod.node_lst[0].docstring)
+            >>> mod = PytMod(__file__)
+            >>> mod.read()
+            >>> print(mod.node_lst[0].docstring)
             This script is free software; you can redistribute it and/or
             modify it under the terms of the GNU Lesser General Public
             License as published by the Free Software Foundation; either
             ...
             MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-            &gt;&gt;&gt; mod = PytMod(&#x27;docstring2md&#x27;)
-            &gt;&gt;&gt; mod.read()
-            &gt;&gt;&gt; print(mod.node_lst[0].definition)
-            def logger_ast(func: F) -&gt; F:
+            >>> mod = PytMod('docstring2md')
+            >>> mod.read()
+            >>> print(mod.node_lst[0].definition)
+            def logger_ast(func: F) -> F:
 
 
 ```
@@ -1637,8 +1636,8 @@ def PytMod.ismodule(self) -> bool:
 ```
 <pre>
 
-If module name is a module file =&gt; True
-Else if the module name is a package =&gt; False
+If module name is a module file => True
+Else if the module name is a package => False
 
 <b>Returns:</b>
             bool: It exits True on success, and False otherwise.
