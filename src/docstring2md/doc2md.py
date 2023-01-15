@@ -61,8 +61,8 @@ class DocString2MD:
         0
         >>> result = doc.get_doc()
         >>> result = result.split("\\n")
-        >>> print(result[0])
-        # docstring2md
+        >>> result[0]
+        '# docstring2md:'
     """
     __options: DocString2MDOptions
     __my_module: PytMod
@@ -98,7 +98,8 @@ class DocString2MD:
         # module / README
         _output: list = []
         if self.__my_module.pkg_main_docstring[0]:
-            _output.append(self.__my_module.pkg_main_docstring[0].get_summary())
+            _output.append(
+                self.__my_module.pkg_main_docstring[0].get_summary())
 
         # _TODO
         if self.__options.todo.path and self.__options.todo.exists:

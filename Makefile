@@ -38,11 +38,10 @@ doc:
 	@export_docstring2md -p $(PACKAGE_DIR) --output-file README.md -mmd doc/classes_docstring2md.mmd -tml pyproject.toml -td doc/todo.md --private-def --toc
 
 stubs:
-	@stubgen src/docstring2md -o stubs
+	@stubgen src/$(PACKAGE_NAME) -o stubs
 
 test:
-	@stubgen src/docstring2md -o stubs
-	@pytest
+	@pytest --pyargs $(PACKAGE_NAME)
 
 example:
 	@pyreverse json -ASmy -o mmd -d example

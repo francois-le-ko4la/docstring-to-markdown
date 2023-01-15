@@ -1,3 +1,5 @@
+from docstring2md.__config__ import EX_CANTCREAT as EX_CANTCREAT, EX_IOERR as EX_IOERR, EX_OK as EX_OK, EX_OSFILE as EX_OSFILE, LOGGING_MSG as LOGGING_MSG, LOGGING_SETUP as LOGGING_SETUP
+from docstring2md.log import logger as logger
 from pathlib import Path
 from typing import NamedTuple, Union
 

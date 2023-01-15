@@ -1,4 +1,6 @@
+from docstring2md.__config__ import CONST as CONST, EX_OK as EX_OK, EX_OSFILE as EX_OSFILE, TAG as TAG
 from docstring2md.file import MyFile as MyFile
+from docstring2md.mod import PytMod as PytMod
 from typing import NamedTuple
 
 class DocString2MDOptions(NamedTuple):

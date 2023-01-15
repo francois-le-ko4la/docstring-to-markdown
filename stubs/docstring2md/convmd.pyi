@@ -1,3 +1,4 @@
+from docstring2md.__config__ import TAG as TAG
 from typing import Any, Callable, TypeVar
 
 F = TypeVar('F', bound=Callable[..., Any])
@@ -13,3 +14,5 @@ class ConvMD:
     def html_escape() -> Callable[[F], F]: ...
     @staticmethod
     def colorize_examples() -> Callable[[F], F]: ...
+    @staticmethod
+    def dedent() -> Callable[[F], F]: ...

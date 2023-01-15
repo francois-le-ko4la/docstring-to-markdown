@@ -1,5 +1,8 @@
 import ast
 from collections import deque
+from docstring2md.__config__ import LOGGING_MSG as LOGGING_MSG, TAG as TAG
+from docstring2md.convmd import ConvMD as ConvMD
+from docstring2md.log import logger as logger
 from typing import Any, Callable, NamedTuple, TypeVar, Union
 
 F = TypeVar('F', bound=Callable[..., Any])

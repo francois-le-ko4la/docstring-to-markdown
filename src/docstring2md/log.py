@@ -19,6 +19,9 @@ from rich.logging import RichHandler
 
 from docstring2md.__config__ import LOGGING_MSG, LOGGING_SETUP
 
+if __name__ == "__main__":
+    raise Exception("Do not start this script manually !")
+
 # ------------------------------------------------------------------------------
 # Windows specific
 # ------------------------------------------------------------------------------

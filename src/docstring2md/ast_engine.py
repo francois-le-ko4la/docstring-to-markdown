@@ -76,7 +76,7 @@ class ModuleDef(NamedTuple):
         >>> module
         ModuleDef(docstring='Title:')
         >>> module.get_summary()
-        '#Title:'
+        '# Title:'
     """
     docstring: str
 
@@ -553,5 +553,4 @@ class ObjVisitor(ast.NodeVisitor):
 
 if __name__ == "__main__":
     import doctest
-
     doctest.testmod()

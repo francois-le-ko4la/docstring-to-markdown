@@ -173,7 +173,6 @@ class ConvMD:
             return cast(F, func_wrapper)
         return tags_decorator
 
-
     @staticmethod
     def dedent() -> Callable[[F], F]:
         """
@@ -191,3 +190,8 @@ class ConvMD:
                 return textwrap.dedent(func(*args, **kwargs))
             return cast(F, func_wrapper)
         return tags_decorator
+
+
+if __name__ == "__main__":
+    import doctest
+    doctest.testmod()

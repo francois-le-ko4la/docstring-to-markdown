@@ -30,6 +30,7 @@ class Tag(NamedTuple):
     end_title: str
     end_b: str
     end_bh: str
+    space: str
     tab: str
     html_tab: str
     cr: str

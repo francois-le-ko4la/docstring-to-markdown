@@ -15,6 +15,9 @@ from __future__ import annotations
 import os
 from typing import NamedTuple
 
+if __name__ == "__main__":
+    raise Exception("Do not start this script manually !")
+
 
 class Const(NamedTuple):
     """Constants"""

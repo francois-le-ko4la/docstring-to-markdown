@@ -212,14 +212,20 @@ build-backend = "setuptools.build_meta"
 
 [tool.pytest.ini_options]
 minversion = "7.2"
-addopts = "-v -rfEX --pycodestyle --doctest-modules --mypy --pylint --strict-markers"
-python_files = ["docstring2md/*.py"]
+addopts = [
+    "-v",
+    "--pycodestyle",
+    "--doctest-modules",
+    "--mypy",
+    "--pylint",
+    "--strict-markers"
+]
 xfail_strict = true
 filterwarnings = [
     "ignore:.*U.*mode is deprecated:DeprecationWarning",
     "ignore::DeprecationWarning"]
 [tool.mypy]
-mypy_path = "$MYPY_CONFIG_FILE_DIR/stubs"
+mypy_path = "stubs/"
 
 
 
@@ -596,7 +602,7 @@ NamedTuple to define a Module.
     >>> module
     ModuleDef(docstring='Title:')
     >>> module.get_summary()
-    '#Title:'
+    '# Title:'
 
 
 ```
@@ -1461,8 +1467,8 @@ Class DocString2MD : export Google docstring to MD File.
     0
     >>> result = doc.get_doc()
     >>> result = result.split("\n")
-    >>> print(result[0])
-    # docstring2md
+    >>> result[0]
+    '# docstring2md:'
 
 
 ```

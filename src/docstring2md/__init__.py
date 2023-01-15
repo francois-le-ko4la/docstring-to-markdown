@@ -133,3 +133,6 @@ from docstring2md.__config__ import CHK_PYT_MIN, LOGGING_MSG, ARG_STYLE, \
 from docstring2md.doc2md import DocString2MD, DocString2MDOptions
 from docstring2md.file import MyFile
 from docstring2md.log import logger, define_logfile
+
+if __name__ == "__main__":
+    raise Exception("Do not start this script manually !")

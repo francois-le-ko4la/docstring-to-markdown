@@ -176,3 +176,8 @@ def run() -> int:
         logger.error(LOGGING_MSG.new_module.error)
         return status
     return module.writedoc()
+
+
+if __name__ == "__main__":
+    import doctest
+    doctest.testmod()
