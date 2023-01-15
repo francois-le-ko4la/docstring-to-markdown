@@ -17,6 +17,7 @@ from typing import NamedTuple
 from docstring2md.__config__ import CONST, TAG, EX_OK, EX_OSFILE
 from docstring2md.file import MyFile
 from docstring2md.mod import PytMod
+from docstring2md.ast_engine import NodeDef
 
 
 class DocString2MDOptions(NamedTuple):
@@ -120,7 +121,8 @@ class DocString2MD:
 
         if self.__options.toc:
             _output.extend([elem.get_toc_elem() for elem in
-                            self.__my_module.node_lst if elem is not None])
+                            self.__my_module.node_lst if elem is not None
+                            and isinstance(elem, NodeDef)])
 
         _output.extend([elem.get_summary() for elem in
                         self.__my_module.node_lst if elem is not None])

@@ -19,14 +19,14 @@ All the installation process has been rebuilt with Makefile and
 pyproject.toml.
 
 # Why ?:
-We can find a lot of tools to generate docs from code but we want something
-quick and easy to setup.
+We can find a lot of tools to generate docs from code, but we want
+something quick and easy to set up.
 This tool can be used on python file or python package.
 
 Semantic analysis and tree traversal are not really my passions ^^,
 but these types of tools are still very interesting. Some time has passed
 since the first version. I admit that Python had started to introduce
-typing but it was, not yet widespread. There have also been significant
+typing, but it was, not yet widespread. There have also been significant
 changes in the deployment of packages, and since the script setup.py has
 no reason to exist. I have therefore migrated to the TOML file and
 adapted the META import libraries.
@@ -114,7 +114,7 @@ make dev
 
 # Test:
 This module has been tested and validated on Ubuntu.
-Test is available if you setup the package with dev environment.
+Test is available if you set up the package with dev environment.
 ```shell
 make test
 ```
@@ -350,7 +350,6 @@ classDiagram
     docstring : str
     get_docstring() str
     get_summary()
-    get_toc_elem() None
   }
   class NodeDef {
     definition : str
@@ -369,7 +368,7 @@ classDiagram
   }
   class ObjVisitor {
     node_lst
-    get_tree(source: str) ast.AST
+    parse(source: str) ast.AST
     visit_ClassDef(node: ast.ClassDef) None
     visit_FunctionDef(node: ast.FunctionDef) None
     visit_Module(node: ast.Module) None
@@ -458,11 +457,16 @@ classDiagram
 
 ## Objects:
 
+[Const()](#const)<br />
+[Tag()](#tag)<br />
+[LoggingSetup()](#loggingsetup)<br />
+[LoggingSetup.set_logfile()](#loggingsetupset_logfile)<br />
+[LoggingMSG()](#loggingmsg)<br />
+[LoggingMSGCollection()](#loggingmsgcollection)<br />
 [logger_ast()](#logger_ast)<br />
 [logger_ast.func_wrapper()](#logger_astfunc_wrapper)<br />
 [NodeLink()](#nodelink)<br />
 [ModuleDef()](#moduledef)<br />
-[ModuleDef.get_toc_elem()](#moduledefget_toc_elem)<br />
 [ModuleDef.get_summary()](#moduledefget_summary)<br />
 [ModuleDef.get_docstring()](#moduledefget_docstring)<br />
 [NodeDef()](#nodedef)<br />
@@ -474,7 +478,7 @@ classDiagram
 [ObjVisitor()](#objvisitor)<br />
 [ObjVisitor.__init__()](#objvisitorinit)<br />
 [@Property ObjVisitor.node_lst()](#property-objvisitornode_lst)<br />
-[ObjVisitor.get_tree()](#objvisitorget_tree)<br />
+[ObjVisitor.parse()](#objvisitorparse)<br />
 [ObjVisitor.__set_level()](#objvisitor__set_level)<br />
 [ObjVisitor.__get_fullname()](#objvisitor__get_fullname)<br />
 [ObjVisitor.__get_docstring()](#objvisitor__get_docstring)<br />
@@ -551,6 +555,109 @@ classDiagram
 [PytMod.__get_doc_from_module()](#pytmod__get_doc_from_module)<br />
 [PytMod.__get_module_list()](#pytmod__get_module_list)<br />
 [PytMod.__get_doc_from_pkg()](#pytmod__get_doc_from_pkg)<br />
+### Const()
+```python
+class Const(NamedTuple):
+```
+<pre>
+
+Constants
+
+</pre>
+### Tag()
+```python
+class Tag(NamedTuple):
+```
+<pre>
+
+TAG used to convert
+
+</pre>
+### LoggingSetup()
+```python
+class LoggingSetup(NamedTuple):
+```
+<pre>
+
+Logging Parameters
+
+</pre>
+<b>Examples:</b>
+```python
+
+>>> my_setup = LoggingSetup()
+>>> my_setup.default_level
+'INFO'
+
+
+```
+
+#### LoggingSetup.set_logfile()
+```python
+@classmethod
+def LoggingSetup.set_logfile(cls, path: str) -> LoggingSetup:
+```
+<pre>
+
+This function create the LoggingSetup object with the log file's
+path,
+file's path is initialized by default.
+
+<b>Args:</b>
+    path: The file's path.
+
+<b>Returns:</b>
+    MyFile
+
+</pre>
+<b>Examples:</b>
+```python
+
+    >>> a = LoggingSetup.set_logfile('report.log')
+    >>> str(a)[0:32]
+    "LoggingSetup(logfile='report.log"
+
+
+```
+
+### LoggingMSG()
+```python
+class LoggingMSG(NamedTuple):
+```
+<pre>
+
+Messages with different sev
+
+</pre>
+<b>Examples:</b>
+```python
+
+    >>> logfile = LoggingMSG(info="Log file used: %s")
+    >>> logfile.info
+    'Log file used: %s'
+
+
+```
+
+### LoggingMSGCollection()
+```python
+class LoggingMSGCollection(NamedTuple):
+```
+<pre>
+
+All logging messages
+
+</pre>
+<b>Examples:</b>
+```python
+
+    >>> log_msg = LoggingMSGCollection()
+    >>> log_msg.logfile.info
+    'Log file used: %s'
+
+
+```
+
 ### logger_ast()
 ```python
 def logger_ast(func: F) -> F:
@@ -607,16 +714,6 @@ NamedTuple to define a Module.
 
 ```
 
-#### ModuleDef.get_toc_elem()
-```python
-@staticmethod
-def ModuleDef.get_toc_elem() -> None:
-```
-<pre>
-
-dumb function
-
-</pre>
 #### ModuleDef.get_summary()
 ```python
 def ModuleDef.get_summary(self):
@@ -646,7 +743,13 @@ class NodeDef(NamedTuple):
 ```
 <pre>
 
-NamedTuple to define a node
+NamedTuple to define a node (Class/Function)
+
+<b>Attributes:</b>
+    title (str): short class/function definition
+    definition (str): full class/function definition
+    docstring (str): docstring
+    level (int): level in the module
 
 </pre>
 #### NodeDef.get_summary()
@@ -741,7 +844,7 @@ ObjVisitor(module_docstring=True|False)
     >>> # init
     >>> doc = ObjVisitor(module_docstring=False)
     >>> # provide source, generate the tree and use visit mechanism
-    >>> doc.visit(doc.get_tree(source.read()))
+    >>> doc.visit(doc.parse(source.read()))
     >>> result = doc.node_lst
     >>> result[0].title
     'logger_ast()'
@@ -755,7 +858,7 @@ ObjVisitor(module_docstring=True|False)
 
 #### ObjVisitor.__init__()
 ```python
-def ObjVisitor.__init__(self, module_docstring: bool = False, priv: bool = False) -> None:
+def ObjVisitor.__init__(self, module_docstring: bool = False, private_def: bool = False) -> None:
 ```
 <pre>
 
@@ -772,15 +875,14 @@ def ObjVisitor.node_lst(self) -> NodeListType:
 Return node list
 
 </pre>
-#### ObjVisitor.get_tree()
+#### ObjVisitor.parse()
 ```python
 @staticmethod
-def ObjVisitor.get_tree(source: str) -> ast.AST:
+def ObjVisitor.parse(source: str) -> ast.AST:
 ```
 <pre>
 
-This function allow us to parse the source and build the
-tree.
+Parse the source code and build the tree.
 
 <b>Args:</b>
             source (str): source code
@@ -1706,7 +1808,7 @@ Object in order to extract Python functions, class....
 
 #### PytMod.__init__()
 ```python
-def PytMod.__init__(self, module_name: str, priv: bool = False) -> None:
+def PytMod.__init__(self, module_name: str, private_def: bool = False) -> None:
 ```
 <pre>
 

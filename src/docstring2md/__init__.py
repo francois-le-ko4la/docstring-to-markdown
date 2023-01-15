@@ -22,14 +22,14 @@ docstring2md:
     pyproject.toml.
 
 Why ?:
-    We can find a lot of tools to generate docs from code but we want something
-    quick and easy to setup.
+    We can find a lot of tools to generate docs from code, but we want
+    something quick and easy to set up.
     This tool can be used on python file or python package.
 
     Semantic analysis and tree traversal are not really my passions ^^,
     but these types of tools are still very interesting. Some time has passed
     since the first version. I admit that Python had started to introduce
-    typing but it was, not yet widespread. There have also been significant
+    typing, but it was, not yet widespread. There have also been significant
     changes in the deployment of packages, and since the script setup.py has
     no reason to exist. I have therefore migrated to the TOML file and
     adapted the META import libraries.
@@ -117,7 +117,7 @@ Setup:
 
 Test:
     This module has been tested and validated on Ubuntu.
-    Test is available if you setup the package with dev environment.
+    Test is available if you set up the package with dev environment.
     ```shell
     make test
     ```
@@ -133,6 +133,7 @@ from docstring2md.__config__ import CHK_PYT_MIN, LOGGING_MSG, ARG_STYLE, \
 from docstring2md.doc2md import DocString2MD, DocString2MDOptions
 from docstring2md.file import MyFile
 from docstring2md.log import logger, define_logfile
+
 
 if __name__ == "__main__":
     raise Exception("Do not start this script manually !")

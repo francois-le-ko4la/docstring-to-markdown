@@ -53,12 +53,12 @@ class PytMod:
     """
     __path: Union[str, None]
     __module: str
-    __priv: bool
+    __private_def: bool
 
-    def __init__(self, module_name: str, priv: bool = False) -> None:
+    def __init__(self, module_name: str, private_def: bool = False) -> None:
         self.__path = ""
         self.__module = module_name
-        self.__priv = priv
+        self.__private_def = private_def
         self.__node_lst: NodeListType = deque()
         logger.debug(LOGGING_MSG.pytmod.debug, module_name)
 
@@ -137,18 +137,25 @@ class PytMod:
         # create an ObjVisitor to search in the module
         doc: ObjVisitor = ObjVisitor(
             module_docstring=module_docstring,
-            priv=self.__priv
+            private_def=self.__private_def
         )
         # Visit all module in the package
-        doc.visit(doc.get_tree(source.read()))
+        doc.visit(doc.parse(source.read()))
 
         return doc.node_lst
 
     def __get_module_list(self, package: str) -> list[str]:
         module = []
+        # Import the module
         imp_pkg = importlib.import_module(package)
+        # keep the original path
         if self.__path == "":
             self.__path = imp_pkg.__path__[0]
+        # Fix __init__ (walk_packages issue)
+        init_file = MyFile.set_path(f"{imp_pkg.__path__[0]}/__init__.py")
+        if init_file.exists:
+            module = [init_file.path]
+        # use walk_packages to list all modules
         for _importer, modname, ispkg in pkgutil.walk_packages(
                 imp_pkg.__path__):
             fullname = f"{package}.{modname}"
@@ -157,14 +164,16 @@ class PytMod:
                     LOGGING_MSG.new_module.info, fullname)
                 module += self.__get_module_list(fullname)
             else:
-                if modname.startswith("__") is False:
-                    module.append(f"{imp_pkg.__path__[0]}/{modname}.py")
+                # if modname.startswith("__") is False:
+                module.append(f"{imp_pkg.__path__[0]}/{modname}.py")
         return module
 
     def __get_doc_from_pkg(self, package: str) -> NodeListType:
         node_lst: NodeListType = deque()
+        # get all modules
         modules = self.__get_module_list(package)
         logger.debug(LOGGING_MSG.pytmod_script.debug, str(modules))
+        # read all modules and get all nodes
         for module in modules:
             logger.info(LOGGING_MSG.pytmod_extract.info, str(module))
             node_lst += self.__get_doc_from_module(module)

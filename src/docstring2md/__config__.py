@@ -85,15 +85,15 @@ class LoggingSetup(NamedTuple):
         file's path is initialized by default.
 
         Args:
-                    path: The file's path.
+            path: The file's path.
 
         Returns:
-                    MyFile
+            MyFile
 
         Examples:
-                    >>> a = LoggingSetup.set_logfile('report.log')
-                    >>> str(a)[0:32]
-                    "LoggingSetup(logfile='report.log"
+            >>> a = LoggingSetup.set_logfile('report.log')
+            >>> str(a)[0:32]
+            "LoggingSetup(logfile='report.log"
         """
         return cls(path)
 
@@ -102,9 +102,9 @@ class LoggingMSG(NamedTuple):
     """Messages with different sev
 
     Examples:
-                >>> logfile = LoggingMSG(info="Log file used: %s")
-                >>> logfile.info
-                'Log file used: %s'
+        >>> logfile = LoggingMSG(info="Log file used: %s")
+        >>> logfile.info
+        'Log file used: %s'
 
     """
     info: str = ""
@@ -117,9 +117,9 @@ class LoggingMSGCollection(NamedTuple):
     """All logging messages
 
     Examples:
-                >>> log_msg = LoggingMSGCollection()
-                >>> log_msg.logfile.info
-                'Log file used: %s'
+        >>> log_msg = LoggingMSGCollection()
+        >>> log_msg.logfile.info
+        'Log file used: %s'
 
     """
     logfile: LoggingMSG = LoggingMSG(

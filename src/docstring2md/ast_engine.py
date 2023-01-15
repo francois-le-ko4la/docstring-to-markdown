@@ -80,11 +80,6 @@ class ModuleDef(NamedTuple):
     """
     docstring: str
 
-    @staticmethod
-    def get_toc_elem() -> None:
-        """dumb function"""
-        return None
-
     def get_summary(self):
         """get the docstring"""
         return self.get_docstring()
@@ -104,7 +99,16 @@ class ModuleDef(NamedTuple):
 
 
 class NodeDef(NamedTuple):
-    """NamedTuple to define a node"""
+    """
+    NamedTuple to define a node (Class/Function)
+
+    Attributes:
+        title (str): short class/function definition
+        definition (str): full class/function definition
+        docstring (str): docstring
+        level (int): level in the module
+
+    """
     title: str
     definition: str
     docstring: str
@@ -194,7 +198,7 @@ class ObjVisitor(ast.NodeVisitor):
         >>> # init
         >>> doc = ObjVisitor(module_docstring=False)
         >>> # provide source, generate the tree and use visit mechanism
-        >>> doc.visit(doc.get_tree(source.read()))
+        >>> doc.visit(doc.parse(source.read()))
         >>> result = doc.node_lst
         >>> result[0].title
         'logger_ast()'
@@ -205,14 +209,15 @@ class ObjVisitor(ast.NodeVisitor):
 
     """
     __module_docstring: bool
-    __priv: bool
+    __private_def: bool
     __func: list[Any]
 
     def __init__(
-            self, module_docstring: bool = False, priv: bool = False) -> None:
+            self, module_docstring: bool = False, private_def: bool = False) \
+            -> None:
         super(ast.NodeVisitor, self).__init__()
         self.__module_docstring = module_docstring
-        self.__priv = priv
+        self.__private_def = private_def
         self.__link_lst: dict[
             Union[ast.FunctionDef, ast.ClassDef, ast.Module], NodeLink]
         self.__node_lst: NodeListType = deque()
@@ -223,10 +228,9 @@ class ObjVisitor(ast.NodeVisitor):
         return self.__node_lst
 
     @staticmethod
-    def get_tree(source: str) -> ast.AST:
+    def parse(source: str) -> ast.AST:
         """
-        This function allow us to parse the source and build the
-        tree.
+        Parse the source code and build the tree.
 
         Args:
                     source (str): source code
@@ -453,7 +457,7 @@ class ObjVisitor(ast.NodeVisitor):
 
     @logger_ast
     def __func_valid_name(self, node: ast.FunctionDef) -> bool:
-        return self.__priv or (node.name.startswith("__") is False)
+        return self.__private_def or (node.name.startswith("__") is False)
 
     @logger_ast
     def __func_get_title(self, node: ast.FunctionDef) -> str:
