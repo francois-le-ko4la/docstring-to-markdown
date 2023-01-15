@@ -1,0 +1,33 @@
+# Todo:
+
+- [X] Create the project
+- [X] Write code and tests
+- [X] Test installation and requirements (setup.py and/or Makefile)
+- [X] Test code
+- [X] Validate features
+- [X] Add-on : decorator
+- [X] Add-on : class properties
+- [X] Add-on : runtime & requirements
+- [X] Add-on : toc
+- [X] Add-on : remove inspect library and use AST
+- [X] Add-on : improve global performance (x3)
+- [X] Write Doc/stringdoc
+- [X] Run PEP8 validation
+- [X] Clean & last check
+- [X] Release 0.4.1
+- [X] Rebuild the cli argument
+- [X] Rebuild logging management and add more debug
+- [X] Rebuild the package management through pyproject.toml
+- [X] Rebuild the Makefile
+- [X] Add-on : typing analysis
+- [X] Create JSON module example
+- [X] Finish the typing
+- [X] AST optimisation
+- [X] Improve CONST
+- [X] improve doctest look & feel
+- [X] homogeneous doc btw Class and Function
+- [X] Include import in init file
+- [X] Improve the docstring module (MD format is not standard ^^)
+- [X] Move the todo from init to a dedicated file (new option)
+- [ ] Test
+- [ ] Release 0.5.0

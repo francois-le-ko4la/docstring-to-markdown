@@ -1,8 +1,9 @@
 classDiagram
   class DocString2MDOptions {
-    export_file
+    output
     private_def
     toc
+    todo
     toml
     uml
   }
@@ -90,6 +91,7 @@ classDiagram
     beg_pre : str
     beg_py : str
     beg_str : str
+    beg_title : str
     beg_toml : str
     coma : str
     cr : str
@@ -100,10 +102,18 @@ classDiagram
     end_py : str
     end_str : str
     end_strh : str
+    end_title : str
     html_cr : str
     html_tab : str
     quote : str
+    space : str
     tab : str
+  }
+  class ModuleDef {
+    docstring : str
+    get_docstring() str
+    get_summary()
+    get_toc_elem() None
   }
   class NodeDef {
     definition : str
@@ -130,6 +140,7 @@ classDiagram
   class ConvMD {
     add_tag(begin_tag: str, end_tag: str) Callable[[F], F]
     colorize_examples() Callable[[F], F]
+    dedent() Callable[[F], F]
     html_escape() Callable[[F], F]
     repl_beg_end(begin_regexp: str, end_regexp: str, begin_tag: str, end_tag: str) Callable[[F], F]
     repl_str(old_string: str, new_string: str) Callable[[F], F]
@@ -140,9 +151,10 @@ classDiagram
     writedoc() int
   }
   class DocString2MDOptions {
-    export_file
+    output
     private_def : bool
     toc : bool
+    todo
     toml
     uml
   }
@@ -170,6 +182,7 @@ classDiagram
   LoggingMSGCollection --|> NamedTuple
   LoggingSetup --|> NamedTuple
   Tag --|> NamedTuple
+  ModuleDef --|> NamedTuple
   NodeDef --|> NamedTuple
   NodeLink --|> NamedTuple
   ObjVisitor --|> NodeVisitor
@@ -198,6 +211,7 @@ classDiagram
   LoggingMSG --* LoggingMSGCollection : write_doc
   MyFile --* DocString2MDOptions : toml
   MyFile --* DocString2MDOptions : uml
-  MyFile --* DocString2MDOptions : export_file
+  MyFile --* DocString2MDOptions : todo
+  MyFile --* DocString2MDOptions : output
   PytMod --* DocString2MD : __my_module
   PytMod --* DocString2MD : __my_module

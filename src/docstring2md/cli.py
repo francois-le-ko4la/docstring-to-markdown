@@ -33,7 +33,7 @@ def check_python() -> bool:
     True/False.
 
     Returns:
-                True if successful, False otherwise.
+        True if successful, False otherwise.
 
     """
     # Python __version__
@@ -58,12 +58,12 @@ def get_argparser() -> argparse.ArgumentParser:
     This function describe the argument parser and return it.
 
     Returns:
-                ArgumentParser
+        ArgumentParser
 
     Examples:
-                >>> a = get_argparser()
-                >>> type(a)
-                <class 'argparse.ArgumentParser'>
+        >>> a = get_argparser()
+        >>> type(a)
+        <class 'argparse.ArgumentParser'>
 
     """
 
@@ -79,8 +79,7 @@ def get_argparser() -> argparse.ArgumentParser:
         '--version',
         help="show version and exit",
         action='version', version=version)
-    exclusive_group: argparse._MutuallyExclusiveGroup = \
-        parser.add_mutually_exclusive_group(required=False)
+    exclusive_group = parser.add_mutually_exclusive_group(required=False)
     exclusive_group.add_argument(
         '--debug',
         help='print debug messages to stderr',
@@ -101,9 +100,9 @@ def get_argparser() -> argparse.ArgumentParser:
         help='Enable the table of contents',
         default=False, action='store_true')
     # New groups
-    required_argument: argparse._ArgumentGroup = parser.add_argument_group(
+    required_argument = parser.add_argument_group(
         'required arguments')
-    optional_argument: argparse._ArgumentGroup = parser.add_argument_group(
+    optional_argument = parser.add_argument_group(
         'optional arguments')
     required_argument.add_argument(
         '-p', '--package',
@@ -117,9 +116,14 @@ def get_argparser() -> argparse.ArgumentParser:
         /path/to/output/file (README.md)
         '''))
     optional_argument.add_argument(
-        '-t', '--toml-file',
+        '-tml', '--toml-file',
         help=textwrap.dedent('''\
-        /path/to/runtime/file
+        /path/to/toml/file.toml
+        '''))
+    optional_argument.add_argument(
+        '-td', '--todo-file',
+        help=textwrap.dedent('''\
+        /path/to/todo/file.md
         '''))
     optional_argument.add_argument(
         '-mmd', '--mermaid-file',
@@ -136,12 +140,12 @@ def run() -> int:
     It exits 0 on success, and >0 if an error occurs.
 
     Returns:
-                int: status
-                return EX_OK: 0 -> success
-                return EX_CONFIG: 78 -> config error
-                return EX_OSFILE: 72 -> Module not found
-                return EX_CANTCREAT: 73 -> can't create the file
-                return EX_IOERR: 74 -> write error
+        int: status
+        return EX_OK: 0 -> success
+        return EX_CONFIG: 78 -> config error
+        return EX_OSFILE: 72 -> Module not found
+        return EX_CANTCREAT: 73 -> can't create the file
+        return EX_IOERR: 74 -> write error
 
     """
 
@@ -161,7 +165,8 @@ def run() -> int:
     options: DocString2MDOptions = DocString2MDOptions(
         toml=MyFile.set_path(args.toml_file),
         uml=MyFile.set_path(args.mermaid_file),
-        export_file=MyFile.set_path(args.output_file),
+        todo=MyFile.set_path(args.todo_file),
+        output=MyFile.set_path(args.output_file),
         toc=args.toc,
         private_def=args.private_def
     )

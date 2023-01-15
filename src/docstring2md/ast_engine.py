@@ -66,6 +66,43 @@ class NodeLink(NamedTuple):
     parent: Union[ast.FunctionDef, ast.ClassDef, ast.Module]
 
 
+class ModuleDef(NamedTuple):
+    """
+    NamedTuple to define a Module.
+
+    Examples:
+        >>> mydocstring = "Title:"
+        >>> module = ModuleDef(docstring=mydocstring)
+        >>> module
+        ModuleDef(docstring='Title:')
+        >>> module.get_summary()
+        '#Title:'
+    """
+    docstring: str
+
+    @staticmethod
+    def get_toc_elem() -> None:
+        """dumb function"""
+        return None
+
+    def get_summary(self):
+        """get the docstring"""
+        return self.get_docstring()
+
+    @ConvMD.dedent()
+    @ConvMD.repl_beg_end(TAG.beg_str, TAG.end_strh,
+                         TAG.tab + TAG.beg_title + TAG.space, TAG.end_title)
+    def get_docstring(self) -> str:
+        """
+        Generate the Module's Docstring with MD Tag.
+
+        Returns:
+                    str: Docstring
+
+        """
+        return self.docstring
+
+
 class NodeDef(NamedTuple):
     """NamedTuple to define a node"""
     title: str
@@ -106,7 +143,7 @@ class NodeDef(NamedTuple):
                     str
 
         """
-        return f"{'#' * (self.level + 3)} {self.title}"
+        return f"{'#' * (self.level + 2)} {self.title}"
 
     @ConvMD.add_tag(TAG.beg_py, TAG.end_py)
     def get_definition(self) -> str:
@@ -124,13 +161,16 @@ class NodeDef(NamedTuple):
     @ConvMD.add_tag(TAG.cr, TAG.cr)
     def get_docstring(self) -> str:
         """
-        Generate the Function's Docstring with MD Tag.
+        Generate the node's Docstring with MD Tag.
 
         Returns:
                     str: Docstring
 
         """
         return self.docstring
+
+
+NodeListType = deque[Union[NodeDef, ModuleDef, None]]
 
 
 class ObjVisitor(ast.NodeVisitor):
@@ -147,21 +187,21 @@ class ObjVisitor(ast.NodeVisitor):
         in a package.
 
     Examples:
-                >>> from docstring2md.file import MyFile
-                >>> import pathlib
-                >>> module = str(pathlib.Path(__file__).resolve())
-                >>> source = MyFile.set_path(module)
-                >>> # init
-                >>> doc = ObjVisitor(module_docstring=False)
-                >>> # provide source, generate the tree and use visit mechanism
-                >>> doc.visit(doc.get_tree(source.read()))
-                >>> result = doc.node_lst
-                >>> result[0].title
-                'logger_ast()'
-                >>> result[0].get_toc_elem()
-                '[logger_ast()](#logger_ast)<br />'
-                >>> result[0].definition
-                'def logger_ast(func: F) -> F:'
+        >>> from docstring2md.file import MyFile
+        >>> import pathlib
+        >>> module = str(pathlib.Path(__file__).resolve())
+        >>> source = MyFile.set_path(module)
+        >>> # init
+        >>> doc = ObjVisitor(module_docstring=False)
+        >>> # provide source, generate the tree and use visit mechanism
+        >>> doc.visit(doc.get_tree(source.read()))
+        >>> result = doc.node_lst
+        >>> result[0].title
+        'logger_ast()'
+        >>> result[0].get_toc_elem()
+        '[logger_ast()](#logger_ast)<br />'
+        >>> result[0].definition
+        'def logger_ast(func: F) -> F:'
 
     """
     __module_docstring: bool
@@ -175,11 +215,10 @@ class ObjVisitor(ast.NodeVisitor):
         self.__priv = priv
         self.__link_lst: dict[
             Union[ast.FunctionDef, ast.ClassDef, ast.Module], NodeLink]
-        self.__node_lst: deque[
-            Union[NodeDef, None]] = deque()
+        self.__node_lst: NodeListType = deque()
 
     @property
-    def node_lst(self) -> deque[Union[NodeDef, None]]:
+    def node_lst(self) -> NodeListType:
         """Return node list"""
         return self.__node_lst
 
@@ -337,9 +376,8 @@ class ObjVisitor(ast.NodeVisitor):
         self.__set_level(node)
         # Get docstring if available
         if self.__module_docstring:
-            self.__node_lst.append(NodeDef(
-                title="Module", definition="",
-                docstring=self.__mod_get_docstring(node), level=0))
+            self.__node_lst.append(ModuleDef(
+                docstring=self.__mod_get_docstring(node)))
         # Continue the visit
         self.generic_visit(node)
 

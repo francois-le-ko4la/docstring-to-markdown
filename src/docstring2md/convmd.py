@@ -16,6 +16,7 @@ import re
 from functools import wraps
 from typing import Callable, TypeVar, Any, cast
 import html
+import textwrap
 
 from docstring2md.__config__ import TAG
 
@@ -33,20 +34,20 @@ class ConvMD:
         Examples: replace space by an HTML tag.
 
         Args:
-                    old_string (str): string to search
-                    new_string (str): new string
+            old_string (str): string to search
+            new_string (str): new string
 
         Returns:
-                    Callable[[F], F]
+            Callable[[F], F]
 
         Examples:
 
-                    >>> from docstring2md.convmd import ConvMD
-                    >>> @ConvMD.repl_str("docstring", "is ok !")
-                    ... def return_test() -> str:
-                    ...     return "my function docstring"
-                    >>> print(return_test())
-                    my function is ok !
+            >>> from docstring2md.convmd import ConvMD
+            >>> @ConvMD.repl_str("docstring", "is ok !")
+            ... def return_test() -> str:
+            ...     return "my function docstring"
+            >>> print(return_test())
+            my function is ok !
 
         """
         def tags_decorator(func: F) -> F:
@@ -66,24 +67,23 @@ class ConvMD:
         Decorator - replace the beginning and the end.
 
         Args:
-                    begin_regexp (str)
-                    end_regexp (str)
-                    begin_tag (str)
-                    end_tag (str)
+            begin_regexp (str)
+            end_regexp (str)
+            begin_tag (str)
+            end_tag (str)
 
         Returns:
-                    decorated function
+            decorated function
 
         Examples:
-
-                    >>> # All new lines must be provided with a specific tag
-                    >>> # > 'Line' <br />
-                    >>> from docstring2md.convmd import ConvMD
-                    >>> @ConvMD.repl_beg_end("^", "$", ">", "<br />")
-                    ... def return_test() -> str:
-                    ...     return "my function docstring"
-                    >>> print(return_test())
-                    >my function docstring<br />
+            >>> # All new lines must be provided with a specific tag
+            >>> # > 'Line' <br />
+            >>> from docstring2md.convmd import ConvMD
+            >>> @ConvMD.repl_beg_end("^", "$", ">", "<br />")
+            ... def return_test() -> str:
+            ...     return "my function docstring"
+            >>> print(return_test())
+            >my function docstring<br />
 
         """
         def tags_decorator(func: F) -> F:
@@ -92,7 +92,7 @@ class ConvMD:
             def func_wrapper(*args: Any, **kwargs: Any) -> Any:
                 """ wrapper """
                 return re.sub(
-                    begin_regexp + r'([^ ].*)' + end_regexp,
+                    begin_regexp + r'(\S.*)' + end_regexp,
                     begin_tag + r'\1' + end_tag,
                     func(*args, **kwargs),
                     flags=re.MULTILINE)
@@ -105,20 +105,20 @@ class ConvMD:
         Decorator - add a tag
 
         Args:
-                    begin_tag (str)
-                    end_tag (str)
+            begin_tag (str)
+            end_tag (str)
 
         Returns:
-                    decorated function
+            decorated function
 
         Examples:
-                    >>> # ('__', '__') => __ TXT __
-                    >>> from docstring2md.convmd import ConvMD
-                    >>> @ConvMD.add_tag("__", "__")
-                    ... def return_test() -> str:
-                    ...     return "test"
-                    >>> print(return_test())
-                    __test__
+            >>> # ('__', '__') => __ TXT __
+            >>> from docstring2md.convmd import ConvMD
+            >>> @ConvMD.add_tag("__", "__")
+            ... def return_test() -> str:
+            ...     return "test"
+            >>> print(return_test())
+            __test__
 
         """
         def tags_decorator(func: F) -> F:
@@ -136,7 +136,7 @@ class ConvMD:
         Escape the HTML tag.
 
         Returns:
-                    decorated function
+            decorated function
 
         """
         def tags_decorator(func: F) -> F:
@@ -154,7 +154,7 @@ class ConvMD:
         Colorize python example.
 
         Returns:
-                    decorated function
+            decorated function
 
         """
         def tags_decorator(func: F) -> F:
@@ -170,5 +170,24 @@ class ConvMD:
                                       f"Examples:\n{TAG.beg_py}{TAG.cr}")
                     return ret
                 return f"{TAG.beg_pre}{TAG.cr}{ret}{TAG.cr}{TAG.end_pre}"
+            return cast(F, func_wrapper)
+        return tags_decorator
+
+
+    @staticmethod
+    def dedent() -> Callable[[F], F]:
+        """
+        Decorator - deindent text
+
+        Returns:
+            decorated function
+
+        """
+        def tags_decorator(func: F) -> F:
+            """ decorator """
+            @wraps(func)
+            def func_wrapper(*args: Any, **kwargs: Any) -> Any:
+                """ wrapper """
+                return textwrap.dedent(func(*args, **kwargs))
             return cast(F, func_wrapper)
         return tags_decorator

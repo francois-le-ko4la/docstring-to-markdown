@@ -25,33 +25,33 @@ class MyFile(NamedTuple):
     @classmethod is used to init the objects correctly.
 
     Notes:
-                The objective is to define a file with only one NamedTuple.
-                The NamedTuple will be created by the set_path function to
-                define the path.
+        The objective is to define a file with only one NamedTuple.
+        The NamedTuple will be created by the set_path function to
+        define the path.
 
     Examples:
-                >>> data_file = MyFile.set_path("lorem")
-                >>> data_file.status
-                72
-                >>> fstab = MyFile.set_path("/etc/fstab")
-                >>> fstab.path.stem
-                'fstab'
-                >>> fstab
-                MyFile(path=PosixPath('/etc/fstab'), exists=False, status=72)
-                >>> fstab.absolute()
-                '/etc/fstab'
-                >>> # pathlib to run the test everywhere
-                >>> import pathlib
-                >>> path = str(pathlib.Path(__file__).resolve().parent) + "/"
-                >>> lic = MyFile.set_path(f"{path}../../LICENSE")
-                >>> lic.path.stem
-                'LICENSE'
-                >>> lic.exists
-                True
-                >>> result = lic.read()
-                >>> result = result.split("\\n")
-                >>> result[0]
-                '                    GNU GENERAL PUBLIC LICENSE'
+        >>> data_file = MyFile.set_path("lorem")
+        >>> data_file.status
+        72
+        >>> fstab = MyFile.set_path("/etc/fstab")
+        >>> fstab.path.stem
+        'fstab'
+        >>> fstab
+        MyFile(path=PosixPath('/etc/fstab'), exists=False, status=72)
+        >>> fstab.absolute()
+        '/etc/fstab'
+        >>> # pathlib to run the test everywhere
+        >>> import pathlib
+        >>> path = str(pathlib.Path(__file__).resolve().parent) + "/"
+        >>> lic = MyFile.set_path(f"{path}../../LICENSE")
+        >>> lic.path.stem
+        'LICENSE'
+        >>> lic.exists
+        True
+        >>> result = lic.read()
+        >>> result = result.split("\\n")
+        >>> result[0]
+        '                    GNU GENERAL PUBLIC LICENSE'
     """
     path: Union[Path, None]
     exists: bool
@@ -63,10 +63,10 @@ class MyFile(NamedTuple):
         if path = None then return None
 
         Args:
-                    path: The file's path.
+            path: The file's path.
 
         Returns:
-                    MyFile or None
+            MyFile or None
 
         """
         if path is None:
@@ -85,7 +85,7 @@ class MyFile(NamedTuple):
         read the text
 
         Returns:
-                    str: Text if successful else ""
+            str: Text if successful else ""
 
         """
         return self.path.read_text() if self.path else ""
@@ -95,10 +95,10 @@ class MyFile(NamedTuple):
         Write data in the file
 
         Returns:
-                    int: status
-                    return EX_OK: 0 -> success
-                    return EX_CANTCREAT: 73 -> can't create the file
-                    return EX_IOERR: 74 -> write error
+            int: status
+            return EX_OK: 0 -> success
+            return EX_CANTCREAT: 73 -> can't create the file
+            return EX_IOERR: 74 -> write error
 
         """
         if not self.path:
@@ -121,7 +121,7 @@ class MyFile(NamedTuple):
         get path.resolve()
 
         Returns:
-                    str
+            str
 
         """
         return str(self.path.resolve()) if self.path else ""
@@ -131,7 +131,7 @@ class MyFile(NamedTuple):
         get path.absolute()
 
         Returns:
-                    str
+            str
 
         """
         if self.path:

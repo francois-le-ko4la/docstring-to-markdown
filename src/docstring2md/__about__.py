@@ -24,6 +24,7 @@ if __name__ == "__main__":
 __pkg_name__: str = "docstring2md"
 __version__: str = metadata.version(__pkg_name__)
 __author__: str = metadata.metadata(__pkg_name__)["Author"]
+__license__: str = metadata.metadata(__pkg_name__)["License"]
 __url__: str = metadata.metadata(__pkg_name__)["Project-URL"]
 __license__: str = metadata.metadata(__pkg_name__)["License"]
 __description__: str = metadata.metadata(__pkg_name__)["Summary"]
@@ -45,7 +46,3 @@ EXIT STATUS:
     - EX_CANTCREAT: 73 -> can not create the file
     - EX_IOERR: 74 -> write error
 """
-
-__all__ = ["__version__", "__author__", "__url__", "__license__",
-           "__script__", "__script_descr__", "__script_epilog__",
-           "__pkg_name__"]

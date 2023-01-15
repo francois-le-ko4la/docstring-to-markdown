@@ -18,7 +18,7 @@ from collections import deque
 from typing import Union
 
 from docstring2md.__config__ import LOGGING_MSG
-from docstring2md.ast_engine import ObjVisitor, NodeDef
+from docstring2md.ast_engine import ObjVisitor, NodeListType
 from docstring2md.file import MyFile
 from docstring2md.log import logger
 
@@ -28,27 +28,27 @@ class PytMod:
     Object in order to extract Python functions, class....
 
     Examples:
-                >>> mod = PytMod("oups...")
-                >>> mod.read()
-                Traceback (most recent call last):
-                ...
-                ModuleNotFoundError: No module named 'oups'
-                >>> mod = PytMod("json")
-                >>> mod.read()
-                >>> print(mod.node_lst[0].definition)
-                class JSONDecodeError(ValueError):
-                >>> mod = PytMod(__file__)
-                >>> mod.read()
-                >>> print(mod.node_lst[0].docstring)
-                This script is free software; you can redistribute it and/or
-                modify it under the terms of the GNU Lesser General Public
-                License as published by the Free Software Foundation; either
-                ...
-                MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-                >>> mod = PytMod('docstring2md')
-                >>> mod.read()
-                >>> print(mod.node_lst[0].definition)
-                def logger_ast(func: F) -> F:
+        >>> mod = PytMod("oups...")
+        >>> mod.read()
+        Traceback (most recent call last):
+        ...
+        ModuleNotFoundError: No module named 'oups'
+        >>> mod = PytMod("json")
+        >>> mod.read()
+        >>> print(mod.node_lst[0].definition)
+        class JSONDecodeError(ValueError):
+        >>> mod = PytMod(__file__)
+        >>> mod.read()
+        >>> print(mod.node_lst[0].docstring)
+        This script is free software; you can redistribute it and/or
+        modify it under the terms of the GNU Lesser General Public
+        License as published by the Free Software Foundation; either
+        ...
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+        >>> mod = PytMod('docstring2md')
+        >>> mod.read()
+        >>> print(mod.node_lst[0].definition)
+        def logger_ast(func: F) -> F:
 
     """
     __path: Union[str, None]
@@ -59,8 +59,7 @@ class PytMod:
         self.__path = ""
         self.__module = module_name
         self.__priv = priv
-        self.__node_lst: deque[
-            Union[NodeDef, None]] = deque()
+        self.__node_lst: NodeListType = deque()
         logger.debug(LOGGING_MSG.pytmod.debug, module_name)
 
     @property
@@ -74,7 +73,7 @@ class PytMod:
         return self.__module
 
     @property
-    def node_lst(self) -> deque[Union[NodeDef, None]]:
+    def node_lst(self) -> NodeListType:
         """
         returns all the docstrings.
 
@@ -85,13 +84,12 @@ class PytMod:
         return self.__node_lst
 
     @property
-    def pkg_main_docstring(self) \
-            -> deque[Union[NodeDef, None]]:
+    def pkg_main_docstring(self) -> NodeListType:
         """
         PKG only.
 
         Returns:
-                    str: Main docstring
+            str: Main docstring
 
         """
         if self.ismodule():
@@ -107,7 +105,7 @@ class PytMod:
         Else if the module name is a package => False
 
         Returns:
-                    bool: It exits True on success, and False otherwise.
+            bool: It exits True on success, and False otherwise.
 
         """
         if self.module.endswith(".py"):
@@ -119,7 +117,7 @@ class PytMod:
         Reads all files and store the result.
 
         Returns:
-                    None
+            None
 
         """
         logger.info(LOGGING_MSG.pytmod.info, self.module)
@@ -133,7 +131,7 @@ class PytMod:
 
     def __get_doc_from_module(
             self, module: str, module_docstring: bool = False) \
-            -> deque[Union[NodeDef, None]]:
+            -> NodeListType:
         # module name, for example json
         source = MyFile.set_path(module)
         # create an ObjVisitor to search in the module
@@ -143,6 +141,7 @@ class PytMod:
         )
         # Visit all module in the package
         doc.visit(doc.get_tree(source.read()))
+
         return doc.node_lst
 
     def __get_module_list(self, package: str) -> list[str]:
@@ -162,9 +161,8 @@ class PytMod:
                     module.append(f"{imp_pkg.__path__[0]}/{modname}.py")
         return module
 
-    def __get_doc_from_pkg(self, package: str) \
-            -> deque[Union[NodeDef, None]]:
-        node_lst: deque[Union[NodeDef, None]] = deque()
+    def __get_doc_from_pkg(self, package: str) -> NodeListType:
+        node_lst: NodeListType = deque()
         modules = self.__get_module_list(package)
         logger.debug(LOGGING_MSG.pytmod_script.debug, str(modules))
         for module in modules:

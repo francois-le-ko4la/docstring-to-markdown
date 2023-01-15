@@ -4,7 +4,8 @@ from typing import NamedTuple
 class DocString2MDOptions(NamedTuple):
     toml: MyFile
     uml: MyFile
-    export_file: MyFile
+    todo: MyFile
+    output: MyFile
     toc: bool
     private_def: bool
 

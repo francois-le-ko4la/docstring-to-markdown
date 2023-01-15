@@ -47,9 +47,9 @@ def define_logfile(path: str) -> None:
     This function set up the log to push log events in the report file.
 
     Args:
-                path:str    /path/to/logfile
+        path:str    /path/to/logfile
     Returns:
-                None
+        None
 
     """
     log_formatter = logging.Formatter(LOGGING_SETUP.file_format)

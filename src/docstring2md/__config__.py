@@ -20,10 +20,10 @@ class Const(NamedTuple):
     """Constants"""
     docstring_empty: str = "Docstring empty"
     head_tag: str = "#"
-    dev_head: str = "## Dev notes"
-    dev_toml: str = "### TOML file:"
-    dev_uml: str = "### UML Diagram:"
-    dev_obj: str = "### Objects:"
+    dev_head: str = "# Dev notes"
+    dev_toml: str = "## TOML file:"
+    dev_uml: str = "## UML Diagram:"
+    dev_obj: str = "## Objects:"
     decorator_tag: str = '@'
     function_tag: str = 'def '
     property_tag: str = '@Property'
@@ -45,8 +45,11 @@ class Tag(NamedTuple):
     end_str: str = "$"
     end_strh: str = ":$"
     beg_b: str = "<b>"
+    beg_title: str = "#"
+    end_title: str = ":"
     end_b: str = "</b>"
     end_bh: str = ":</b>"
+    space: str = " "
     tab: str = "    "
     html_tab: str = "&nbsp;" * 15 + "  "
     cr: str = "\n"

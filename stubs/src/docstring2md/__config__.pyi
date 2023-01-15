@@ -26,6 +26,8 @@ class Tag(NamedTuple):
     end_str: str
     end_strh: str
     beg_b: str
+    beg_title: str
+    end_title: str
     end_b: str
     end_bh: str
     tab: str

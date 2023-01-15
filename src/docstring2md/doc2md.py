@@ -21,18 +21,21 @@ from docstring2md.mod import PytMod
 
 class DocString2MDOptions(NamedTuple):
     """
-    This NamedTuple organizes all options with one NamedTuple
-        export_file (str): /path/to/doc/file - None by default
-        runtime_file (str): /path/to/runtime/file - None by default
-        requirements_file (str): /path/to/requiremnt/file - None by default
-        uml_file (str): /path/to/uml/file - None by default
+    This NamedTuple organizes all options with one NamedTuple:
+
+    Attributes:
+        toml (MyFile): MyFile.set_path(/path/to/toml/file.toml)
+        uml (MyFile): MyFile.set_path(/path/to/mermaid/file.mmd)
+        todo (MyFile): MyFile.set_path(/path/to/todo/file.md)
+        output (MyFile): MyFile.set_path(/path/to/output/file) (README.md)
         toc (bool): True -> get a table of content
-        priv (bool): True -> get private function
+        private_def (bool): True -> get private function
 
     """
     toml: MyFile
     uml: MyFile
-    export_file: MyFile
+    todo: MyFile
+    output: MyFile
     toc: bool
     private_def: bool
 
@@ -43,22 +46,23 @@ class DocString2MD:
     Class DocString2MD : export Google docstring to MD File.
 
     Examples:
-                >>> options: DocString2MDOptions = DocString2MDOptions(
-                ...         toml=MyFile.set_path(None),
-                ...         uml=MyFile.set_path(None),
-                ...         export_file=MyFile.set_path(None),
-                ...         toc=False,
-                ...         private_def=False)
-                >>> doc = DocString2MD("oups", options)
-                >>> doc.import_module()
-                72
-                >>> doc = DocString2MD("docstring2md", options)
-                >>> doc.import_module()
-                0
-                >>> result = doc.get_doc()
-                >>> result = result.split("\\n")
-                >>> print(result[0])
-                # docstring2md
+        >>> options: DocString2MDOptions = DocString2MDOptions(
+        ...         toml=MyFile.set_path(None),
+        ...         uml=MyFile.set_path(None),
+        ...         output=MyFile.set_path(None),
+        ...         todo=MyFile.set_path(None),
+        ...         toc=False,
+        ...         private_def=False)
+        >>> doc = DocString2MD("oups", options)
+        >>> doc.import_module()
+        72
+        >>> doc = DocString2MD("docstring2md", options)
+        >>> doc.import_module()
+        0
+        >>> result = doc.get_doc()
+        >>> result = result.split("\\n")
+        >>> print(result[0])
+        # docstring2md
     """
     __options: DocString2MDOptions
     __my_module: PytMod
@@ -66,10 +70,10 @@ class DocString2MD:
 
     def __init__(self, module_name: str, options: DocString2MDOptions) -> None:
         """Init the class
-        This function define default attributs.
+        This function define default attributes.
 
         Args:
-                    module_name (str): /path/to/module/ or <module_name>
+            module_name (str): /path/to/module/ or <module_name>
 
         """
         self.__options = options
@@ -81,9 +85,9 @@ class DocString2MD:
         It exits 0 on success, and >0 if an error occurs.
 
         Returns:
-                    int: status
-                    return EX_OK: 0 -> success
-                    return EX_OSFILE: 72 -> Module not found
+            int: status
+            return EX_OK: 0 -> success
+            return EX_OSFILE: 72 -> Module not found
 
         """
         try:
@@ -94,7 +98,11 @@ class DocString2MD:
         # module / README
         _output: list = []
         if self.__my_module.pkg_main_docstring[0]:
-            _output.append(self.__my_module.pkg_main_docstring[0].docstring)
+            _output.append(self.__my_module.pkg_main_docstring[0].get_summary())
+
+        # _TODO
+        if self.__options.todo.path and self.__options.todo.exists:
+            _output.extend([self.__options.todo.read()])
 
         _output.extend([CONST.dev_head])
         # TOML
@@ -108,6 +116,7 @@ class DocString2MD:
 
         # children
         _output.append(f"{CONST.dev_obj}{TAG.cr}")
+
         if self.__options.toc:
             _output.extend([elem.get_toc_elem() for elem in
                             self.__my_module.node_lst if elem is not None])
@@ -122,7 +131,7 @@ class DocString2MD:
         """Returns the documentation
 
         Returns:
-                    str: doc
+            str: doc
 
         """
         return self.__output
@@ -133,17 +142,17 @@ class DocString2MD:
         It exits 0 on success, and >0 if an error occurs.
 
         args:
-                    None
+            None
 
         Returns:
-                    int: status
-                    return EX_OK: 0 -> success
-                    return EX_CANTCREAT: 73 -> can't create the file
-                    return EX_IOERR: 74 -> write error
+            int: status
+            return EX_OK: 0 -> success
+            return EX_CANTCREAT: 73 -> can't create the file
+            return EX_IOERR: 74 -> write error
 
         """
-        if self.__options.export_file:
-            return self.__options.export_file.write(self.__output)
+        if self.__options.output:
+            return self.__options.output.write(self.__output)
         print(self.__output)
         return EX_OK
 
