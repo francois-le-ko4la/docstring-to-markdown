@@ -40,9 +40,9 @@ ecosystem.
 Use the script:
 ```
 Usage: export_docstring2md [-h] [--version] [--debug | --quiet]
-                           [--logfile LOGFILE] [--toc] [--private-def] -p
-                           PACKAGE [-o OUTPUT_FILE] [-t TOML_FILE]
-                           [-mmd MERMAID_FILE]
+                           [--logfile LOGFILE] [--toc] [--private-def]
+                           -p PACKAGE [-o OUTPUT_FILE] [-tml TOML_FILE]
+                           [-td TODO_FILE] [-mmd MERMAID_FILE]
 
 This script is provided by docstring2md package.
 It exports google docstrings from python module to a Markdown file in order
@@ -59,19 +59,21 @@ Options:
 
 Required Arguments:
   -p, --package PACKAGE
-                        define the /path/to/the/package or <package_name>
+                        define the /path/to/the/package or
+                        <package_name>
 
 Optional Arguments:
   -o, --output-file OUTPUT_FILE
                         /path/to/output/file (README.md)
-  -t, --toml-file TOML_FILE
-                        /path/to/runtime/file
+  -tml, --toml-file TOML_FILE
+                        /path/to/toml/file.toml
+  -td, --todo-file TODO_FILE
+                        /path/to/todo/file.md
   -mmd, --mermaid-file MERMAID_FILE
                         /path/to/mermaid/file.mmd
 
 COMPATIBILITY:
     Python 3.7+ - https://www.python.org/
-
 EXIT STATUS:
     This script exits 0 on success, and >0 if an error occurs:
     - EX_OK: 0 -> success
