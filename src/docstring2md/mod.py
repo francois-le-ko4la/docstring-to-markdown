@@ -36,7 +36,7 @@ class PytMod:
         >>> mod = PytMod("json")
         >>> mod.read()
         >>> print(mod.node_lst[0].definition)
-        class JSONDecodeError(ValueError):
+        def dump(obj, fp, **kw):
         >>> mod = PytMod(__file__)
         >>> mod.read()
         >>> print(mod.node_lst[0].docstring)
@@ -48,7 +48,7 @@ class PytMod:
         >>> mod = PytMod('docstring2md')
         >>> mod.read()
         >>> print(mod.node_lst[0].definition)
-        def logger_ast(func: F) -> F:
+        class Const(NamedTuple):
 
     """
     __path: Union[str, None]
@@ -154,7 +154,7 @@ class PytMod:
         # Fix __init__ (walk_packages issue)
         init_file = MyFile.set_path(f"{imp_pkg.__path__[0]}/__init__.py")
         if init_file.exists:
-            module = [init_file.path]
+            module = [str(init_file.path)]
         # use walk_packages to list all modules
         for _importer, modname, ispkg in pkgutil.walk_packages(
                 imp_pkg.__path__):
@@ -175,7 +175,7 @@ class PytMod:
         logger.debug(LOGGING_MSG.pytmod_script.debug, str(modules))
         # read all modules and get all nodes
         for module in modules:
-            logger.info(LOGGING_MSG.pytmod_extract.info, str(module))
+            logger.info(LOGGING_MSG.pytmod_extract.info, module)
             node_lst += self.__get_doc_from_module(module)
         return node_lst
 

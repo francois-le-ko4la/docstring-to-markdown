@@ -88,6 +88,7 @@ Use:
 
 Setup:
     - User:
+
     Get the package:
     ```shell
     git clone https://github.com/francois-le-ko4la/docstring-to-markdown.git
@@ -102,6 +103,7 @@ Setup:
     ```
 
     - Dev environment:
+
     Get the package:
     ```shell
     git clone https://github.com/francois-le-ko4la/docstring-to-markdown.git

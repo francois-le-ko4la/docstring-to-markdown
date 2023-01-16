@@ -85,6 +85,7 @@ EXIT STATUS:
 
 # Setup:
 - User:
+
 Get the package:
 ```shell
 git clone https://github.com/francois-le-ko4la/docstring-to-markdown.git
@@ -99,6 +100,7 @@ make install
 ```
 
 - Dev environment:
+
 Get the package:
 ```shell
 git clone https://github.com/francois-le-ko4la/docstring-to-markdown.git
@@ -1791,7 +1793,7 @@ Object in order to extract Python functions, class....
     >>> mod = PytMod("json")
     >>> mod.read()
     >>> print(mod.node_lst[0].definition)
-    class JSONDecodeError(ValueError):
+    def dump(obj, fp, **kw):
     >>> mod = PytMod(__file__)
     >>> mod.read()
     >>> print(mod.node_lst[0].docstring)
@@ -1803,7 +1805,7 @@ Object in order to extract Python functions, class....
     >>> mod = PytMod('docstring2md')
     >>> mod.read()
     >>> print(mod.node_lst[0].definition)
-    def logger_ast(func: F) -> F:
+    class Const(NamedTuple):
 
 
 ```
