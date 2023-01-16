@@ -47,4 +47,10 @@ example:
 	@pyreverse json -ASmy -o mmd -d example
 	@export_docstring2md -p json --output-file example/README.md -mmd example/classes.mmd --private-def --toc
 
-.PHONY: default init dev install uninstall doc stubs test example
+publish:
+	@pytest --pyargs $(PACKAGE_NAME)
+	@git add .
+	@git commit
+	@git push
+
+.PHONY: default init dev install uninstall doc stubs test example publish

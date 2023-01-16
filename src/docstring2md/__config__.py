@@ -81,8 +81,7 @@ class LoggingSetup(NamedTuple):
     @classmethod
     def set_logfile(cls, path: str) -> "LoggingSetup":
         """ This function create the LoggingSetup object with the log file's
-        path,
-        file's path is initialized by default.
+        path.
 
         Args:
             path: The file's path.
@@ -99,7 +98,15 @@ class LoggingSetup(NamedTuple):
 
 
 class LoggingMSG(NamedTuple):
-    """Messages with different sev
+    """
+    This call define Messages with different sev.
+
+    Attributes:
+        info (str): message for info ("" by default)
+        warning (str): message for warning ("" by default)
+        error (str): message for error ("" by default)
+        debug (str): message for debug ("" by default)
+
 
     Examples:
         >>> logfile = LoggingMSG(info="Log file used: %s")

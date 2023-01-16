@@ -604,8 +604,7 @@ def LoggingSetup.set_logfile(cls, path: str) -> LoggingSetup:
 <pre>
 
 This function create the LoggingSetup object with the log file's
-path,
-file's path is initialized by default.
+path.
 
 <b>Args:</b>
     path: The file's path.
@@ -630,7 +629,14 @@ class LoggingMSG(NamedTuple):
 ```
 <pre>
 
-Messages with different sev
+This call define Messages with different sev.
+
+<b>Attributes:</b>
+    info (str): message for info ("" by default)
+    warning (str): message for warning ("" by default)
+    error (str): message for error ("" by default)
+    debug (str): message for debug ("" by default)
+
 
 </pre>
 <b>Examples:</b>
