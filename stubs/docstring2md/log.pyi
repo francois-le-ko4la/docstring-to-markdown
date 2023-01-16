@@ -1,5 +1,5 @@
 import logging
-from docstring2md.__config__ import LOGGING_MSG as LOGGING_MSG, LOGGING_SETUP as LOGGING_SETUP
+from docstring2md.__config__ import LOGGING_SETUP as LOGGING_SETUP, LOG_MSG as LOG_MSG
 
 logger: logging.Logger
 

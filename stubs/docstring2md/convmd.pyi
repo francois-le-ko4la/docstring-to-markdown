@@ -1,4 +1,4 @@
-from docstring2md.__config__ import TAG as TAG
+from docstring2md.__config__ import Tag as Tag
 from typing import Any, Callable, TypeVar
 
 F = TypeVar('F', bound=Callable[..., Any])
