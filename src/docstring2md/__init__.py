@@ -132,8 +132,6 @@ License:
 """
 from docstring2md.__about__ import __version__, __author__, \
     __license__, __script_descr__, __script_epilog__
-from docstring2md.__config__ import CHK_PYT_MIN, LOGGING_MSG, ARG_STYLE, \
-    CONST, ARG_HIGHLIGHT, EX_CONFIG, EX_OK
 from docstring2md.doc2md import DocString2MD, DocString2MDOptions
 from docstring2md.file import MyFile
 from docstring2md.log import logger, define_logfile

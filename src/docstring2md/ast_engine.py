@@ -20,12 +20,12 @@ from collections import deque
 from functools import wraps
 from typing import TypeVar, NamedTuple, Optional, Union, Callable, Any, cast
 
-from docstring2md.__config__ import LOGGING_MSG, TAG
+from docstring2md.__config__ import LOG_MSG, Tag
 from docstring2md.convmd import ConvMD
 from docstring2md.log import logger
 
 F = TypeVar('F', bound=Callable[..., Any])
-ASTNode = Union[ast.Module, ast.ClassDef, ast.FunctionDef]
+ASTVisitedNode = Union[ast.Module, ast.ClassDef, ast.FunctionDef]
 ASTClassFunc = Union[ast.ClassDef, ast.FunctionDef]
 
 
@@ -72,7 +72,7 @@ class NodeLink(NamedTuple):
 
     """
     level: int
-    parent: Optional[ASTNode]
+    parent: Optional[ASTVisitedNode]
 
 
 class ModuleDef(NamedTuple):
@@ -99,8 +99,9 @@ class ModuleDef(NamedTuple):
         return self.get_docstring()
 
     @ConvMD.dedent()
-    @ConvMD.repl_beg_end(TAG.beg_str, TAG.end_strh,
-                         TAG.tab + TAG.beg_title + TAG.space, TAG.end_title)
+    @ConvMD.repl_beg_end(Tag.BEG_STR.value, Tag.END_STRH.value,
+                         Tag.TAB.value + Tag.BEG_TITLE.value + Tag.SPACE.value,
+                         Tag.END_TITLE.value)
     def get_docstring(self) -> str:
         """
         Generate the module's Docstring with MD Tag.
@@ -136,8 +137,8 @@ class NodeDef(NamedTuple):
             str
 
         """
-        return f"{self.get_title()}{TAG.cr}{self.get_definition()}{TAG.cr}" + \
-            f"{self.get_docstring()}"
+        return f"{self.get_title()}{Tag.CR.value}{self.get_definition()}" + \
+               f"{Tag.CR.value}{self.get_docstring()}"
 
     def get_toc_elem(self) -> str:
         """
@@ -163,7 +164,7 @@ class NodeDef(NamedTuple):
         """
         return f"{'#' * (self.level + 2)} {self.title}"
 
-    @ConvMD.add_tag(TAG.beg_py, TAG.end_py)
+    @ConvMD.add_tag(Tag.BEG_PY.value, Tag.BEG_END_CO.value)
     def get_definition(self) -> str:
         """
         Return a TOC entry for this node
@@ -174,9 +175,10 @@ class NodeDef(NamedTuple):
         """
         return self.definition
 
-    @ConvMD.repl_beg_end(TAG.beg_str, TAG.end_strh, TAG.beg_b, TAG.end_bh)
+    @ConvMD.repl_beg_end(Tag.BEG_STR.value, Tag.END_STRH.value,
+                         Tag.BEG_B.value, Tag.END_BH.value)
     @ConvMD.colorize_examples()
-    @ConvMD.add_tag(TAG.cr, TAG.cr)
+    @ConvMD.add_tag(Tag.CR.value, Tag.CR.value)
     def get_docstring(self) -> str:
         """
         Generate the node's Docstring with MD Tag.
@@ -232,7 +234,7 @@ class ObjVisitor(ast.NodeVisitor):
         super(ast.NodeVisitor, self).__init__()
         self.__module_docstring = module_docstring
         self.__private_def = private_def
-        self.__link_lst: dict[ASTNode, NodeLink]
+        self.__link_lst: dict[ASTVisitedNode, NodeLink]
         self.__node_lst: NodeListType = deque()
 
     @property
@@ -256,11 +258,11 @@ class ObjVisitor(ast.NodeVisitor):
 
     @logger_ast
     def __set_level(
-            self, node: ASTNode, level: int = 0,
-            parent: Optional[ASTNode] = None)\
+            self, node: ASTVisitedNode, level: int = 0,
+            parent: Optional[ASTVisitedNode] = None)\
             -> None:
         if level == 0:
-            logger.info(LOGGING_MSG.node_link_analysis_beg.info)
+            logger.info(LOG_MSG.node_link_analysis_beg.info)
             self.__link_lst = {}
         self.__link_lst[node] = NodeLink(level=level, parent=parent)
 
@@ -268,7 +270,7 @@ class ObjVisitor(ast.NodeVisitor):
             if isinstance(child, (ast.ClassDef, ast.FunctionDef)):
                 self.__set_level(child, (level + 1), node)
         if level == 0:
-            logger.info(LOGGING_MSG.node_link_analysis_end.info)
+            logger.info(LOG_MSG.node_link_analysis_end.info)
 
     # -------------------------------------------------------------------------
     # Generic
@@ -283,7 +285,7 @@ class ObjVisitor(ast.NodeVisitor):
 
     @staticmethod
     @logger_ast
-    def __get_docstring(node: ASTNode) -> str:
+    def __get_docstring(node: ASTVisitedNode) -> str:
         return str(ast.get_docstring(node))
 
     @staticmethod
@@ -303,10 +305,11 @@ class ObjVisitor(ast.NodeVisitor):
     def __get_value_from_str(node: ast.Str) -> str:
         return node.s
 
-    @staticmethod
-    def __get_value_from_attribute(node: ast.Attribute) -> str:
+    def __get_value_from_attribute(self, node: ast.Attribute) -> str:
         return f"{node.value.id}.{node.attr}" \
-            if isinstance(node.value, ast.Name) else ""
+            if isinstance(node.value, ast.Name) \
+            else self.__get_value_from_node(node.value) \
+            if isinstance(node.value, ast.Attribute) else ""
 
     @staticmethod
     def __get_value_from_unary(node: ast.UnaryOp) -> str:
@@ -366,9 +369,8 @@ class ObjVisitor(ast.NodeVisitor):
             if type(node) in methode_by_type else ""
 
         if result == "":
-            logger.warning(
-                LOGGING_MSG.unknown_type_of_node.warning, str(ast.dump(node)))
-
+            logger.warning(LOG_MSG.unknown_type_of_node.warning,
+                           str(ast.dump(node)))
         return result
 
     # -------------------------------------------------------------------------
@@ -433,9 +435,10 @@ class ObjVisitor(ast.NodeVisitor):
 
     @logger_ast
     def __cla_get_inheritance(self, node: ast.ClassDef) -> str:
-        return TAG.coma.join([self.__get_value_from_node(base)
-                              for base in node.bases
-                              if isinstance(base, (ast.Name, ast.Attribute))])
+        return Tag.COMA.value.join([self.__get_value_from_node(base)
+                                    for base in node.bases
+                                    if isinstance(base,
+                                                  (ast.Name, ast.Attribute))])
 
     @logger_ast
     def __cla_get_docstring(self, node: ast.ClassDef) -> str:
@@ -479,9 +482,9 @@ class ObjVisitor(ast.NodeVisitor):
 
     @logger_ast
     def __func_get_def(self, node: ast.FunctionDef) -> str:
-        deco: str = TAG.cr.join(self.__func_get_decorator(node)) + TAG.cr \
-            if (hasattr(node, "decorator_list")
-                and len(node.decorator_list) > 0) else ""
+        deco: str = Tag.CR.value.join(self.__func_get_decorator(node)) + \
+                    Tag.CR.value if (hasattr(node, "decorator_list")
+                                     and len(node.decorator_list) > 0) else ""
         return f"{deco}def {self.__get_fullname(node)}" + \
             f"({self.__func_get_args(node)}){self.__func_get_return(node)}:"
 
@@ -503,7 +506,7 @@ class ObjVisitor(ast.NodeVisitor):
                 f"**{node.args.kwarg.arg}" +
                 f"{self.__func_get_args_annotation(node.args.kwarg)}")
 
-        result: str = f"{TAG.coma.join(argument)}"
+        result: str = f"{Tag.COMA.value.join(argument)}"
         return result
 
     @logger_ast
@@ -539,17 +542,17 @@ class ObjVisitor(ast.NodeVisitor):
                 if isinstance(dec.func, (ast.Attribute, ast.Name)):
                     name = self.__get_value_from_node(dec.func)
                 if hasattr(dec, "args"):
-                    name += self.__func_get_decorator_args(dec)
+                    name += f"({self.__func_get_decorator_args(dec)})"
             decorator.append("@" + name)
         return decorator
 
     @logger_ast
     def __func_get_decorator_args(self, node: ast.Call) -> str:
         # node = Args from Call node
-        return TAG.coma.join([self.__get_value_from_node(attribute)
-                              for attribute in node.args
-                              if isinstance(attribute, (ast.Name,
-                                                        ast.Attribute))])
+        return Tag.COMA.value.join([self.__get_value_from_node(attribute)
+                                    for attribute in node.args
+                                    if isinstance(attribute, (ast.Name,
+                                                              ast.Attribute))])
 
     @logger_ast
     def __func_get_return(self, node: ast.FunctionDef) -> str:

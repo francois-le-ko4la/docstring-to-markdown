@@ -15,8 +15,7 @@ from __future__ import annotations
 from pathlib import Path
 from typing import NamedTuple, Optional
 
-from docstring2md.__config__ import EX_OK, EX_OSFILE, EX_IOERR, EX_CANTCREAT, \
-    LOGGING_SETUP, LOGGING_MSG
+from docstring2md.__config__ import ExitStatus,  LOGGING_SETUP, LOG_MSG
 from docstring2md.log import logger
 
 
@@ -32,12 +31,12 @@ class MyFile(NamedTuple):
     Examples:
         >>> data_file = MyFile.set_path("lorem")
         >>> data_file.status
-        72
+        <ExitStatus.EX_OSFILE: 72>
         >>> fstab = MyFile.set_path("/etc/fstab")
         >>> fstab.path.stem
         'fstab'
         >>> fstab
-        MyFile(path=PosixPath('/etc/fstab'), exists=False, status=72)
+        MyFile(path=PosixPath(...), exists=False, status=ExitStatus.EX_OSFILE)
         >>> fstab.absolute()
         '/etc/fstab'
         >>> # pathlib to run the test everywhere
@@ -55,7 +54,7 @@ class MyFile(NamedTuple):
     """
     path: Optional[Path]
     exists: bool
-    status: int
+    status: ExitStatus
 
     @classmethod
     def set_path(cls, path: Optional[str]) -> MyFile:
@@ -70,9 +69,10 @@ class MyFile(NamedTuple):
 
         """
         if path is None:
-            return cls(path=None, exists=False, status=EX_CANTCREAT)
+            return cls(path=None, exists=False, status=ExitStatus.EX_CANTCREAT)
         _exists: bool = Path(path).exists()
-        _status: int = EX_OK if _exists else EX_OSFILE
+        _status: ExitStatus = ExitStatus.EX_OK if _exists else \
+            ExitStatus.EX_OSFILE
         return cls(path=Path(path), exists=_exists, status=_status)
 
     def __repr__(self) -> str:
@@ -90,7 +90,7 @@ class MyFile(NamedTuple):
         """
         return self.path.read_text() if self.path else ""
 
-    def write(self, data: str) -> int:
+    def write(self, data: str) -> ExitStatus:
         """
         Write data in the file
 
@@ -102,19 +102,19 @@ class MyFile(NamedTuple):
 
         """
         if not self.path:
-            return EX_CANTCREAT
+            return ExitStatus.EX_CANTCREAT
         try:
             with open(self.path, 'w', encoding=LOGGING_SETUP.encoding) as file:
                 try:
                     file.write(data)
                 except (IOError, OSError):
-                    logger.error(LOGGING_MSG.io_err.error)
-                    return EX_IOERR
+                    logger.error(LOG_MSG.io_err.error)
+                    return ExitStatus.EX_IOERR
         except (FileNotFoundError, PermissionError, OSError):
-            logger.error(LOGGING_MSG.file_not_found.error)
-            return EX_CANTCREAT
-        logger.info(LOGGING_MSG.write_doc.info)
-        return EX_OK
+            logger.error(LOG_MSG.file_not_found.error)
+            return ExitStatus.EX_CANTCREAT
+        logger.info(LOG_MSG.write_doc.info)
+        return ExitStatus.EX_OK
 
     def resolve(self) -> str:
         """

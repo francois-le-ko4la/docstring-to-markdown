@@ -17,7 +17,7 @@ import os
 
 from rich.logging import RichHandler
 
-from docstring2md.__config__ import LOGGING_MSG, LOGGING_SETUP
+from docstring2md.__config__ import LOG_MSG, LOGGING_SETUP
 
 if __name__ == "__main__":
     raise Exception("Do not start this script manually !")
@@ -59,4 +59,4 @@ def define_logfile(path: str) -> None:
     file_handler = logging.FileHandler(path)
     file_handler.setFormatter(log_formatter)
     logger.addHandler(file_handler)
-    logger.info(LOGGING_MSG.logfile.info, path)
+    logger.info(LOG_MSG.logfile.info, path)

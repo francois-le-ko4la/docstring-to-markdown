@@ -29,5 +29,8 @@
 - [X] Include import in init file
 - [X] Improve the docstring module (MD format is not standard ^^)
 - [X] Move the todo from init to a dedicated file (new option)
+- [X] Use Enum class to define ExitStatus, Const and Tag
+- [X] Fix an issue on Atttributes management
+- [X] Fix decorator argument : add ()
 - [ ] Test
 - [ ] Release 0.5.0

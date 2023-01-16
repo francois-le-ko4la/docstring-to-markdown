@@ -14,7 +14,7 @@ from __future__ import annotations
 
 from typing import NamedTuple
 
-from docstring2md.__config__ import CONST, TAG, EX_OK, EX_OSFILE
+from docstring2md.__config__ import Const, Tag, ExitStatus
 from docstring2md.file import MyFile
 from docstring2md.mod import PytMod
 from docstring2md.ast_engine import NodeDef
@@ -56,10 +56,10 @@ class DocString2MD:
         ...         private_def=False)
         >>> doc = DocString2MD("oups", options)
         >>> doc.import_module()
-        72
+        <ExitStatus.EX_OSFILE: 72>
         >>> doc = DocString2MD("docstring2md", options)
         >>> doc.import_module()
-        0
+        <ExitStatus.EX_OK: 0>
         >>> result = doc.get_doc()
         >>> result = result.split("\\n")
         >>> result[0]
@@ -80,7 +80,7 @@ class DocString2MD:
         self.__options = options
         self.__my_module = PytMod(module_name, options.private_def)
 
-    def import_module(self) -> int:
+    def import_module(self) -> ExitStatus:
         """
         Import the module.
         It exits 0 on success, and >0 if an error occurs.
@@ -94,7 +94,7 @@ class DocString2MD:
         try:
             self.__my_module.read()
         except ModuleNotFoundError:
-            return EX_OSFILE
+            return ExitStatus.EX_OSFILE
 
         # module / README
         _output: list[str] = []
@@ -106,18 +106,18 @@ class DocString2MD:
         if self.__options.todo.path and self.__options.todo.exists:
             _output.extend([self.__options.todo.read()])
 
-        _output.extend([CONST.dev_head])
+        _output.extend([Const.DEV_HEAD.value])
         # TOML
         if self.__options.toml.path and self.__options.toml.exists:
-            _output.extend([CONST.dev_toml, TAG.beg_toml,
-                            self.__options.toml.read(), TAG.end_co])
+            _output.extend([Const.DEV_TOML.value, Tag.BEG_TOML.value,
+                            self.__options.toml.read(), Tag.BEG_END_CO.value])
         # UML
         if self.__options.uml.path and self.__options.uml.exists:
-            _output.extend([CONST.dev_uml, TAG.beg_mermaid,
-                            self.__options.uml.read(), TAG.end_co])
+            _output.extend([Const.DEV_UML.value, Tag.BEG_MERMAID.value,
+                            self.__options.uml.read(), Tag.BEG_END_CO.value])
 
         # children
-        _output.append(f"{CONST.dev_obj}{TAG.cr}")
+        _output.append(f"{Const.DEV_OBJ.value}{Tag.CR.value}")
 
         if self.__options.toc:
             _output.extend([elem.get_toc_elem() for elem in
@@ -127,8 +127,8 @@ class DocString2MD:
         _output.extend([elem.get_summary() for elem in
                         self.__my_module.node_lst if elem is not None])
 
-        self.__output = TAG.cr.join(_output)
-        return EX_OK
+        self.__output = Tag.CR.value.join(_output)
+        return ExitStatus.EX_OK
 
     def get_doc(self) -> str:
         """Returns the documentation
@@ -139,7 +139,7 @@ class DocString2MD:
         """
         return self.__output
 
-    def writedoc(self) -> int:
+    def writedoc(self) -> ExitStatus:
         """
         Writes the doc: screen or files.
         It exits 0 on success, and >0 if an error occurs.
@@ -157,7 +157,7 @@ class DocString2MD:
         if self.__options.output:
             return self.__options.output.write(self.__output)
         print(self.__output)
-        return EX_OK
+        return ExitStatus.EX_OK
 
 
 if __name__ == "__main__":

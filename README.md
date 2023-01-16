@@ -156,6 +156,9 @@ This package is distributed under the [GPLv3 license](./LICENSE)
 - [X] Include import in init file
 - [X] Improve the docstring module (MD format is not standard ^^)
 - [X] Move the todo from init to a dedicated file (new option)
+- [X] Use Enum class to define ExitStatus, Const and Tag
+- [X] Fix an issue on Atttributes management
+- [X] Fix decorator argument : add ()
 - [ ] Test
 - [ ] Release 0.5.0
 
@@ -238,7 +241,6 @@ strict_equality = true
 
 
 ```
-
 ## UML Diagram:
 
 ```mermaid
@@ -252,7 +254,7 @@ classDiagram
     toml
     uml
   }
-  class LoggingMSG {
+  class EventMSG {
     debug
     error
     info
@@ -265,13 +267,16 @@ classDiagram
     absolute() str
     read() str
     resolve() str
-    set_path(path: Union[str, None]) MyFile
-    write(data: str) int
+    set_path(path: Optional[str]) MyFile
+    write(data: str) ExitStatus
   }
   class NodeVisitor {
     generic_visit(node)
     visit(node)
     visit_Constant(node)
+  }
+  class ExitStatus {
+    name
   }
   class PytMod {
     module
@@ -280,26 +285,23 @@ classDiagram
     ismodule() bool
     read() None
   }
-  class Const {
-    coma : str
-    decorator_tag : str
-    dev_head : str
-    dev_obj : str
-    dev_toml : str
-    dev_uml : str
-    docstring_empty : str
-    dot : str
-    function_tag : str
-    head_tag : str
-    property_tag : str
+  class Enum {
+    name()
+    value()
   }
-  class LoggingMSG {
+  class Const {
+    name
+  }
+  class EventMSG {
     debug : str
     error : str
     info : str
     warning : str
   }
-  class LoggingMSGCollection {
+  class ExitStatus {
+    name
+  }
+  class LogMessages {
     args
     dump
     elapse_time
@@ -330,29 +332,7 @@ classDiagram
     set_logfile(path: str) 'LoggingSetup'
   }
   class Tag {
-    beg_b : str
-    beg_co : str
-    beg_mermaid : str
-    beg_pre : str
-    beg_py : str
-    beg_str : str
-    beg_title : str
-    beg_toml : str
-    coma : str
-    cr : str
-    end_b : str
-    end_bh : str
-    end_co : str
-    end_pre : str
-    end_py : str
-    end_str : str
-    end_strh : str
-    end_title : str
-    html_cr : str
-    html_tab : str
-    quote : str
-    space : str
-    tab : str
+    name
   }
   class ModuleDef {
     docstring : str
@@ -372,7 +352,7 @@ classDiagram
   }
   class NodeLink {
     level : int
-    parent : Optional[ASTNode]
+    parent : Optional[ASTVisitedNode]
   }
   class ObjVisitor {
     node_lst
@@ -391,8 +371,8 @@ classDiagram
   }
   class DocString2MD {
     get_doc() str
-    import_module() int
-    writedoc() int
+    import_module() ExitStatus
+    writedoc() ExitStatus
   }
   class DocString2MDOptions {
     output
@@ -404,13 +384,13 @@ classDiagram
   }
   class MyFile {
     exists : bool
-    path : Union[Path, None]
-    status : int
+    path : Optional[Path]
+    status
     absolute() str
     read() str
     resolve() str
-    set_path(path: Union[str, None]) MyFile
-    write(data: str) int
+    set_path(path: Optional[str]) MyFile
+    write(data: str) ExitStatus
   }
   class PytMod {
     module
@@ -421,11 +401,13 @@ classDiagram
   }
   class NamedTuple {
   }
-  Const --|> NamedTuple
-  LoggingMSG --|> NamedTuple
-  LoggingMSGCollection --|> NamedTuple
+  ExitStatus --|> Enum
+  Const --|> Enum
+  EventMSG --|> NamedTuple
+  ExitStatus --|> Enum
+  LogMessages --|> NamedTuple
   LoggingSetup --|> NamedTuple
-  Tag --|> NamedTuple
+  Tag --|> Enum
   ModuleDef --|> NamedTuple
   NodeDef --|> NamedTuple
   NodeLink --|> NamedTuple
@@ -434,43 +416,44 @@ classDiagram
   MyFile --|> NamedTuple
   DocString2MDOptions --* DocString2MD : __options
   DocString2MDOptions --* DocString2MD : __options
-  LoggingMSG --* LoggingMSGCollection : logfile
-  LoggingMSG --* LoggingMSGCollection : args
-  LoggingMSG --* LoggingMSGCollection : python
-  LoggingMSG --* LoggingMSGCollection : dump
-  LoggingMSG --* LoggingMSGCollection : result
-  LoggingMSG --* LoggingMSGCollection : elapse_time
-  LoggingMSG --* LoggingMSGCollection : pytmod
-  LoggingMSG --* LoggingMSGCollection : pytmod_mod
-  LoggingMSG --* LoggingMSGCollection : pytmod_script
-  LoggingMSG --* LoggingMSGCollection : pytmod_extract
-  LoggingMSG --* LoggingMSGCollection : new_module
-  LoggingMSG --* LoggingMSGCollection : new_class
-  LoggingMSG --* LoggingMSGCollection : new_func
-  LoggingMSG --* LoggingMSGCollection : node_link_analysis_beg
-  LoggingMSG --* LoggingMSGCollection : node_link_analysis_end
-  LoggingMSG --* LoggingMSGCollection : unknown_type_of_node
-  LoggingMSG --* LoggingMSGCollection : io_err
-  LoggingMSG --* LoggingMSGCollection : file_not_found
-  LoggingMSG --* LoggingMSGCollection : write_doc
+  EventMSG --* LogMessages : logfile
+  EventMSG --* LogMessages : args
+  EventMSG --* LogMessages : python
+  EventMSG --* LogMessages : dump
+  EventMSG --* LogMessages : result
+  EventMSG --* LogMessages : elapse_time
+  EventMSG --* LogMessages : pytmod
+  EventMSG --* LogMessages : pytmod_mod
+  EventMSG --* LogMessages : pytmod_script
+  EventMSG --* LogMessages : pytmod_extract
+  EventMSG --* LogMessages : new_module
+  EventMSG --* LogMessages : new_class
+  EventMSG --* LogMessages : new_func
+  EventMSG --* LogMessages : node_link_analysis_beg
+  EventMSG --* LogMessages : node_link_analysis_end
+  EventMSG --* LogMessages : unknown_type_of_node
+  EventMSG --* LogMessages : io_err
+  EventMSG --* LogMessages : file_not_found
+  EventMSG --* LogMessages : write_doc
   MyFile --* DocString2MDOptions : toml
   MyFile --* DocString2MDOptions : uml
   MyFile --* DocString2MDOptions : todo
   MyFile --* DocString2MDOptions : output
+  ExitStatus --* MyFile : status
   PytMod --* DocString2MD : __my_module
   PytMod --* DocString2MD : __my_module
 
 
 ```
-
 ## Objects:
 
 [Const()](#const)<br />
 [Tag()](#tag)<br />
 [LoggingSetup()](#loggingsetup)<br />
 [LoggingSetup.set_logfile()](#loggingsetupset_logfile)<br />
-[LoggingMSG()](#loggingmsg)<br />
-[LoggingMSGCollection()](#loggingmsgcollection)<br />
+[EventMSG()](#eventmsg)<br />
+[LogMessages()](#logmessages)<br />
+[ExitStatus()](#exitstatus)<br />
 [logger_ast()](#logger_ast)<br />
 [logger_ast.func_wrapper()](#logger_astfunc_wrapper)<br />
 [NodeLink()](#nodelink)<br />
@@ -565,7 +548,7 @@ classDiagram
 [PytMod.__get_doc_from_pkg()](#pytmod__get_doc_from_pkg)<br />
 ### Const()
 ```python
-class Const(NamedTuple):
+class Const(Enum):
 ```
 <pre>
 
@@ -574,7 +557,7 @@ Constants
 </pre>
 ### Tag()
 ```python
-class Tag(NamedTuple):
+class Tag(Enum):
 ```
 <pre>
 
@@ -599,7 +582,6 @@ Logging Parameters
 
 
 ```
-
 #### LoggingSetup.set_logfile()
 ```python
 @classmethod
@@ -626,10 +608,9 @@ path.
 
 
 ```
-
-### LoggingMSG()
+### EventMSG()
 ```python
-class LoggingMSG(NamedTuple):
+class EventMSG(NamedTuple):
 ```
 <pre>
 
@@ -646,32 +627,30 @@ This call define Messages with different sev.
 <b>Examples:</b>
 ```python
 
-    >>> logfile = LoggingMSG(info="Log file used: %s")
+    >>> logfile = EventMSG(info="Log file used: %s")
     >>> logfile.info
     'Log file used: %s'
 
 
 ```
-
-### LoggingMSGCollection()
+### LogMessages()
 ```python
-class LoggingMSGCollection(NamedTuple):
+class LogMessages(NamedTuple):
 ```
 <pre>
 
 All logging messages
 
 </pre>
-<b>Examples:</b>
+### ExitStatus()
 ```python
-
-    >>> log_msg = LoggingMSGCollection()
-    >>> log_msg.logfile.info
-    'Log file used: %s'
-
-
+class ExitStatus(Enum):
 ```
+<pre>
 
+Exit status
+
+</pre>
 ### logger_ast()
 ```python
 def logger_ast(func: F) -> F:
@@ -689,7 +668,7 @@ This function is a decorator to use in the AST Navigator Class.
 </pre>
 #### logger_ast.func_wrapper()
 ```python
-@wrapsfunc
+@wraps(func)
 def logger_ast.func_wrapper(*args: Any, **kwargs: Any) -> Any:
 ```
 <pre>
@@ -731,7 +710,6 @@ NamedTuple to define a Module.
 
 
 ```
-
 #### ModuleDef.get_summary()
 ```python
 def ModuleDef.get_summary(self) -> str:
@@ -746,8 +724,8 @@ get the module's summary
 </pre>
 #### ModuleDef.get_docstring()
 ```python
-@ConvMD.dedent
-@ConvMD.repl_beg_endTAG.beg_str, TAG.end_strh, TAG.end_title
+@ConvMD.dedent()
+@ConvMD.repl_beg_end(Tag.BEG_STR, Tag.END_STRH, Tag.END_TITLE)
 def ModuleDef.get_docstring(self) -> str:
 ```
 <pre>
@@ -811,7 +789,7 @@ Return the node's title
 </pre>
 #### NodeDef.get_definition()
 ```python
-@ConvMD.add_tagTAG.beg_py, TAG.end_py
+@ConvMD.add_tag(Tag.BEG_PY, Tag.BEG_END_CO)
 def NodeDef.get_definition(self) -> str:
 ```
 <pre>
@@ -824,9 +802,9 @@ Return a TOC entry for this node
 </pre>
 #### NodeDef.get_docstring()
 ```python
-@ConvMD.repl_beg_endTAG.beg_str, TAG.end_strh, TAG.beg_b, TAG.end_bh
-@ConvMD.colorize_examples
-@ConvMD.add_tagTAG.cr, TAG.cr
+@ConvMD.repl_beg_end(Tag.BEG_STR, Tag.END_STRH, Tag.BEG_B, Tag.END_BH)
+@ConvMD.colorize_examples()
+@ConvMD.add_tag(Tag.CR, Tag.CR)
 def NodeDef.get_docstring(self) -> str:
 ```
 <pre>
@@ -876,7 +854,6 @@ ObjVisitor(module_docstring=True|False)
 
 
 ```
-
 #### ObjVisitor.__init__()
 ```python
 def ObjVisitor.__init__(self, module_docstring: bool = False, private_def: bool = False) -> None:
@@ -915,7 +892,7 @@ Parse the source code and build the tree.
 #### ObjVisitor.__set_level()
 ```python
 @logger_ast
-def ObjVisitor.__set_level(self, node: ASTNode, level: int = 0, parent: Optional[ASTNode] = None) -> None:
+def ObjVisitor.__set_level(self, node: ASTVisitedNode, level: int = 0, parent: Optional[ASTVisitedNode] = None) -> None:
 ```
 <pre>
 
@@ -936,7 +913,7 @@ None
 ```python
 @staticmethod
 @logger_ast
-def ObjVisitor.__get_docstring(node: ASTNode) -> str:
+def ObjVisitor.__get_docstring(node: ASTVisitedNode) -> str:
 ```
 <pre>
 
@@ -985,8 +962,7 @@ None
 </pre>
 #### ObjVisitor.__get_value_from_attribute()
 ```python
-@staticmethod
-def ObjVisitor.__get_value_from_attribute(node: ast.Attribute) -> str:
+def ObjVisitor.__get_value_from_attribute(self, node: ast.Attribute) -> str:
 ```
 <pre>
 
@@ -1268,7 +1244,6 @@ This function describe the argument parser and return it.
 
 
 ```
-
 ### run()
 ```python
 def run() -> int:
@@ -1304,7 +1279,7 @@ def ConvMD.repl_str(old_string: str, new_string: str) -> Callable[[F], F]:
 <pre>
 
 Decorator - search & replace a string by another string
-Examples: replace space by an HTML tag.
+Examples: replace space by an HTML Tag.
 
 <b>Args:</b>
     old_string (str): string to search
@@ -1327,7 +1302,6 @@ Examples: replace space by an HTML tag.
 
 
 ```
-
 ##### ConvMD.repl_str.tags_decorator()
 ```python
 def ConvMD.repl_str.tags_decorator(func: F) -> F:
@@ -1339,7 +1313,7 @@ decorator
 </pre>
 ###### ConvMD.repl_str.tags_decorator.func_wrapper()
 ```python
-@wrapsfunc
+@wraps(func)
 def ConvMD.repl_str.tags_decorator.func_wrapper(*args: Any, **kwargs: Any) -> Any:
 ```
 <pre>
@@ -1380,7 +1354,6 @@ Decorator - replace the beginning and the end.
 
 
 ```
-
 ##### ConvMD.repl_beg_end.tags_decorator()
 ```python
 def ConvMD.repl_beg_end.tags_decorator(func: F) -> F:
@@ -1392,7 +1365,7 @@ decorator
 </pre>
 ###### ConvMD.repl_beg_end.tags_decorator.func_wrapper()
 ```python
-@wrapsfunc
+@wraps(func)
 def ConvMD.repl_beg_end.tags_decorator.func_wrapper(*args: Any, **kwargs: Any) -> Any:
 ```
 <pre>
@@ -1430,7 +1403,6 @@ Decorator - add a tag
 
 
 ```
-
 ##### ConvMD.add_tag.tags_decorator()
 ```python
 def ConvMD.add_tag.tags_decorator(func: F) -> F:
@@ -1442,7 +1414,7 @@ decorator
 </pre>
 ###### ConvMD.add_tag.tags_decorator.func_wrapper()
 ```python
-@wrapsfunc
+@wraps(func)
 def ConvMD.add_tag.tags_decorator.func_wrapper(*args: Any, **kwargs: Any) -> Any:
 ```
 <pre>
@@ -1457,7 +1429,7 @@ def ConvMD.html_escape() -> Callable[[F], F]:
 ```
 <pre>
 
-Escape the HTML tag.
+Escape the HTML Tag.
 
 <b>Returns:</b>
     decorated function
@@ -1474,7 +1446,7 @@ decorator
 </pre>
 ###### ConvMD.html_escape.tags_decorator.func_wrapper()
 ```python
-@wrapsfunc
+@wraps(func)
 def ConvMD.html_escape.tags_decorator.func_wrapper(*args: Any, **kwargs: Any) -> Any:
 ```
 <pre>
@@ -1506,7 +1478,7 @@ decorator
 </pre>
 ###### ConvMD.colorize_examples.tags_decorator.func_wrapper()
 ```python
-@wrapsfunc
+@wraps(func)
 def ConvMD.colorize_examples.tags_decorator.func_wrapper(*args: Any, **kwargs: Any) -> Any:
 ```
 <pre>
@@ -1538,7 +1510,7 @@ decorator
 </pre>
 ###### ConvMD.dedent.tags_decorator.func_wrapper()
 ```python
-@wrapsfunc
+@wraps(func)
 def ConvMD.dedent.tags_decorator.func_wrapper(*args: Any, **kwargs: Any) -> Any:
 ```
 <pre>
@@ -1584,10 +1556,10 @@ Class DocString2MD : export Google docstring to MD File.
     ...         private_def=False)
     >>> doc = DocString2MD("oups", options)
     >>> doc.import_module()
-    72
+    <ExitStatus.EX_OSFILE: 72>
     >>> doc = DocString2MD("docstring2md", options)
     >>> doc.import_module()
-    0
+    <ExitStatus.EX_OK: 0>
     >>> result = doc.get_doc()
     >>> result = result.split("\n")
     >>> result[0]
@@ -1595,7 +1567,6 @@ Class DocString2MD : export Google docstring to MD File.
 
 
 ```
-
 #### DocString2MD.__init__()
 ```python
 def DocString2MD.__init__(self, module_name: str, options: DocString2MDOptions) -> None:
@@ -1611,7 +1582,7 @@ This function define default attributes.
 </pre>
 #### DocString2MD.import_module()
 ```python
-def DocString2MD.import_module(self) -> int:
+def DocString2MD.import_module(self) -> ExitStatus:
 ```
 <pre>
 
@@ -1638,7 +1609,7 @@ Returns the documentation
 </pre>
 #### DocString2MD.writedoc()
 ```python
-def DocString2MD.writedoc(self) -> int:
+def DocString2MD.writedoc(self) -> ExitStatus:
 ```
 <pre>
 
@@ -1675,12 +1646,12 @@ This class describe a file with a NamedTuple
 
     >>> data_file = MyFile.set_path("lorem")
     >>> data_file.status
-    72
+    <ExitStatus.EX_OSFILE: 72>
     >>> fstab = MyFile.set_path("/etc/fstab")
     >>> fstab.path.stem
     'fstab'
     >>> fstab
-    MyFile(path=PosixPath('/etc/fstab'), exists=False, status=72)
+    MyFile(path=PosixPath(...), exists=False, status=ExitStatus.EX_OSFILE)
     >>> fstab.absolute()
     '/etc/fstab'
     >>> # pathlib to run the test everywhere
@@ -1698,11 +1669,10 @@ This class describe a file with a NamedTuple
 
 
 ```
-
 #### MyFile.set_path()
 ```python
 @classmethod
-def MyFile.set_path(cls, path: Union[str, None]) -> MyFile:
+def MyFile.set_path(cls, path: Optional[str]) -> MyFile:
 ```
 <pre>
 
@@ -1739,7 +1709,7 @@ read the text
 </pre>
 #### MyFile.write()
 ```python
-def MyFile.write(self, data: str) -> int:
+def MyFile.write(self, data: str) -> ExitStatus:
 ```
 <pre>
 
@@ -1822,11 +1792,10 @@ Object in order to extract Python functions, class....
     >>> mod = PytMod('docstring2md')
     >>> mod.read()
     >>> print(mod.node_lst[0].definition)
-    class Const(NamedTuple):
+    class Const(Enum):
 
 
 ```
-
 #### PytMod.__init__()
 ```python
 def PytMod.__init__(self, module_name: str, private_def: bool = False) -> None:

@@ -7,7 +7,7 @@ classDiagram
     toml
     uml
   }
-  class LoggingMSG {
+  class EventMSG {
     debug
     error
     info
@@ -20,13 +20,16 @@ classDiagram
     absolute() str
     read() str
     resolve() str
-    set_path(path: Union[str, None]) MyFile
-    write(data: str) int
+    set_path(path: Optional[str]) MyFile
+    write(data: str) ExitStatus
   }
   class NodeVisitor {
     generic_visit(node)
     visit(node)
     visit_Constant(node)
+  }
+  class ExitStatus {
+    name
   }
   class PytMod {
     module
@@ -35,26 +38,23 @@ classDiagram
     ismodule() bool
     read() None
   }
-  class Const {
-    coma : str
-    decorator_tag : str
-    dev_head : str
-    dev_obj : str
-    dev_toml : str
-    dev_uml : str
-    docstring_empty : str
-    dot : str
-    function_tag : str
-    head_tag : str
-    property_tag : str
+  class Enum {
+    name()
+    value()
   }
-  class LoggingMSG {
+  class Const {
+    name
+  }
+  class EventMSG {
     debug : str
     error : str
     info : str
     warning : str
   }
-  class LoggingMSGCollection {
+  class ExitStatus {
+    name
+  }
+  class LogMessages {
     args
     dump
     elapse_time
@@ -85,29 +85,7 @@ classDiagram
     set_logfile(path: str) 'LoggingSetup'
   }
   class Tag {
-    beg_b : str
-    beg_co : str
-    beg_mermaid : str
-    beg_pre : str
-    beg_py : str
-    beg_str : str
-    beg_title : str
-    beg_toml : str
-    coma : str
-    cr : str
-    end_b : str
-    end_bh : str
-    end_co : str
-    end_pre : str
-    end_py : str
-    end_str : str
-    end_strh : str
-    end_title : str
-    html_cr : str
-    html_tab : str
-    quote : str
-    space : str
-    tab : str
+    name
   }
   class ModuleDef {
     docstring : str
@@ -127,7 +105,7 @@ classDiagram
   }
   class NodeLink {
     level : int
-    parent : Optional[ASTNode]
+    parent : Optional[ASTVisitedNode]
   }
   class ObjVisitor {
     node_lst
@@ -146,8 +124,8 @@ classDiagram
   }
   class DocString2MD {
     get_doc() str
-    import_module() int
-    writedoc() int
+    import_module() ExitStatus
+    writedoc() ExitStatus
   }
   class DocString2MDOptions {
     output
@@ -159,13 +137,13 @@ classDiagram
   }
   class MyFile {
     exists : bool
-    path : Union[Path, None]
-    status : int
+    path : Optional[Path]
+    status
     absolute() str
     read() str
     resolve() str
-    set_path(path: Union[str, None]) MyFile
-    write(data: str) int
+    set_path(path: Optional[str]) MyFile
+    write(data: str) ExitStatus
   }
   class PytMod {
     module
@@ -176,11 +154,13 @@ classDiagram
   }
   class NamedTuple {
   }
-  Const --|> NamedTuple
-  LoggingMSG --|> NamedTuple
-  LoggingMSGCollection --|> NamedTuple
+  ExitStatus --|> Enum
+  Const --|> Enum
+  EventMSG --|> NamedTuple
+  ExitStatus --|> Enum
+  LogMessages --|> NamedTuple
   LoggingSetup --|> NamedTuple
-  Tag --|> NamedTuple
+  Tag --|> Enum
   ModuleDef --|> NamedTuple
   NodeDef --|> NamedTuple
   NodeLink --|> NamedTuple
@@ -189,28 +169,29 @@ classDiagram
   MyFile --|> NamedTuple
   DocString2MDOptions --* DocString2MD : __options
   DocString2MDOptions --* DocString2MD : __options
-  LoggingMSG --* LoggingMSGCollection : logfile
-  LoggingMSG --* LoggingMSGCollection : args
-  LoggingMSG --* LoggingMSGCollection : python
-  LoggingMSG --* LoggingMSGCollection : dump
-  LoggingMSG --* LoggingMSGCollection : result
-  LoggingMSG --* LoggingMSGCollection : elapse_time
-  LoggingMSG --* LoggingMSGCollection : pytmod
-  LoggingMSG --* LoggingMSGCollection : pytmod_mod
-  LoggingMSG --* LoggingMSGCollection : pytmod_script
-  LoggingMSG --* LoggingMSGCollection : pytmod_extract
-  LoggingMSG --* LoggingMSGCollection : new_module
-  LoggingMSG --* LoggingMSGCollection : new_class
-  LoggingMSG --* LoggingMSGCollection : new_func
-  LoggingMSG --* LoggingMSGCollection : node_link_analysis_beg
-  LoggingMSG --* LoggingMSGCollection : node_link_analysis_end
-  LoggingMSG --* LoggingMSGCollection : unknown_type_of_node
-  LoggingMSG --* LoggingMSGCollection : io_err
-  LoggingMSG --* LoggingMSGCollection : file_not_found
-  LoggingMSG --* LoggingMSGCollection : write_doc
+  EventMSG --* LogMessages : logfile
+  EventMSG --* LogMessages : args
+  EventMSG --* LogMessages : python
+  EventMSG --* LogMessages : dump
+  EventMSG --* LogMessages : result
+  EventMSG --* LogMessages : elapse_time
+  EventMSG --* LogMessages : pytmod
+  EventMSG --* LogMessages : pytmod_mod
+  EventMSG --* LogMessages : pytmod_script
+  EventMSG --* LogMessages : pytmod_extract
+  EventMSG --* LogMessages : new_module
+  EventMSG --* LogMessages : new_class
+  EventMSG --* LogMessages : new_func
+  EventMSG --* LogMessages : node_link_analysis_beg
+  EventMSG --* LogMessages : node_link_analysis_end
+  EventMSG --* LogMessages : unknown_type_of_node
+  EventMSG --* LogMessages : io_err
+  EventMSG --* LogMessages : file_not_found
+  EventMSG --* LogMessages : write_doc
   MyFile --* DocString2MDOptions : toml
   MyFile --* DocString2MDOptions : uml
   MyFile --* DocString2MDOptions : todo
   MyFile --* DocString2MDOptions : output
+  ExitStatus --* MyFile : status
   PytMod --* DocString2MD : __my_module
   PytMod --* DocString2MD : __my_module

@@ -17,7 +17,7 @@ import pkgutil
 from collections import deque
 from typing import Optional
 
-from docstring2md.__config__ import LOGGING_MSG
+from docstring2md.__config__ import LOG_MSG
 from docstring2md.ast_engine import ObjVisitor, NodeListType
 from docstring2md.file import MyFile
 from docstring2md.log import logger
@@ -48,7 +48,7 @@ class PytMod:
         >>> mod = PytMod('docstring2md')
         >>> mod.read()
         >>> print(mod.node_lst[0].definition)
-        class Const(NamedTuple):
+        class Const(Enum):
 
     """
     __path: Optional[str]
@@ -60,7 +60,7 @@ class PytMod:
         self.__module = module_name
         self.__private_def = private_def
         self.__node_lst: NodeListType = deque()
-        logger.debug(LOGGING_MSG.pytmod.debug, module_name)
+        logger.debug(LOG_MSG.pytmod.debug, module_name)
 
     @property
     def module(self) -> str:
@@ -93,9 +93,9 @@ class PytMod:
 
         """
         if self.ismodule():
-            logger.debug(LOGGING_MSG.pytmod_mod.info, self.module)
+            logger.debug(LOG_MSG.pytmod_mod.info, self.module)
             return deque()
-        logger.debug(LOGGING_MSG.pytmod_script.info, self.module)
+        logger.debug(LOG_MSG.pytmod_script.info, self.module)
         return self.__get_doc_from_module(
             f"{self.__path}/__init__.py", module_docstring=True)
 
@@ -120,13 +120,13 @@ class PytMod:
             None
 
         """
-        logger.info(LOGGING_MSG.pytmod.info, self.module)
+        logger.info(LOG_MSG.pytmod.info, self.module)
         if self.ismodule():
-            logger.info(LOGGING_MSG.pytmod_mod.info, self.module)
+            logger.info(LOG_MSG.pytmod_mod.info, self.module)
             self.__node_lst += self.__get_doc_from_module(
                 self.module, module_docstring=True)
         else:
-            logger.info(LOGGING_MSG.pytmod_script.info, self.module)
+            logger.info(LOG_MSG.pytmod_script.info, self.module)
             self.__node_lst += self.__get_doc_from_pkg(self.module)
 
     def __get_doc_from_module(
@@ -161,7 +161,7 @@ class PytMod:
             fullname = f"{package}.{modname}"
             if ispkg:
                 logger.info(
-                    LOGGING_MSG.new_module.info, fullname)
+                    LOG_MSG.new_module.info, fullname)
                 module += self.__get_module_list(fullname)
             else:
                 # if modname.startswith("__") is False:
@@ -172,10 +172,10 @@ class PytMod:
         node_lst: NodeListType = deque()
         # get all modules
         modules = self.__get_module_list(package)
-        logger.debug(LOGGING_MSG.pytmod_script.debug, str(modules))
+        logger.debug(LOG_MSG.pytmod_script.debug, str(modules))
         # read all modules and get all nodes
         for module in modules:
-            logger.info(LOGGING_MSG.pytmod_extract.info, module)
+            logger.info(LOG_MSG.pytmod_extract.info, module)
             node_lst += self.__get_doc_from_module(module)
         return node_lst
 

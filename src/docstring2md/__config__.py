@@ -14,51 +14,52 @@ from __future__ import annotations
 
 import os
 from typing import NamedTuple
+from enum import Enum, unique
 
 if __name__ == "__main__":
     raise Exception("Do not start this script manually !")
 
 
-class Const(NamedTuple):
+@unique
+class Const(Enum):
     """Constants"""
-    docstring_empty: str = "Docstring empty"
-    head_tag: str = "#"
-    dev_head: str = "# Dev notes"
-    dev_toml: str = "## TOML file:"
-    dev_uml: str = "## UML Diagram:"
-    dev_obj: str = "## Objects:"
-    decorator_tag: str = '@'
-    function_tag: str = 'def '
-    property_tag: str = '@Property'
-    coma: str = ", "
-    dot: str = "."
+    DOCSTRING_EMPTY: str = "Docstring empty"
+    HEAD_TAG: str = "#"
+    DEV_HEAD: str = "# Dev notes"
+    DEV_TOML: str = "## TOML file:"
+    DEV_UML: str = "## UML Diagram:"
+    DEV_OBJ: str = "## Objects:"
+    DECORATOR_TAG: str = '@'
+    FUNCTION_TAG: str = 'def '
+    PROPERTY_TAG: str = '@Property'
+    COMA: str = ", "
+    DOT: str = "."
 
 
-class Tag(NamedTuple):
+@unique
+class Tag(Enum):
     """TAG used to convert"""
-    beg_co: str = "\n```\n"
-    end_co: str = "\n```\n"
-    beg_mermaid: str = "\n```mermaid\n"
-    beg_toml: str = "\n```toml\n"
-    beg_py: str = "```python\n"
-    end_py: str = "\n```"
-    beg_pre: str = "<pre>"
-    end_pre: str = "</pre>"
-    beg_str: str = "^"
-    end_str: str = "$"
-    end_strh: str = ":$"
-    beg_b: str = "<b>"
-    beg_title: str = "#"
-    end_title: str = ":"
-    end_b: str = "</b>"
-    end_bh: str = ":</b>"
-    space: str = " "
-    tab: str = "    "
-    html_tab: str = "&nbsp;" * 15 + "  "
-    cr: str = "\n"
-    html_cr: str = "<br />"
-    quote: str = "> "
-    coma: str = ", "
+    BEG_END_CO: str = "\n```"
+    BEG_MERMAID: str = "\n```mermaid\n"
+    BEG_TOML: str = "\n```toml\n"
+    BEG_PY: str = "```python\n"
+    BEG_PRE: str = "<pre>"
+    END_PRE: str = "</pre>"
+    BEG_STR: str = "^"
+    END_STR: str = "$"
+    END_STRH: str = ":$"
+    BEG_B: str = "<b>"
+    END_B: str = "</b>"
+    END_BH: str = ":</b>"
+    BEG_TITLE: str = "#"
+    END_TITLE: str = ":"
+    SPACE: str = " "
+    TAB: str = "    "
+    HTML_TAB: str = "&nbsp;" * 15 + "  "
+    CR: str = "\n"
+    HTML_CR: str = "<br />"
+    QUOTE: str = "> "
+    COMA: str = ", "
 
 
 # logging
@@ -97,7 +98,10 @@ class LoggingSetup(NamedTuple):
         return cls(path)
 
 
-class LoggingMSG(NamedTuple):
+LOGGING_SETUP: LoggingSetup = LoggingSetup()
+
+
+class EventMSG(NamedTuple):
     """
     This call define Messages with different sev.
 
@@ -109,7 +113,7 @@ class LoggingMSG(NamedTuple):
 
 
     Examples:
-        >>> logfile = LoggingMSG(info="Log file used: %s")
+        >>> logfile = EventMSG(info="Log file used: %s")
         >>> logfile.info
         'Log file used: %s'
 
@@ -120,78 +124,74 @@ class LoggingMSG(NamedTuple):
     debug: str = ""
 
 
-class LoggingMSGCollection(NamedTuple):
-    """All logging messages
-
-    Examples:
-        >>> log_msg = LoggingMSGCollection()
-        >>> log_msg.logfile.info
-        'Log file used: %s'
-
-    """
-    logfile: LoggingMSG = LoggingMSG(
+class LogMessages(NamedTuple):
+    """All logging messages"""
+    logfile: EventMSG = EventMSG(
         info="Log file used: %s")
-    args: LoggingMSG = LoggingMSG(
+    args: EventMSG = EventMSG(
         debug="Arguments: %s")
-    python: LoggingMSG = LoggingMSG(
+    python: EventMSG = EventMSG(
         info="Python version is supported: %s",
         error="Python version is not supported: %s",
         debug="Python: %s")
-    dump: LoggingMSG = LoggingMSG(
+    dump: EventMSG = EventMSG(
         info="New report has been created: %s",
         error="New report has not been created.",
         debug="New report cannot be saved:")
-    result: LoggingMSG = LoggingMSG(
+    result: EventMSG = EventMSG(
         info="Result:\n%s")
-    elapse_time: LoggingMSG = LoggingMSG(
+    elapse_time: EventMSG = EventMSG(
         info="Elapse time: %s s")
-    pytmod: LoggingMSG = LoggingMSG(
+    pytmod: EventMSG = EventMSG(
         info="PytMod: start reading %s",
         debug="PytMod: module=%s")
-    pytmod_mod: LoggingMSG = LoggingMSG(
+    pytmod_mod: EventMSG = EventMSG(
         info="PytMod: This is a python module (%s)")
-    pytmod_script: LoggingMSG = LoggingMSG(
+    pytmod_script: EventMSG = EventMSG(
         info="PytMod: This is a script or a folder (%s)",
         debug="PytMod: details => %s")
-    pytmod_extract: LoggingMSG = LoggingMSG(
+    pytmod_extract: EventMSG = EventMSG(
         info="PytMod - extract %s")
-    new_module: LoggingMSG = LoggingMSG(
+    new_module: EventMSG = EventMSG(
         info="PytMod - new module => %s",
         error="check your module.",
         debug="New ModuleDef - title: %s / def: %s / doc: %s / lvl: %s")
-    new_class: LoggingMSG = LoggingMSG(
+    new_class: EventMSG = EventMSG(
         debug="New ClassDef - title: %s / def: %s / doc: %s / lvl: %s")
-    new_func: LoggingMSG = LoggingMSG(
+    new_func: EventMSG = EventMSG(
         debug="New FuncDef - title: %s / def: %s / doc: %s / lvl: %s")
-    node_link_analysis_beg: LoggingMSG = LoggingMSG(
+    node_link_analysis_beg: EventMSG = EventMSG(
         info="Node link analysis: started")
-    node_link_analysis_end: LoggingMSG = LoggingMSG(
+    node_link_analysis_end: EventMSG = EventMSG(
         info="Node link analysis: finished")
-    unknown_type_of_node: LoggingMSG = LoggingMSG(
+    unknown_type_of_node: EventMSG = EventMSG(
         warning="__get_value_from_node - another object: %s")
-    io_err: LoggingMSG = LoggingMSG(
+    io_err: EventMSG = EventMSG(
         error="Error writing to the file.")
-    file_not_found: LoggingMSG = LoggingMSG(
+    file_not_found: EventMSG = EventMSG(
         error="Error opening file")
-    write_doc: LoggingMSG = LoggingMSG(
+    write_doc: EventMSG = EventMSG(
         info="Doc has been created")
 
+
+LOG_MSG = LogMessages()
 
 # python
 CHK_PYT_MIN: tuple[int, int, int] = (3, 7, 0)
 ROOT_DIR: str = os.path.abspath(os.path.dirname(__file__))
 PID: int = os.getpid()
+
+
 # exit values
-EX_OK: int = getattr(os, 'EX_OK', 0)
-EX_OSFILE: int = getattr(os, 'EX_OSFILE', 72)
-EX_CANTCREAT: int = getattr(os, 'EX_CANTCREAT', 73)
-EX_IOERR: int = getattr(os, 'EX_IOERR', 74)
-EX_CONFIG: int = getattr(os, 'EX_CONFIG', 78)
-# Const
-CONST: Const = Const()
-TAG: Tag = Tag()
-LOGGING_SETUP: LoggingSetup = LoggingSetup()
-LOGGING_MSG: LoggingMSGCollection = LoggingMSGCollection()
+class ExitStatus(Enum):
+    """Exit status"""
+    EX_OK: int = getattr(os, 'EX_OK', 0)
+    EX_OSFILE: int = getattr(os, 'EX_OSFILE', 72)
+    EX_CANTCREAT: int = getattr(os, 'EX_CANTCREAT', 73)
+    EX_IOERR: int = getattr(os, 'EX_IOERR', 74)
+    EX_CONFIG: int = getattr(os, 'EX_CONFIG', 78)
+
+
 ARG_STYLE: dict[str, str] = {
     'argparse.yellow': 'yellow',
     'argparse.byellow': 'yellow bold',

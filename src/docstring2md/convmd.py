@@ -18,7 +18,7 @@ from typing import Callable, TypeVar, Any, cast
 import html
 import textwrap
 
-from docstring2md.__config__ import TAG
+from docstring2md.__config__ import Tag
 
 F = TypeVar('F', bound=Callable[..., Any])
 
@@ -31,7 +31,7 @@ class ConvMD:
     def repl_str(old_string: str, new_string: str) -> Callable[[F], F]:
         """
         Decorator - search & replace a string by another string
-        Examples: replace space by an HTML tag.
+        Examples: replace space by an HTML Tag.
 
         Args:
             old_string (str): string to search
@@ -133,7 +133,7 @@ class ConvMD:
     @staticmethod
     def html_escape() -> Callable[[F], F]:
         """
-        Escape the HTML tag.
+        Escape the HTML Tag.
 
         Returns:
             decorated function
@@ -164,12 +164,15 @@ class ConvMD:
                 """ wrapper """
                 ret = func(*args, **kwargs)
                 if re.search(r"\nExamples:\n", ret):
-                    ret = f"{TAG.beg_pre}{TAG.cr}{ret}{TAG.cr}{TAG.end_co}"
-                    ret = ret.replace("\nExamples:\n",
-                                      f"\n{TAG.end_pre}\n" +
-                                      f"Examples:\n{TAG.beg_py}{TAG.cr}")
+                    ret = f"{Tag.BEG_PRE.value}{Tag.CR.value}{ret}" + \
+                          f"{Tag.CR.value}{Tag.BEG_END_CO.value}"
+                    ret = ret.replace(
+                        "\nExamples:\n",
+                        f"\n{Tag.END_PRE.value}\nExamples:\n" +
+                        f"{Tag.BEG_PY.value}{Tag.CR.value}")
                     return ret
-                return f"{TAG.beg_pre}{TAG.cr}{ret}{TAG.cr}{TAG.end_pre}"
+                return f"{Tag.BEG_PRE.value}{Tag.CR.value}{ret}" + \
+                       f"{Tag.CR.value}"f"{Tag.END_PRE.value}"
             return cast(F, func_wrapper)
         return tags_decorator
 

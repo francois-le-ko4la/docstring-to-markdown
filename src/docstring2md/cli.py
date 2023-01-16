@@ -18,8 +18,8 @@ from rich_argparse import RawDescriptionRichHelpFormatter
 
 from docstring2md.__about__ import __version__, __script_descr__, \
     __script_epilog__
-from docstring2md.__config__ import CHK_PYT_MIN, LOGGING_MSG, ARG_STYLE, \
-    CONST, ARG_HIGHLIGHT, EX_CONFIG, EX_OK
+from docstring2md.__config__ import CHK_PYT_MIN, LOG_MSG, ARG_STYLE, \
+    Const, ARG_HIGHLIGHT, ExitStatus
 from docstring2md.doc2md import DocString2MD, DocString2MDOptions
 from docstring2md.file import MyFile
 from docstring2md.log import logger, define_logfile
@@ -40,13 +40,13 @@ def check_python() -> bool:
     current_version: tuple[int, int, int] = sys.version_info[:3]
     if current_version < CHK_PYT_MIN:
         logger.error(
-            LOGGING_MSG.python.error,
-            CONST.dot.join(map(str, current_version)))
+            LOG_MSG.python.error,
+            Const.DOT.value.join(map(str, current_version)))
         return False
     logger.info(
-        LOGGING_MSG.python.info,
-        CONST.dot.join(map(str, current_version)))
-    logger.debug(LOGGING_MSG.python.debug, sys.version)
+        LOG_MSG.python.info,
+        Const.DOT.value.join(map(str, current_version)))
+    logger.debug(LOG_MSG.python.debug, sys.version)
     return True
 
 
@@ -159,7 +159,7 @@ def run() -> int:
     if args.logfile:
         define_logfile(args.logfile)
     if not check_python():
-        return EX_CONFIG
+        return ExitStatus.EX_CONFIG.value
 
     module_name: str = args.package
     options: DocString2MDOptions = DocString2MDOptions(
@@ -171,11 +171,11 @@ def run() -> int:
         private_def=args.private_def
     )
     module: DocString2MD = DocString2MD(module_name, options)
-    status: int = module.import_module()
-    if status is not EX_OK:
-        logger.error(LOGGING_MSG.new_module.error)
-        return status
-    return module.writedoc()
+    status: ExitStatus = module.import_module()
+    if status is not ExitStatus.EX_OK:
+        logger.error(LOG_MSG.new_module.error)
+        return status.value
+    return module.writedoc().value
 
 
 if __name__ == "__main__":
