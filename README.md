@@ -353,7 +353,7 @@ classDiagram
   class ModuleDef {
     docstring : str
     get_docstring() str
-    get_summary()
+    get_summary() str
   }
   class NodeDef {
     definition : str
@@ -701,6 +701,10 @@ class NodeLink(NamedTuple):
 
 NamedTuple to link a node with a parent Node
 
+<b>Attributes:</b>
+    level (int): level in the module
+    parent (Union[ast.FunctionDef, ast.ClassDef, ast.Module]): parent
+
 </pre>
 ### ModuleDef()
 ```python
@@ -726,11 +730,14 @@ NamedTuple to define a Module.
 
 #### ModuleDef.get_summary()
 ```python
-def ModuleDef.get_summary(self):
+def ModuleDef.get_summary(self) -> str:
 ```
 <pre>
 
-get the docstring
+get the module's summary
+
+<b>Returns:</b>
+    str: Summary
 
 </pre>
 #### ModuleDef.get_docstring()
@@ -741,10 +748,10 @@ def ModuleDef.get_docstring(self) -> str:
 ```
 <pre>
 
-Generate the Module's Docstring with MD Tag.
+Generate the module's Docstring with MD Tag.
 
 <b>Returns:</b>
-            str: Docstring
+    str: Docstring
 
 </pre>
 ### NodeDef()
@@ -768,10 +775,10 @@ def NodeDef.get_summary(self) -> str:
 ```
 <pre>
 
-Node summary
+Node's summary
 
 <b>Returns:</b>
-            str
+    str
 
 </pre>
 #### NodeDef.get_toc_elem()
@@ -783,7 +790,7 @@ def NodeDef.get_toc_elem(self) -> str:
 Return a TOC entry for this node
 
 <b>Returns:</b>
-            str
+    str
 
 </pre>
 #### NodeDef.get_title()
@@ -795,7 +802,7 @@ def NodeDef.get_title(self) -> str:
 Return the node's title
 
 <b>Returns:</b>
-            str
+    str
 
 </pre>
 #### NodeDef.get_definition()
@@ -808,7 +815,7 @@ def NodeDef.get_definition(self) -> str:
 Return a TOC entry for this node
 
 <b>Returns:</b>
-            str
+    str
 
 </pre>
 #### NodeDef.get_docstring()
@@ -823,7 +830,7 @@ def NodeDef.get_docstring(self) -> str:
 Generate the node's Docstring with MD Tag.
 
 <b>Returns:</b>
-            str: Docstring
+    str: Docstring
 
 </pre>
 ### ObjVisitor()
@@ -895,10 +902,10 @@ def ObjVisitor.parse(source: str) -> ast.AST:
 Parse the source code and build the tree.
 
 <b>Args:</b>
-            source (str): source code
+    source (str): source code
 
 <b>Returns:</b>
-            AST tree
+    AST tree
 
 </pre>
 #### ObjVisitor.__set_level()
@@ -1032,10 +1039,10 @@ when the current node is a module.
 We update self.node_lst.
 
 <b>Args:</b>
-            node (ast.AST): current node
+    node (ast.AST): current node
 
 <b>Returns:</b>
-            None
+    None
 
 </pre>
 #### ObjVisitor.__mod_get_docstring()
@@ -1059,10 +1066,10 @@ when the current node is a class.
 We update self.node_lst.
 
 <b>Args:</b>
-            node (ast.ClassDef): current node
+    node (ast.ClassDef): current node
 
 <b>Returns:</b>
-            None
+    None
 
 </pre>
 #### ObjVisitor.__cla_get_title()
@@ -1117,10 +1124,10 @@ when the current node is a function.
 We add FuncDef obj in self.node_lst.
 
 <b>Args:</b>
-            node (ast.FunctionDef): current node
+    node (ast.FunctionDef): current node
 
 <b>Returns:</b>
-            None
+    None
 
 </pre>
 #### ObjVisitor.__func_valid_name()

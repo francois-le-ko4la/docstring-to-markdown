@@ -61,7 +61,14 @@ def logger_ast(func: F) -> F:
 
 
 class NodeLink(NamedTuple):
-    """NamedTuple to link a node with a parent Node"""
+    """
+    NamedTuple to link a node with a parent Node
+
+    Attributes:
+        level (int): level in the module
+        parent (Union[ast.FunctionDef, ast.ClassDef, ast.Module]): parent
+
+    """
     level: int
     parent: Union[ast.FunctionDef, ast.ClassDef, ast.Module]
 
@@ -80,8 +87,13 @@ class ModuleDef(NamedTuple):
     """
     docstring: str
 
-    def get_summary(self):
-        """get the docstring"""
+    def get_summary(self) -> str:
+        """
+        get the module's summary
+
+        Returns:
+            str: Summary
+        """
         return self.get_docstring()
 
     @ConvMD.dedent()
@@ -89,10 +101,10 @@ class ModuleDef(NamedTuple):
                          TAG.tab + TAG.beg_title + TAG.space, TAG.end_title)
     def get_docstring(self) -> str:
         """
-        Generate the Module's Docstring with MD Tag.
+        Generate the module's Docstring with MD Tag.
 
         Returns:
-                    str: Docstring
+            str: Docstring
 
         """
         return self.docstring
@@ -116,10 +128,10 @@ class NodeDef(NamedTuple):
 
     def get_summary(self) -> str:
         """
-        Node summary
+        Node's summary
 
         Returns:
-                    str
+            str
 
         """
         return f"{self.get_title()}{TAG.cr}{self.get_definition()}{TAG.cr}" + \
@@ -130,7 +142,7 @@ class NodeDef(NamedTuple):
         Return a TOC entry for this node
 
         Returns:
-                    str
+            str
 
         """
         anchor: str = f"{self.title}"
@@ -144,7 +156,7 @@ class NodeDef(NamedTuple):
         Return the node's title
 
         Returns:
-                    str
+            str
 
         """
         return f"{'#' * (self.level + 2)} {self.title}"
@@ -155,7 +167,7 @@ class NodeDef(NamedTuple):
         Return a TOC entry for this node
 
         Returns:
-                    str
+            str
 
         """
         return self.definition
@@ -168,7 +180,7 @@ class NodeDef(NamedTuple):
         Generate the node's Docstring with MD Tag.
 
         Returns:
-                    str: Docstring
+            str: Docstring
 
         """
         return self.docstring
@@ -233,10 +245,10 @@ class ObjVisitor(ast.NodeVisitor):
         Parse the source code and build the tree.
 
         Args:
-                    source (str): source code
+            source (str): source code
 
         Returns:
-                    AST tree
+            AST tree
 
         """
         return ast.parse(source)
@@ -371,10 +383,10 @@ class ObjVisitor(ast.NodeVisitor):
         We update self.node_lst.
 
         Args:
-                    node (ast.AST): current node
+            node (ast.AST): current node
 
         Returns:
-                    None
+            None
         """
         # Find all objects and set up the level
         self.__set_level(node)
@@ -399,10 +411,10 @@ class ObjVisitor(ast.NodeVisitor):
         We update self.node_lst.
 
         Args:
-                    node (ast.ClassDef): current node
+            node (ast.ClassDef): current node
 
         Returns:
-                    None
+            None
         """
         self.__node_lst.append(
             NodeDef(
@@ -441,10 +453,10 @@ class ObjVisitor(ast.NodeVisitor):
         We add FuncDef obj in self.node_lst.
 
         Args:
-                    node (ast.FunctionDef): current node
+            node (ast.FunctionDef): current node
 
         Returns:
-                    None
+            None
 
         """
         if self.__func_valid_name(node):
