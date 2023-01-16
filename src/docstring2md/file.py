@@ -13,7 +13,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 from __future__ import annotations
 
 from pathlib import Path
-from typing import NamedTuple, Union
+from typing import NamedTuple, Optional
 
 from docstring2md.__config__ import EX_OK, EX_OSFILE, EX_IOERR, EX_CANTCREAT, \
     LOGGING_SETUP, LOGGING_MSG
@@ -53,12 +53,12 @@ class MyFile(NamedTuple):
         >>> result[0]
         '                    GNU GENERAL PUBLIC LICENSE'
     """
-    path: Union[Path, None]
+    path: Optional[Path]
     exists: bool
     status: int
 
     @classmethod
-    def set_path(cls, path: Union[str, None]) -> MyFile:
+    def set_path(cls, path: Optional[str]) -> MyFile:
         """ This function create the MyFile object with the file's path.
         if path = None then return None
 

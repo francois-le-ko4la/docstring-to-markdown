@@ -127,7 +127,7 @@ classDiagram
   }
   class NodeLink {
     level : int
-    parent : Union[ast.FunctionDef, ast.ClassDef, ast.Module]
+    parent : Optional[ASTNode]
   }
   class ObjVisitor {
     node_lst

@@ -18,13 +18,15 @@ import ast
 import re
 from collections import deque
 from functools import wraps
-from typing import TypeVar, NamedTuple, Union, Callable, Any, cast
+from typing import TypeVar, NamedTuple, Optional, Union, Callable, Any, cast
 
 from docstring2md.__config__ import LOGGING_MSG, TAG
 from docstring2md.convmd import ConvMD
 from docstring2md.log import logger
 
 F = TypeVar('F', bound=Callable[..., Any])
+ASTNode = Union[ast.Module, ast.ClassDef, ast.FunctionDef]
+ASTClassFunc = Union[ast.ClassDef, ast.FunctionDef]
 
 
 def logger_ast(func: F) -> F:
@@ -42,7 +44,7 @@ def logger_ast(func: F) -> F:
     @wraps(func)
     def func_wrapper(*args: Any, **kwargs: Any) -> Any:
         target: str = ""
-        msg_debug: Union[None, str] = None
+        msg_debug: Optional[str] = None
         for arg in args:
             if isinstance(arg, (ast.FunctionDef, ast.ClassDef)):
                 target = arg.name
@@ -66,11 +68,11 @@ class NodeLink(NamedTuple):
 
     Attributes:
         level (int): level in the module
-        parent (Union[ast.FunctionDef, ast.ClassDef, ast.Module]): parent
+        parent (NodeType): parent
 
     """
     level: int
-    parent: Union[ast.FunctionDef, ast.ClassDef, ast.Module]
+    parent: Optional[ASTNode]
 
 
 class ModuleDef(NamedTuple):
@@ -186,7 +188,7 @@ class NodeDef(NamedTuple):
         return self.docstring
 
 
-NodeListType = deque[Union[NodeDef, ModuleDef, None]]
+NodeListType = deque[Union[NodeDef, ModuleDef]]
 
 
 class ObjVisitor(ast.NodeVisitor):
@@ -230,8 +232,7 @@ class ObjVisitor(ast.NodeVisitor):
         super(ast.NodeVisitor, self).__init__()
         self.__module_docstring = module_docstring
         self.__private_def = private_def
-        self.__link_lst: dict[
-            Union[ast.FunctionDef, ast.ClassDef, ast.Module], NodeLink]
+        self.__link_lst: dict[ASTNode, NodeLink]
         self.__node_lst: NodeListType = deque()
 
     @property
@@ -255,8 +256,9 @@ class ObjVisitor(ast.NodeVisitor):
 
     @logger_ast
     def __set_level(
-            self, node: Union[ast.Module, ast.ClassDef, ast.FunctionDef],
-            level=0, parent=None) -> None:
+            self, node: ASTNode, level: int = 0,
+            parent: Optional[ASTNode] = None)\
+            -> None:
         if level == 0:
             logger.info(LOGGING_MSG.node_link_analysis_beg.info)
             self.__link_lst = {}
@@ -273,18 +275,15 @@ class ObjVisitor(ast.NodeVisitor):
     # -------------------------------------------------------------------------
 
     @logger_ast
-    def __get_fullname(self,
-                       node: Union[
-                           ast.FunctionDef, ast.ClassDef]) -> str:
+    def __get_fullname(self, node: ASTClassFunc) -> str:
         node_link: NodeLink = self.__link_lst[node]
         return node.name if isinstance(node_link.parent, ast.Module) \
-            else f"{self.__get_fullname(node_link.parent)}.{node.name}"
+            else f"{self.__get_fullname(node_link.parent)}.{node.name}" if \
+            node_link.parent is not None else ""
 
     @staticmethod
     @logger_ast
-    def __get_docstring(
-            node: Union[
-                ast.Module, ast.ClassDef, ast.FunctionDef]) -> str:
+    def __get_docstring(node: ASTNode) -> str:
         return str(ast.get_docstring(node))
 
     @staticmethod

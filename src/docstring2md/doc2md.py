@@ -97,7 +97,7 @@ class DocString2MD:
             return EX_OSFILE
 
         # module / README
-        _output: list = []
+        _output: list[str] = []
         if self.__my_module.pkg_main_docstring[0]:
             _output.append(
                 self.__my_module.pkg_main_docstring[0].get_summary())

@@ -202,7 +202,7 @@ ARG_STYLE: dict[str, str] = {
     'argparse.bgreen': 'green bold',
     'argparse.magenta': 'magenta',
     'argparse.grey': 'grey37 bold'}
-ARG_HIGHLIGHT: list = [
+ARG_HIGHLIGHT: list[str] = [
     r'(?P<cyan>INFO)',
     r'(?P<red>ERROR)',
     r'(?P<green>DEBUG)',

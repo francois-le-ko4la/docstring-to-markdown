@@ -15,7 +15,7 @@ from __future__ import annotations
 import importlib
 import pkgutil
 from collections import deque
-from typing import Union
+from typing import Optional
 
 from docstring2md.__config__ import LOGGING_MSG
 from docstring2md.ast_engine import ObjVisitor, NodeListType
@@ -51,7 +51,7 @@ class PytMod:
         class Const(NamedTuple):
 
     """
-    __path: Union[str, None]
+    __path: Optional[str]
     __module: str
     __private_def: bool
 

@@ -230,6 +230,10 @@ filterwarnings = [
     "ignore::DeprecationWarning"]
 [tool.mypy]
 mypy_path = "stubs/"
+disallow_any_generics = true
+disallow_untyped_defs = true
+warn_redundant_casts = true
+strict_equality = true
 
 
 
@@ -368,7 +372,7 @@ classDiagram
   }
   class NodeLink {
     level : int
-    parent : Union[ast.FunctionDef, ast.ClassDef, ast.Module]
+    parent : Optional[ASTNode]
   }
   class ObjVisitor {
     node_lst
@@ -703,7 +707,7 @@ NamedTuple to link a node with a parent Node
 
 <b>Attributes:</b>
     level (int): level in the module
-    parent (Union[ast.FunctionDef, ast.ClassDef, ast.Module]): parent
+    parent (NodeType): parent
 
 </pre>
 ### ModuleDef()
@@ -911,7 +915,7 @@ Parse the source code and build the tree.
 #### ObjVisitor.__set_level()
 ```python
 @logger_ast
-def ObjVisitor.__set_level(self, node: Union[ast.Module, ast.ClassDef, ast.FunctionDef], level = 0, parent = None) -> None:
+def ObjVisitor.__set_level(self, node: ASTNode, level: int = 0, parent: Optional[ASTNode] = None) -> None:
 ```
 <pre>
 
@@ -921,7 +925,7 @@ None
 #### ObjVisitor.__get_fullname()
 ```python
 @logger_ast
-def ObjVisitor.__get_fullname(self, node: Union[ast.FunctionDef, ast.ClassDef]) -> str:
+def ObjVisitor.__get_fullname(self, node: ASTClassFunc) -> str:
 ```
 <pre>
 
@@ -932,7 +936,7 @@ None
 ```python
 @staticmethod
 @logger_ast
-def ObjVisitor.__get_docstring(node: Union[ast.Module, ast.ClassDef, ast.FunctionDef]) -> str:
+def ObjVisitor.__get_docstring(node: ASTNode) -> str:
 ```
 <pre>
 

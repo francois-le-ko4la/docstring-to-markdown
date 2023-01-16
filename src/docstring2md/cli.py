@@ -37,7 +37,7 @@ def check_python() -> bool:
 
     """
     # Python __version__
-    current_version: tuple = sys.version_info[:3]
+    current_version: tuple[int, int, int] = sys.version_info[:3]
     if current_version < CHK_PYT_MIN:
         logger.error(
             LOGGING_MSG.python.error,
