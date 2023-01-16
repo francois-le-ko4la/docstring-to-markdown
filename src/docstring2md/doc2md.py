@@ -154,7 +154,7 @@ class DocString2MD:
             return EX_IOERR: 74 -> write error
 
         """
-        if self.__options.output:
+        if self.__options.output.status is not ExitStatus.EX_CANTCREAT:
             return self.__options.output.write(self.__output)
         print(self.__output)
         return ExitStatus.EX_OK
