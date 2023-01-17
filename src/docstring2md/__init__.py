@@ -131,12 +131,11 @@ License:
     This package is distributed under the [GPLv3 license](./LICENSE)
 
 """
-from docstring2md.__about__ import __version__, __author__, \
-    __license__, __script_descr__, __script_epilog__
+from docstring2md.__about__ import (__author__, __license__, __script_descr__,
+                                    __script_epilog__, __version__)
 from docstring2md.doc2md import DocString2MD, DocString2MDOptions
 from docstring2md.file import MyFile
-from docstring2md.log import logger, define_logfile
-
+from docstring2md.log import define_logfile, logger
 
 if __name__ == "__main__":
     raise Exception("Do not start this script manually !")

@@ -19,13 +19,13 @@ import textwrap
 
 from rich_argparse import RawDescriptionRichHelpFormatter
 
-from docstring2md.__about__ import __version__, __script_descr__, \
-    __script_epilog__
-from docstring2md.__config__ import CHK_PYT_MIN, LOG_MSG, ARG_STYLE, \
-    Const, ARG_HIGHLIGHT, ExitStatus
+from docstring2md.__about__ import (__script_descr__, __script_epilog__,
+                                    __version__)
+from docstring2md.__config__ import (ARG_HIGHLIGHT, ARG_STYLE, CHK_PYT_MIN,
+                                     LOG_MSG, Const, ExitStatus)
 from docstring2md.doc2md import DocString2MD, DocString2MDOptions
 from docstring2md.file import MyFile
-from docstring2md.log import logger, define_logfile
+from docstring2md.log import define_logfile, logger
 
 
 # ------------------------------------------------------------------------------

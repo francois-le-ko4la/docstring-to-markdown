@@ -209,6 +209,7 @@ dev = [
     "pytest-pycodestyle",
     "pytest-mypy",
     "pytest-pydocstyle",
+    "pytest-isort",
     "types-setuptools",
     "types-PyYAML"]
 
@@ -228,6 +229,7 @@ addopts = [
     "--mypy",
     "--pydocstyle",
     "--pylint",
+    "--isort",
     "--strict-markers"
 ]
 xfail_strict = true

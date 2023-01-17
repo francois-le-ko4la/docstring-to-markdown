@@ -20,7 +20,7 @@ from collections import deque
 from typing import Optional
 
 from docstring2md.__config__ import LOG_MSG
-from docstring2md.ast_engine import ObjVisitor, NodeListType
+from docstring2md.ast_engine import NodeListType, ObjVisitor
 from docstring2md.file import MyFile
 from docstring2md.log import logger
 

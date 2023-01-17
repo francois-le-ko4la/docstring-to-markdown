@@ -20,7 +20,7 @@ import ast
 import re
 from collections import deque
 from functools import wraps
-from typing import TypeVar, NamedTuple, Optional, Union, Callable, Any, cast
+from typing import Any, Callable, NamedTuple, Optional, TypeVar, Union, cast
 
 from docstring2md.__config__ import LOG_MSG, Tag
 from docstring2md.convmd import ConvMD

@@ -15,8 +15,8 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 from __future__ import annotations
 
 import os
-from typing import NamedTuple
 from enum import Enum, unique
+from typing import NamedTuple
 
 if __name__ == "__main__":
     raise Exception("Do not start this script manually !")

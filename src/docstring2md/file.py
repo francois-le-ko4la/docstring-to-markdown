@@ -17,7 +17,7 @@ from __future__ import annotations
 from pathlib import Path
 from typing import NamedTuple, Optional
 
-from docstring2md.__config__ import ExitStatus,  LOGGING_SETUP, LOG_MSG
+from docstring2md.__config__ import LOG_MSG, LOGGING_SETUP, ExitStatus
 from docstring2md.log import logger
 
 

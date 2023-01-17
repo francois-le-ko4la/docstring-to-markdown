@@ -14,11 +14,11 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 """
 from __future__ import annotations
 
-import re
-from functools import wraps
-from typing import Callable, TypeVar, Any, cast
 import html
+import re
 import textwrap
+from functools import wraps
+from typing import Any, Callable, TypeVar, cast
 
 from docstring2md.__config__ import Tag
 

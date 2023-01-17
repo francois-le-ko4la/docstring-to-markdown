@@ -16,10 +16,10 @@ from __future__ import annotations
 
 from typing import NamedTuple
 
-from docstring2md.__config__ import Const, Tag, ExitStatus
+from docstring2md.__config__ import Const, ExitStatus, Tag
+from docstring2md.ast_engine import NodeDef
 from docstring2md.file import MyFile
 from docstring2md.mod import PytMod
-from docstring2md.ast_engine import NodeDef
 
 
 class DocString2MDOptions(NamedTuple):
