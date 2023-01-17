@@ -3,6 +3,8 @@
 # AST doesn't conform to snake_case naming style + return:
 # pylint: disable=invalid-name, too-many-return-statements, too-many-branches
 """
+Docstring2md: AST Engine.
+
 This script is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
 License as published by the Free Software Foundation; either
@@ -30,17 +32,18 @@ ASTClassFunc = Union[ast.ClassDef, ast.FunctionDef]
 
 
 def logger_ast(func: F) -> F:
-    """
-    This function is a decorator to use in the AST Navigator Class.
+    """Use it to decorate AST Navigator Class.
+
+    This function decorate an AST function and use the logging to track
+    the activity.
 
     Args:
-                func: F (Callable[..., Any])
+        func: F (Callable[..., Any])
 
     Returns:
-                F (Callable[..., Any])
+        F (Callable[..., Any])
 
     """
-
     @wraps(func)
     def func_wrapper(*args: Any, **kwargs: Any) -> Any:
         target: str = ""
@@ -63,21 +66,20 @@ def logger_ast(func: F) -> F:
 
 
 class NodeLink(NamedTuple):
-    """
-    NamedTuple to link a node with a parent Node
+    """Use a NamedTuple to link a node with his parent Node.
 
     Attributes:
         level (int): level in the module
         parent (NodeType): parent
 
     """
+
     level: int
     parent: Optional[ASTVisitedNode]
 
 
 class ModuleDef(NamedTuple):
-    """
-    NamedTuple to define a Module.
+    """Define a module with this NamedTuple.
 
     Examples:
         >>> mydocstring = "Title:"
@@ -86,15 +88,17 @@ class ModuleDef(NamedTuple):
         ModuleDef(docstring='Title:')
         >>> module.get_summary()
         '# Title:'
+
     """
+
     docstring: str
 
     def get_summary(self) -> str:
-        """
-        get the module's summary
+        """Get the module's summary.
 
         Returns:
             str: Summary
+
         """
         return self.get_docstring()
 
@@ -114,8 +118,7 @@ class ModuleDef(NamedTuple):
 
 
 class NodeDef(NamedTuple):
-    """
-    NamedTuple to define a node (Class/Function)
+    """Define a node (class/function) with this NamedTuple.
 
     Attributes:
         title (str): short class/function definition
@@ -124,14 +127,14 @@ class NodeDef(NamedTuple):
         level (int): level in the module
 
     """
+
     title: str
     definition: str
     docstring: str
     level: int
 
     def get_summary(self) -> str:
-        """
-        Node's summary
+        """Get the node's summary.
 
         Returns:
             str
@@ -141,8 +144,7 @@ class NodeDef(NamedTuple):
                f"{Tag.CR.value}{self.get_docstring()}"
 
     def get_toc_elem(self) -> str:
-        """
-        Return a TOC entry for this node
+        """Get the node's TOC entry.
 
         Returns:
             str
@@ -155,8 +157,7 @@ class NodeDef(NamedTuple):
         return f"[{self.title}](#{anchor})<br />"
 
     def get_title(self) -> str:
-        """
-        Return the node's title
+        """Get the node's title.
 
         Returns:
             str
@@ -166,8 +167,7 @@ class NodeDef(NamedTuple):
 
     @ConvMD.add_tag(Tag.BEG_PY.value, Tag.BEG_END_CO.value)
     def get_definition(self) -> str:
-        """
-        Return a TOC entry for this node
+        """Get the node's TOC entry.
 
         Returns:
             str
@@ -180,8 +180,7 @@ class NodeDef(NamedTuple):
     @ConvMD.colorize_examples()
     @ConvMD.add_tag(Tag.CR.value, Tag.CR.value)
     def get_docstring(self) -> str:
-        """
-        Generate the node's Docstring with MD Tag.
+        """Get the node's Docstring with MD Tag.
 
         Returns:
             str: Docstring
@@ -194,7 +193,8 @@ NodeListType = deque[Union[NodeDef, ModuleDef]]
 
 
 class ObjVisitor(ast.NodeVisitor):
-    """
+    """Define the AST NodeVisitor.
+
     This Class is an ast.NodeVisitor class and allow us to parse
     code tree.
     All methods are called according to node type.
@@ -224,6 +224,7 @@ class ObjVisitor(ast.NodeVisitor):
         'def logger_ast(func: F) -> F:'
 
     """
+
     __module_docstring: bool
     __private_def: bool
     __func: list[Any]
@@ -231,6 +232,13 @@ class ObjVisitor(ast.NodeVisitor):
     def __init__(
             self, module_docstring: bool = False, private_def: bool = False) \
             -> None:
+        """Init the AST analysis.
+
+        Args:
+            module_docstring (bool): get module docstring
+            private_def (bool): get private functions
+
+        """
         super(ast.NodeVisitor, self).__init__()
         self.__module_docstring = module_docstring
         self.__private_def = private_def
@@ -239,7 +247,7 @@ class ObjVisitor(ast.NodeVisitor):
 
     @property
     def node_lst(self) -> NodeListType:
-        """Return node list"""
+        """Get the node list."""
         return self.__node_lst
 
     @staticmethod
@@ -378,16 +386,17 @@ class ObjVisitor(ast.NodeVisitor):
     # -------------------------------------------------------------------------
     @logger_ast
     def visit_Module(self, node: ast.Module) -> None:
-        """
-        This function is automatically called by AST mechanism
-        when the current node is a module.
-        We update self.node_lst.
+        """Visit a module.
+
+        This function is automatically called by AST mechanism when the
+        current node is a module and add a ModuleDef obj in self.node_lst.
 
         Args:
             node (ast.AST): current node
 
         Returns:
             None
+
         """
         # Find all objects and set up the level
         self.__set_level(node)
@@ -406,16 +415,17 @@ class ObjVisitor(ast.NodeVisitor):
     # -------------------------------------------------------------------------
     @logger_ast
     def visit_ClassDef(self, node: ast.ClassDef) -> None:
-        """
-        This function is automatically called by AST mechanism
-        when the current node is a class.
-        We update self.node_lst.
+        """Visit a Class.
+
+        This function is automatically called by AST mechanism when the
+        current node is a class and add a NodeDef obj in self.node_lst.
 
         Args:
             node (ast.ClassDef): current node
 
         Returns:
             None
+
         """
         self.__node_lst.append(
             NodeDef(
@@ -449,10 +459,10 @@ class ObjVisitor(ast.NodeVisitor):
     # -------------------------------------------------------------------------
     @logger_ast
     def visit_FunctionDef(self, node: ast.FunctionDef) -> None:
-        """
-        This function is automatically called by AST mechanism
-        when the current node is a function.
-        We add FuncDef obj in self.node_lst.
+        """Visit Function.
+
+        This function is automatically called by AST mechanism when the
+        current node is a function and add a NodeDef obj in self.node_lst.
 
         Args:
             node (ast.FunctionDef): current node

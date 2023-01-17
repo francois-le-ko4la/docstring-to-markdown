@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
+Docstring2md: mod.
+
 This script is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
 License as published by the Free Software Foundation; either
@@ -24,7 +26,8 @@ from docstring2md.log import logger
 
 
 class PytMod:
-    """
+    """Manage module analysis.
+
     Object in order to extract Python functions, class....
 
     Examples:
@@ -40,9 +43,7 @@ class PytMod:
         >>> mod = PytMod(__file__)
         >>> mod.read()
         >>> print(mod.node_lst[0].docstring)
-        This script is free software; you can redistribute it and/or
-        modify it under the terms of the GNU Lesser General Public
-        License as published by the Free Software Foundation; either
+        Docstring2md: mod.
         ...
         MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
         >>> mod = PytMod('docstring2md')
@@ -51,11 +52,18 @@ class PytMod:
         class Const(Enum):
 
     """
+
     __path: Optional[str]
     __module: str
     __private_def: bool
 
     def __init__(self, module_name: str, private_def: bool = False) -> None:
+        """Init the object.
+
+        Args:
+            module_name (str): module name
+            private_def (bool): extract private def
+        """
         self.__path = ""
         self.__module = module_name
         self.__private_def = private_def
@@ -64,7 +72,8 @@ class PytMod:
 
     @property
     def module(self) -> str:
-        """
+        """Get the module name.
+
         module name (str):
             modulename
             /path/to/the/mod
@@ -74,8 +83,7 @@ class PytMod:
 
     @property
     def node_lst(self) -> NodeListType:
-        """
-        returns all the docstrings.
+        """Get the docstrings.
 
         Returns:
                     str: Docstring
@@ -85,8 +93,7 @@ class PytMod:
 
     @property
     def pkg_main_docstring(self) -> NodeListType:
-        """
-        PKG only.
+        """Get the main docstring.
 
         Returns:
             str: Main docstring
@@ -100,7 +107,8 @@ class PytMod:
             f"{self.__path}/__init__.py", module_docstring=True)
 
     def ismodule(self) -> bool:
-        """
+        """Check the module.
+
         If module name is a module file => True
         Else if the module name is a package => False
 
@@ -113,7 +121,8 @@ class PytMod:
         return False
 
     def read(self) -> None:
-        """
+        """Read the module.
+
         Reads all files and store the result.
 
         Returns:

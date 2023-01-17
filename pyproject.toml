@@ -35,9 +35,11 @@ dev = [
     "pytest>=7.2.0",
     "pylint",
     "mypy",
+    "pydocstyle",
     "pytest-pylint",
     "pytest-pycodestyle",
     "pytest-mypy",
+    "pytest-pydocstyle",
     "types-setuptools",
     "types-PyYAML"]
 
@@ -55,6 +57,7 @@ addopts = [
     "--pycodestyle",
     "--doctest-modules",
     "--mypy",
+    "--pydocstyle",
     "--pylint",
     "--strict-markers"
 ]

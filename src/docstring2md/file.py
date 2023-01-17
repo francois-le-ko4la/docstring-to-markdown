@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
+Docstring2md: file.
+
 This script is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
 License as published by the Free Software Foundation; either
@@ -20,7 +22,8 @@ from docstring2md.log import logger
 
 
 class MyFile(NamedTuple):
-    """This class describe a file with a NamedTuple
+    r"""Describe a file with a NamedTuple.
+
     @classmethod is used to init the objects correctly.
 
     Notes:
@@ -48,18 +51,22 @@ class MyFile(NamedTuple):
         >>> lic.exists
         True
         >>> result = lic.read()
-        >>> result = result.split("\\n")
+        >>> result = result.split("\n")
         >>> result[0]
         '                    GNU GENERAL PUBLIC LICENSE'
     """
+
     path: Optional[Path]
     exists: bool
     status: ExitStatus
 
     @classmethod
     def set_path(cls, path: Optional[str]) -> MyFile:
-        """ This function create the MyFile object with the file's path.
-        if path = None then return None
+        """Set path and create the object.
+
+        if path is None        -> status = ExitStatus.EX_CANTCREAT
+        if path exists         -> status = ExitStatus.EX_OK
+        If path does not exist -> status = ExitStatus.EX_OSFILE
 
         Args:
             path: The file's path.
@@ -76,13 +83,13 @@ class MyFile(NamedTuple):
         return cls(path=Path(path), exists=_exists, status=_status)
 
     def __repr__(self) -> str:
+        """Get the repr."""
         _repr: str = f"path={repr(self.path)}, exists={self.exists}, status" \
                      f"={self.status}"
         return f'{self.__class__.__name__}({_repr})'
 
     def read(self) -> str:
-        """
-        read the text
+        """Read the file.
 
         Returns:
             str: Text if successful else ""
@@ -91,8 +98,7 @@ class MyFile(NamedTuple):
         return self.path.read_text() if self.path else ""
 
     def write(self, data: str) -> ExitStatus:
-        """
-        Write data in the file
+        """Write data in the file.
 
         Returns:
             int: status
@@ -117,8 +123,7 @@ class MyFile(NamedTuple):
         return ExitStatus.EX_OK
 
     def resolve(self) -> str:
-        """
-        get path.resolve()
+        """Get the resolved path.
 
         Returns:
             str
@@ -127,8 +132,7 @@ class MyFile(NamedTuple):
         return str(self.path.resolve()) if self.path else ""
 
     def absolute(self) -> str:
-        """
-        get path.absolute()
+        """Get the absolute path.
 
         Returns:
             str

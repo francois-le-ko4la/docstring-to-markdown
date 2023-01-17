@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+# noqa: D205,D400
 """
 docstring2md:
     [![badge](https://forthebadge.com/images/badges/made-with-python.svg)]()

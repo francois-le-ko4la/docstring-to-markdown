@@ -3,6 +3,8 @@
 # Metadata with importlib_metadata:
 # mypy: disable-error-code=no-redef
 """
+Docstring2md: about.
+
 This script is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
 License as published by the Free Software Foundation; either

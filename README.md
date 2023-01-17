@@ -204,9 +204,11 @@ dev = [
     "pytest>=7.2.0",
     "pylint",
     "mypy",
+    "pydocstyle",
     "pytest-pylint",
     "pytest-pycodestyle",
     "pytest-mypy",
+    "pytest-pydocstyle",
     "types-setuptools",
     "types-PyYAML"]
 
@@ -224,6 +226,7 @@ addopts = [
     "--pycodestyle",
     "--doctest-modules",
     "--mypy",
+    "--pydocstyle",
     "--pylint",
     "--strict-markers"
 ]
@@ -552,7 +555,7 @@ class Const(Enum):
 ```
 <pre>
 
-Constants
+Define constants.
 
 </pre>
 ### Tag()
@@ -561,7 +564,7 @@ class Tag(Enum):
 ```
 <pre>
 
-TAG used to convert
+Define TAG used to build MD file.
 
 </pre>
 ### LoggingSetup()
@@ -570,7 +573,7 @@ class LoggingSetup(NamedTuple):
 ```
 <pre>
 
-Logging Parameters
+Define logging Parameters.
 
 </pre>
 <b>Examples:</b>
@@ -589,8 +592,9 @@ def LoggingSetup.set_logfile(cls, path: str) -> LoggingSetup:
 ```
 <pre>
 
-This function create the LoggingSetup object with the log file's
-path.
+Define the logfile.
+
+This function create the LoggingSetup object with the log file's path.
 
 <b>Args:</b>
     path: The file's path.
@@ -614,14 +618,13 @@ class EventMSG(NamedTuple):
 ```
 <pre>
 
-This call define Messages with different sev.
+Define Messages with different sev.
 
 <b>Attributes:</b>
     info (str): message for info ("" by default)
     warning (str): message for warning ("" by default)
     error (str): message for error ("" by default)
     debug (str): message for debug ("" by default)
-
 
 </pre>
 <b>Examples:</b>
@@ -639,7 +642,7 @@ class LogMessages(NamedTuple):
 ```
 <pre>
 
-All logging messages
+Set standard logging messages.
 
 </pre>
 ### ExitStatus()
@@ -648,7 +651,7 @@ class ExitStatus(Enum):
 ```
 <pre>
 
-Exit status
+Define Exit status.
 
 </pre>
 ### logger_ast()
@@ -657,13 +660,16 @@ def logger_ast(func: F) -> F:
 ```
 <pre>
 
-This function is a decorator to use in the AST Navigator Class.
+Use it to decorate AST Navigator Class.
+
+This function decorate an AST function and use the logging to track
+the activity.
 
 <b>Args:</b>
-            func: F (Callable[..., Any])
+    func: F (Callable[..., Any])
 
 <b>Returns:</b>
-            F (Callable[..., Any])
+    F (Callable[..., Any])
 
 </pre>
 #### logger_ast.func_wrapper()
@@ -682,7 +688,7 @@ class NodeLink(NamedTuple):
 ```
 <pre>
 
-NamedTuple to link a node with a parent Node
+Use a NamedTuple to link a node with his parent Node.
 
 <b>Attributes:</b>
     level (int): level in the module
@@ -695,7 +701,7 @@ class ModuleDef(NamedTuple):
 ```
 <pre>
 
-NamedTuple to define a Module.
+Define a module with this NamedTuple.
 
 </pre>
 <b>Examples:</b>
@@ -716,7 +722,7 @@ def ModuleDef.get_summary(self) -> str:
 ```
 <pre>
 
-get the module's summary
+Get the module's summary.
 
 <b>Returns:</b>
     str: Summary
@@ -742,7 +748,7 @@ class NodeDef(NamedTuple):
 ```
 <pre>
 
-NamedTuple to define a node (Class/Function)
+Define a node (class/function) with this NamedTuple.
 
 <b>Attributes:</b>
     title (str): short class/function definition
@@ -757,7 +763,7 @@ def NodeDef.get_summary(self) -> str:
 ```
 <pre>
 
-Node's summary
+Get the node's summary.
 
 <b>Returns:</b>
     str
@@ -769,7 +775,7 @@ def NodeDef.get_toc_elem(self) -> str:
 ```
 <pre>
 
-Return a TOC entry for this node
+Get the node's TOC entry.
 
 <b>Returns:</b>
     str
@@ -781,7 +787,7 @@ def NodeDef.get_title(self) -> str:
 ```
 <pre>
 
-Return the node's title
+Get the node's title.
 
 <b>Returns:</b>
     str
@@ -794,7 +800,7 @@ def NodeDef.get_definition(self) -> str:
 ```
 <pre>
 
-Return a TOC entry for this node
+Get the node's TOC entry.
 
 <b>Returns:</b>
     str
@@ -809,7 +815,7 @@ def NodeDef.get_docstring(self) -> str:
 ```
 <pre>
 
-Generate the node's Docstring with MD Tag.
+Get the node's Docstring with MD Tag.
 
 <b>Returns:</b>
     str: Docstring
@@ -820,6 +826,8 @@ Generate the node's Docstring with MD Tag.
 class ObjVisitor(ast.NodeVisitor):
 ```
 <pre>
+
+Define the AST NodeVisitor.
 
 This Class is an ast.NodeVisitor class and allow us to parse
 code tree.
@@ -860,7 +868,11 @@ def ObjVisitor.__init__(self, module_docstring: bool = False, private_def: bool 
 ```
 <pre>
 
-None
+Init the AST analysis.
+
+<b>Args:</b>
+    module_docstring (bool): get module docstring
+    private_def (bool): get private functions
 
 </pre>
 #### @Property ObjVisitor.node_lst()
@@ -870,7 +882,7 @@ def ObjVisitor.node_lst(self) -> NodeListType:
 ```
 <pre>
 
-Return node list
+Get the node list.
 
 </pre>
 #### ObjVisitor.parse()
@@ -1014,9 +1026,10 @@ def ObjVisitor.visit_Module(self, node: ast.Module) -> None:
 ```
 <pre>
 
-This function is automatically called by AST mechanism
-when the current node is a module.
-We update self.node_lst.
+Visit a module.
+
+This function is automatically called by AST mechanism when the
+current node is a module and add a ModuleDef obj in self.node_lst.
 
 <b>Args:</b>
     node (ast.AST): current node
@@ -1041,9 +1054,10 @@ def ObjVisitor.visit_ClassDef(self, node: ast.ClassDef) -> None:
 ```
 <pre>
 
-This function is automatically called by AST mechanism
-when the current node is a class.
-We update self.node_lst.
+Visit a Class.
+
+This function is automatically called by AST mechanism when the
+current node is a class and add a NodeDef obj in self.node_lst.
 
 <b>Args:</b>
     node (ast.ClassDef): current node
@@ -1099,9 +1113,10 @@ def ObjVisitor.visit_FunctionDef(self, node: ast.FunctionDef) -> None:
 ```
 <pre>
 
-This function is automatically called by AST mechanism
-when the current node is a function.
-We add FuncDef obj in self.node_lst.
+Visit Function.
+
+This function is automatically called by AST mechanism when the
+current node is a function and add a NodeDef obj in self.node_lst.
 
 <b>Args:</b>
     node (ast.FunctionDef): current node
@@ -1216,6 +1231,8 @@ def check_python() -> bool:
 ```
 <pre>
 
+Check python version.
+
 This function check Python version, log the result and return a status
 True/False.
 
@@ -1229,7 +1246,9 @@ def get_argparser() -> argparse.ArgumentParser:
 ```
 <pre>
 
-This function describe the argument parser and return it.
+Define the argument parser.
+
+This function define the argument parser and return it.
 
 <b>Returns:</b>
     ArgumentParser
@@ -1250,7 +1269,9 @@ def run() -> int:
 ```
 <pre>
 
-This function is called by the CLI runner and manage options.
+Manage options and analyse modules.
+
+Called by the CLI runner, manage options to analyse the module.
 It exits 0 on success, and >0 if an error occurs.
 
 <b>Returns:</b>
@@ -1268,7 +1289,7 @@ class ConvMD():
 ```
 <pre>
 
-Prepare MD string
+Prepare MD string.
 
 </pre>
 #### ConvMD.repl_str()
@@ -1278,8 +1299,7 @@ def ConvMD.repl_str(old_string: str, new_string: str) -> Callable[[F], F]:
 ```
 <pre>
 
-Decorator - search & replace a string by another string
-Examples: replace space by an HTML Tag.
+Search & replace a string by another string.
 
 <b>Args:</b>
     old_string (str): string to search
@@ -1291,7 +1311,6 @@ Examples: replace space by an HTML Tag.
 </pre>
 <b>Examples:</b>
 ```python
-
 
     >>> from docstring2md.convmd import ConvMD
     >>> @ConvMD.repl_str("docstring", "is ok !")
@@ -1308,7 +1327,7 @@ def ConvMD.repl_str.tags_decorator(func: F) -> F:
 ```
 <pre>
 
-decorator 
+Decorate.
 
 </pre>
 ###### ConvMD.repl_str.tags_decorator.func_wrapper()
@@ -1318,7 +1337,7 @@ def ConvMD.repl_str.tags_decorator.func_wrapper(*args: Any, **kwargs: Any) -> An
 ```
 <pre>
 
-wrapper 
+Wrapp.
 
 </pre>
 #### ConvMD.repl_beg_end()
@@ -1328,7 +1347,7 @@ def ConvMD.repl_beg_end(begin_regexp: str, end_regexp: str, begin_tag: str, end_
 ```
 <pre>
 
-Decorator - replace the beginning and the end.
+Replace the beginning and the end.
 
 <b>Args:</b>
     begin_regexp (str)
@@ -1360,7 +1379,7 @@ def ConvMD.repl_beg_end.tags_decorator(func: F) -> F:
 ```
 <pre>
 
-decorator 
+Decorate.
 
 </pre>
 ###### ConvMD.repl_beg_end.tags_decorator.func_wrapper()
@@ -1370,7 +1389,7 @@ def ConvMD.repl_beg_end.tags_decorator.func_wrapper(*args: Any, **kwargs: Any) -
 ```
 <pre>
 
-wrapper 
+Wrapp.
 
 </pre>
 #### ConvMD.add_tag()
@@ -1380,7 +1399,7 @@ def ConvMD.add_tag(begin_tag: str, end_tag: str) -> Callable[[F], F]:
 ```
 <pre>
 
-Decorator - add a tag
+Add a tag in a string.
 
 <b>Args:</b>
     begin_tag (str)
@@ -1409,7 +1428,7 @@ def ConvMD.add_tag.tags_decorator(func: F) -> F:
 ```
 <pre>
 
-decorator 
+Decorate.
 
 </pre>
 ###### ConvMD.add_tag.tags_decorator.func_wrapper()
@@ -1419,7 +1438,7 @@ def ConvMD.add_tag.tags_decorator.func_wrapper(*args: Any, **kwargs: Any) -> Any
 ```
 <pre>
 
-wrapper 
+Wrapp.
 
 </pre>
 #### ConvMD.html_escape()
@@ -1441,7 +1460,7 @@ def ConvMD.html_escape.tags_decorator(func: F) -> F:
 ```
 <pre>
 
-decorator 
+Decorate.
 
 </pre>
 ###### ConvMD.html_escape.tags_decorator.func_wrapper()
@@ -1451,7 +1470,7 @@ def ConvMD.html_escape.tags_decorator.func_wrapper(*args: Any, **kwargs: Any) ->
 ```
 <pre>
 
-wrapper 
+Wrapp.
 
 </pre>
 #### ConvMD.colorize_examples()
@@ -1473,7 +1492,7 @@ def ConvMD.colorize_examples.tags_decorator(func: F) -> F:
 ```
 <pre>
 
-decorator 
+Decorate.
 
 </pre>
 ###### ConvMD.colorize_examples.tags_decorator.func_wrapper()
@@ -1483,7 +1502,7 @@ def ConvMD.colorize_examples.tags_decorator.func_wrapper(*args: Any, **kwargs: A
 ```
 <pre>
 
-wrapper 
+Wrapp.
 
 </pre>
 #### ConvMD.dedent()
@@ -1493,7 +1512,7 @@ def ConvMD.dedent() -> Callable[[F], F]:
 ```
 <pre>
 
-Decorator - deindent text
+Deindent text.
 
 <b>Returns:</b>
     decorated function
@@ -1505,7 +1524,7 @@ def ConvMD.dedent.tags_decorator(func: F) -> F:
 ```
 <pre>
 
-decorator 
+Decorate.
 
 </pre>
 ###### ConvMD.dedent.tags_decorator.func_wrapper()
@@ -1515,7 +1534,7 @@ def ConvMD.dedent.tags_decorator.func_wrapper(*args: Any, **kwargs: Any) -> Any:
 ```
 <pre>
 
-wrapper 
+Wrapp.
 
 </pre>
 ### DocString2MDOptions()
@@ -1524,7 +1543,7 @@ class DocString2MDOptions(NamedTuple):
 ```
 <pre>
 
-<b>This NamedTuple organizes all options with one NamedTuple:</b>
+Define the DocString2MD options.
 
 <b>Attributes:</b>
     toml (MyFile): MyFile.set_path(/path/to/toml/file.toml)
@@ -1541,7 +1560,7 @@ class DocString2MD():
 ```
 <pre>
 
-Class DocString2MD : export Google docstring to MD File.
+Export Google docstring to MD File.
 
 </pre>
 <b>Examples:</b>
@@ -1573,7 +1592,8 @@ def DocString2MD.__init__(self, module_name: str, options: DocString2MDOptions) 
 ```
 <pre>
 
-Init the class
+Init the obj.
+
 This function define default attributes.
 
 <b>Args:</b>
@@ -1587,6 +1607,7 @@ def DocString2MD.import_module(self) -> ExitStatus:
 <pre>
 
 Import the module.
+
 It exits 0 on success, and >0 if an error occurs.
 
 <b>Returns:</b>
@@ -1601,7 +1622,7 @@ def DocString2MD.get_doc(self) -> str:
 ```
 <pre>
 
-Returns the documentation
+Return the documentation.
 
 <b>Returns:</b>
     str: doc
@@ -1613,7 +1634,8 @@ def DocString2MD.writedoc(self) -> ExitStatus:
 ```
 <pre>
 
-Writes the doc: screen or files.
+Write the doc - screen or files.
+
 It exits 0 on success, and >0 if an error occurs.
 
 <b>args:</b>
@@ -1632,7 +1654,8 @@ class MyFile(NamedTuple):
 ```
 <pre>
 
-This class describe a file with a NamedTuple
+Describe a file with a NamedTuple.
+
 @classmethod is used to init the objects correctly.
 
 <b>Notes:</b>
@@ -1676,8 +1699,11 @@ def MyFile.set_path(cls, path: Optional[str]) -> MyFile:
 ```
 <pre>
 
-This function create the MyFile object with the file's path.
-if path = None then return None
+Set path and create the object.
+
+if path is None        -> status = ExitStatus.EX_CANTCREAT
+if path exists         -> status = ExitStatus.EX_OK
+If path does not exist -> status = ExitStatus.EX_OSFILE
 
 <b>Args:</b>
     path: The file's path.
@@ -1692,7 +1718,7 @@ def MyFile.__repr__(self) -> str:
 ```
 <pre>
 
-None
+Get the repr.
 
 </pre>
 #### MyFile.read()
@@ -1701,7 +1727,7 @@ def MyFile.read(self) -> str:
 ```
 <pre>
 
-read the text
+Read the file.
 
 <b>Returns:</b>
     str: Text if successful else ""
@@ -1713,7 +1739,7 @@ def MyFile.write(self, data: str) -> ExitStatus:
 ```
 <pre>
 
-Write data in the file
+Write data in the file.
 
 <b>Returns:</b>
     int: status
@@ -1728,7 +1754,7 @@ def MyFile.resolve(self) -> str:
 ```
 <pre>
 
-get path.resolve()
+Get the resolved path.
 
 <b>Returns:</b>
     str
@@ -1740,7 +1766,7 @@ def MyFile.absolute(self) -> str:
 ```
 <pre>
 
-get path.absolute()
+Get the absolute path.
 
 <b>Returns:</b>
     str
@@ -1751,6 +1777,8 @@ get path.absolute()
 def define_logfile(path: str) -> None:
 ```
 <pre>
+
+Define the logfile.
 
 This function set up the log to push log events in the report file.
 
@@ -1765,6 +1793,8 @@ This function set up the log to push log events in the report file.
 class PytMod():
 ```
 <pre>
+
+Manage module analysis.
 
 Object in order to extract Python functions, class....
 
@@ -1784,9 +1814,7 @@ Object in order to extract Python functions, class....
     >>> mod = PytMod(__file__)
     >>> mod.read()
     >>> print(mod.node_lst[0].docstring)
-    This script is free software; you can redistribute it and/or
-    modify it under the terms of the GNU Lesser General Public
-    License as published by the Free Software Foundation; either
+    Docstring2md: mod.
     ...
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
     >>> mod = PytMod('docstring2md')
@@ -1802,7 +1830,11 @@ def PytMod.__init__(self, module_name: str, private_def: bool = False) -> None:
 ```
 <pre>
 
-None
+Init the object.
+
+<b>Args:</b>
+    module_name (str): module name
+    private_def (bool): extract private def
 
 </pre>
 #### @Property PytMod.module()
@@ -1811,6 +1843,8 @@ None
 def PytMod.module(self) -> str:
 ```
 <pre>
+
+Get the module name.
 
 <b>module name (str):</b>
     modulename
@@ -1825,7 +1859,7 @@ def PytMod.node_lst(self) -> NodeListType:
 ```
 <pre>
 
-returns all the docstrings.
+Get the docstrings.
 
 <b>Returns:</b>
             str: Docstring
@@ -1838,7 +1872,7 @@ def PytMod.pkg_main_docstring(self) -> NodeListType:
 ```
 <pre>
 
-PKG only.
+Get the main docstring.
 
 <b>Returns:</b>
     str: Main docstring
@@ -1849,6 +1883,8 @@ PKG only.
 def PytMod.ismodule(self) -> bool:
 ```
 <pre>
+
+Check the module.
 
 If module name is a module file => True
 Else if the module name is a package => False
@@ -1862,6 +1898,8 @@ Else if the module name is a package => False
 def PytMod.read(self) -> None:
 ```
 <pre>
+
+Read the module.
 
 Reads all files and store the result.
 

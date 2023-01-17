@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
+Docstring2md: log.
+
 This script is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
 License as published by the Free Software Foundation; either
@@ -46,7 +48,8 @@ logger: logging.Logger = logging.getLogger(__name__)
 # ------------------------------------------------------------------------------
 
 def define_logfile(path: str) -> None:
-    """
+    """Define the logfile.
+
     This function set up the log to push log events in the report file.
 
     Args:

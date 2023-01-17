@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
+Docstring2md: doc2md.
+
 This script is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
 License as published by the Free Software Foundation; either
@@ -21,8 +23,7 @@ from docstring2md.ast_engine import NodeDef
 
 
 class DocString2MDOptions(NamedTuple):
-    """
-    This NamedTuple organizes all options with one NamedTuple:
+    """Define the DocString2MD options.
 
     Attributes:
         toml (MyFile): MyFile.set_path(/path/to/toml/file.toml)
@@ -33,6 +34,7 @@ class DocString2MDOptions(NamedTuple):
         private_def (bool): True -> get private function
 
     """
+
     toml: MyFile
     uml: MyFile
     todo: MyFile
@@ -42,9 +44,7 @@ class DocString2MDOptions(NamedTuple):
 
 
 class DocString2MD:
-
-    """
-    Class DocString2MD : export Google docstring to MD File.
+    r"""Export Google docstring to MD File.
 
     Examples:
         >>> options: DocString2MDOptions = DocString2MDOptions(
@@ -61,16 +61,19 @@ class DocString2MD:
         >>> doc.import_module()
         <ExitStatus.EX_OK: 0>
         >>> result = doc.get_doc()
-        >>> result = result.split("\\n")
+        >>> result = result.split("\n")
         >>> result[0]
         '# docstring2md:'
+
     """
+
     __options: DocString2MDOptions
     __my_module: PytMod
     __output: str = ""
 
     def __init__(self, module_name: str, options: DocString2MDOptions) -> None:
-        """Init the class
+        """Init the obj.
+
         This function define default attributes.
 
         Args:
@@ -81,8 +84,8 @@ class DocString2MD:
         self.__my_module = PytMod(module_name, options.private_def)
 
     def import_module(self) -> ExitStatus:
-        """
-        Import the module.
+        """Import the module.
+
         It exits 0 on success, and >0 if an error occurs.
 
         Returns:
@@ -131,7 +134,7 @@ class DocString2MD:
         return ExitStatus.EX_OK
 
     def get_doc(self) -> str:
-        """Returns the documentation
+        """Return the documentation.
 
         Returns:
             str: doc
@@ -140,8 +143,8 @@ class DocString2MD:
         return self.__output
 
     def writedoc(self) -> ExitStatus:
-        """
-        Writes the doc: screen or files.
+        """Write the doc - screen or files.
+
         It exits 0 on success, and >0 if an error occurs.
 
         args:

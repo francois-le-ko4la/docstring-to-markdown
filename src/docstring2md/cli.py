@@ -3,8 +3,11 @@
 # Error on __version__:
 # mypy: disable-error-code=attr-defined
 """
+Docstring2md: cli.
+
 This script is provided by docstring2md package.
-It exports google docstrings from python module to a Markdown file in order to
+
+Export google docstrings from python module to a Markdown file in order to
 generate README.
 """
 from __future__ import annotations
@@ -29,7 +32,9 @@ from docstring2md.log import logger, define_logfile
 # check python
 # ------------------------------------------------------------------------------
 def check_python() -> bool:
-    """This function check Python version, log the result and return a status
+    """Check python version.
+
+    This function check Python version, log the result and return a status
     True/False.
 
     Returns:
@@ -54,8 +59,9 @@ def check_python() -> bool:
 # arguments and options
 # ------------------------------------------------------------------------------
 def get_argparser() -> argparse.ArgumentParser:
-    """
-    This function describe the argument parser and return it.
+    """Define the argument parser.
+
+    This function define the argument parser and return it.
 
     Returns:
         ArgumentParser
@@ -64,9 +70,7 @@ def get_argparser() -> argparse.ArgumentParser:
         >>> a = get_argparser()
         >>> type(a)
         <class 'argparse.ArgumentParser'>
-
     """
-
     RawDescriptionRichHelpFormatter.styles.update(ARG_STYLE)
     RawDescriptionRichHelpFormatter.highlights.extend(ARG_HIGHLIGHT)
 
@@ -135,8 +139,9 @@ def get_argparser() -> argparse.ArgumentParser:
 
 
 def run() -> int:
-    """
-    This function is called by the CLI runner and manage options.
+    """Manage options and analyse modules.
+
+    Called by the CLI runner, manage options to analyse the module.
     It exits 0 on success, and >0 if an error occurs.
 
     Returns:
@@ -146,9 +151,7 @@ def run() -> int:
         return EX_OSFILE: 72 -> Module not found
         return EX_CANTCREAT: 73 -> can't create the file
         return EX_IOERR: 74 -> write error
-
     """
-
     parser: argparse.ArgumentParser = get_argparser()
     args: argparse.Namespace = parser.parse_args()
 

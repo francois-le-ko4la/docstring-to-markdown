@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
+Docstring2md: Config.
+
 This script is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
 License as published by the Free Software Foundation; either
@@ -22,7 +24,8 @@ if __name__ == "__main__":
 
 @unique
 class Const(Enum):
-    """Constants"""
+    """Define constants."""
+
     DOCSTRING_EMPTY: str = "Docstring empty"
     HEAD_TAG: str = "#"
     DEV_HEAD: str = "# Dev notes"
@@ -38,7 +41,8 @@ class Const(Enum):
 
 @unique
 class Tag(Enum):
-    """TAG used to convert"""
+    """Define TAG used to build MD file."""
+
     BEG_END_CO: str = "\n```"
     BEG_MERMAID: str = "\n```mermaid\n"
     BEG_TOML: str = "\n```toml\n"
@@ -64,7 +68,7 @@ class Tag(Enum):
 
 # logging
 class LoggingSetup(NamedTuple):
-    """Logging Parameters
+    """Define logging Parameters.
 
     Examples:
     >>> my_setup = LoggingSetup()
@@ -72,6 +76,7 @@ class LoggingSetup(NamedTuple):
     'INFO'
 
     """
+
     logfile: str = ""
     default_level: str = 'INFO'
     default_format: str = '%(message)s'
@@ -81,8 +86,9 @@ class LoggingSetup(NamedTuple):
 
     @classmethod
     def set_logfile(cls, path: str) -> "LoggingSetup":
-        """ This function create the LoggingSetup object with the log file's
-        path.
+        """Define the logfile.
+
+        This function create the LoggingSetup object with the log file's path.
 
         Args:
             path: The file's path.
@@ -102,8 +108,7 @@ LOGGING_SETUP: LoggingSetup = LoggingSetup()
 
 
 class EventMSG(NamedTuple):
-    """
-    This call define Messages with different sev.
+    """Define Messages with different sev.
 
     Attributes:
         info (str): message for info ("" by default)
@@ -111,13 +116,13 @@ class EventMSG(NamedTuple):
         error (str): message for error ("" by default)
         debug (str): message for debug ("" by default)
 
-
     Examples:
         >>> logfile = EventMSG(info="Log file used: %s")
         >>> logfile.info
         'Log file used: %s'
 
     """
+
     info: str = ""
     warning: str = ""
     error: str = ""
@@ -125,7 +130,8 @@ class EventMSG(NamedTuple):
 
 
 class LogMessages(NamedTuple):
-    """All logging messages"""
+    """Set standard logging messages."""
+
     logfile: EventMSG = EventMSG(
         info="Log file used: %s")
     args: EventMSG = EventMSG(
@@ -184,7 +190,8 @@ PID: int = os.getpid()
 
 # exit values
 class ExitStatus(Enum):
-    """Exit status"""
+    """Define Exit status."""
+
     EX_OK: int = getattr(os, 'EX_OK', 0)
     EX_OSFILE: int = getattr(os, 'EX_OSFILE', 72)
     EX_CANTCREAT: int = getattr(os, 'EX_CANTCREAT', 73)

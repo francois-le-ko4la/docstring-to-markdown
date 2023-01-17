@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
+Docstring2md: convmd.
+
 This script is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
 License as published by the Free Software Foundation; either
@@ -24,14 +26,11 @@ F = TypeVar('F', bound=Callable[..., Any])
 
 
 class ConvMD:
-    """
-    Prepare MD string
-    """
+    """Prepare MD string."""
+
     @staticmethod
     def repl_str(old_string: str, new_string: str) -> Callable[[F], F]:
-        """
-        Decorator - search & replace a string by another string
-        Examples: replace space by an HTML Tag.
+        """Search & replace a string by another string.
 
         Args:
             old_string (str): string to search
@@ -41,7 +40,6 @@ class ConvMD:
             Callable[[F], F]
 
         Examples:
-
             >>> from docstring2md.convmd import ConvMD
             >>> @ConvMD.repl_str("docstring", "is ok !")
             ... def return_test() -> str:
@@ -51,10 +49,10 @@ class ConvMD:
 
         """
         def tags_decorator(func: F) -> F:
-            """ decorator """
+            """Decorate."""
             @wraps(func)
             def func_wrapper(*args: Any, **kwargs: Any) -> Any:
-                """ wrapper """
+                """Wrapp."""
                 return (func(*args, **kwargs)).replace(old_string, new_string)
             return cast(F, func_wrapper)
         return tags_decorator
@@ -63,8 +61,7 @@ class ConvMD:
     def repl_beg_end(
             begin_regexp: str, end_regexp: str, begin_tag: str, end_tag: str)\
             -> Callable[[F], F]:
-        """
-        Decorator - replace the beginning and the end.
+        """Replace the beginning and the end.
 
         Args:
             begin_regexp (str)
@@ -87,10 +84,10 @@ class ConvMD:
 
         """
         def tags_decorator(func: F) -> F:
-            """ decorator """
+            """Decorate."""
             @wraps(func)
             def func_wrapper(*args: Any, **kwargs: Any) -> Any:
-                """ wrapper """
+                """Wrapp."""
                 return re.sub(
                     begin_regexp + r'(\S.*)' + end_regexp,
                     begin_tag + r'\1' + end_tag,
@@ -101,8 +98,7 @@ class ConvMD:
 
     @staticmethod
     def add_tag(begin_tag: str, end_tag: str) -> Callable[[F], F]:
-        """
-        Decorator - add a tag
+        """Add a tag in a string.
 
         Args:
             begin_tag (str)
@@ -122,46 +118,44 @@ class ConvMD:
 
         """
         def tags_decorator(func: F) -> F:
-            """ decorator """
+            """Decorate."""
             @wraps(func)
             def func_wrapper(*args: Any, **kwargs: Any) -> Any:
-                """ wrapper """
+                """Wrapp."""
                 return f"{begin_tag}{func(*args, **kwargs)}{end_tag}"
             return cast(F, func_wrapper)
         return tags_decorator
 
     @staticmethod
     def html_escape() -> Callable[[F], F]:
-        """
-        Escape the HTML Tag.
+        """Escape the HTML Tag.
 
         Returns:
             decorated function
 
         """
         def tags_decorator(func: F) -> F:
-            """ decorator """
+            """Decorate."""
             @wraps(func)
             def func_wrapper(*args: Any, **kwargs: Any) -> Any:
-                """ wrapper """
+                """Wrapp."""
                 return html.escape(func(*args, **kwargs))
             return cast(F, func_wrapper)
         return tags_decorator
 
     @staticmethod
     def colorize_examples() -> Callable[[F], F]:
-        """
-        Colorize python example.
+        """Colorize python example.
 
         Returns:
             decorated function
 
         """
         def tags_decorator(func: F) -> F:
-            """ decorator """
+            """Decorate."""
             @wraps(func)
             def func_wrapper(*args: Any, **kwargs: Any) -> Any:
-                """ wrapper """
+                """Wrapp."""
                 ret = func(*args, **kwargs)
                 if re.search(r"\nExamples:\n", ret):
                     ret = f"{Tag.BEG_PRE.value}{Tag.CR.value}{ret}" + \
@@ -178,18 +172,17 @@ class ConvMD:
 
     @staticmethod
     def dedent() -> Callable[[F], F]:
-        """
-        Decorator - deindent text
+        """Deindent text.
 
         Returns:
             decorated function
 
         """
         def tags_decorator(func: F) -> F:
-            """ decorator """
+            """Decorate."""
             @wraps(func)
             def func_wrapper(*args: Any, **kwargs: Any) -> Any:
-                """ wrapper """
+                """Wrapp."""
                 return textwrap.dedent(func(*args, **kwargs))
             return cast(F, func_wrapper)
         return tags_decorator
