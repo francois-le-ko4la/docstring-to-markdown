@@ -138,7 +138,7 @@ def get_argparser() -> argparse.ArgumentParser:
     return parser
 
 
-def run() -> int:
+def run() -> ExitStatus:
     """Manage options and analyse modules.
 
     Called by the CLI runner, manage options to analyse the module.
@@ -162,7 +162,7 @@ def run() -> int:
     if args.logfile:
         define_logfile(args.logfile)
     if not check_python():
-        return ExitStatus.EX_CONFIG.value
+        return ExitStatus.EX_CONFIG
 
     module_name: str = args.package
     options: DocString2MDOptions = DocString2MDOptions(
@@ -177,8 +177,8 @@ def run() -> int:
     status: ExitStatus = module.import_module()
     if status is not ExitStatus.EX_OK:
         logger.error(LOG_MSG.new_module.error)
-        return status.value
-    return module.writedoc().value
+        return status
+    return module.writedoc()
 
 
 if __name__ == "__main__":

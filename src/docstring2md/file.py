@@ -39,7 +39,7 @@ class MyFile(NamedTuple):
         >>> fstab.path.stem
         'fstab'
         >>> fstab
-        MyFile(path=PosixPath(...), exists=False, status=ExitStatus.EX_OSFILE)
+        MyFile(path=PosixPath(...), exists=False, status=72)
         >>> fstab.absolute()
         '/etc/fstab'
         >>> # pathlib to run the test everywhere

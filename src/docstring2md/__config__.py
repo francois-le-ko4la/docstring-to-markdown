@@ -15,7 +15,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 from __future__ import annotations
 
 import os
-from enum import Enum, unique
+from enum import Enum, IntEnum, unique
 from typing import NamedTuple
 
 if __name__ == "__main__":
@@ -189,7 +189,8 @@ PID: int = os.getpid()
 
 
 # exit values
-class ExitStatus(Enum):
+@unique
+class ExitStatus(IntEnum):
     """Define Exit status."""
 
     EX_OK: int = getattr(os, 'EX_OK', 0)

@@ -1,5 +1,5 @@
 from _typeshed import Incomplete
-from enum import Enum
+from enum import Enum, IntEnum
 from typing import NamedTuple
 
 class Const(Enum):
@@ -82,7 +82,7 @@ CHK_PYT_MIN: tuple[int, int, int]
 ROOT_DIR: str
 PID: int
 
-class ExitStatus(Enum):
+class ExitStatus(IntEnum):
     EX_OK: int
     EX_OSFILE: int
     EX_CANTCREAT: int

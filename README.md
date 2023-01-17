@@ -294,6 +294,10 @@ classDiagram
     name()
     value()
   }
+  class IntEnum {
+  }
+  class ReprEnum {
+  }
   class Const {
     name
   }
@@ -406,10 +410,12 @@ classDiagram
   }
   class NamedTuple {
   }
-  ExitStatus --|> Enum
+  ExitStatus --|> IntEnum
+  IntEnum --|> ReprEnum
+  ReprEnum --|> Enum
   Const --|> Enum
   EventMSG --|> NamedTuple
-  ExitStatus --|> Enum
+  ExitStatus --|> IntEnum
   LogMessages --|> NamedTuple
   LoggingSetup --|> NamedTuple
   Tag --|> Enum
@@ -649,7 +655,7 @@ Set standard logging messages.
 </pre>
 ### ExitStatus()
 ```python
-class ExitStatus(Enum):
+class ExitStatus(IntEnum):
 ```
 <pre>
 
@@ -1267,7 +1273,7 @@ This function define the argument parser and return it.
 ```
 ### run()
 ```python
-def run() -> int:
+def run() -> ExitStatus:
 ```
 <pre>
 
@@ -1676,7 +1682,7 @@ Describe a file with a NamedTuple.
     >>> fstab.path.stem
     'fstab'
     >>> fstab
-    MyFile(path=PosixPath(...), exists=False, status=ExitStatus.EX_OSFILE)
+    MyFile(path=PosixPath(...), exists=False, status=72)
     >>> fstab.absolute()
     '/etc/fstab'
     >>> # pathlib to run the test everywhere

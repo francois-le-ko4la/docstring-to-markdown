@@ -42,6 +42,10 @@ classDiagram
     name()
     value()
   }
+  class IntEnum {
+  }
+  class ReprEnum {
+  }
   class Const {
     name
   }
@@ -154,10 +158,12 @@ classDiagram
   }
   class NamedTuple {
   }
-  ExitStatus --|> Enum
+  ExitStatus --|> IntEnum
+  IntEnum --|> ReprEnum
+  ReprEnum --|> Enum
   Const --|> Enum
   EventMSG --|> NamedTuple
-  ExitStatus --|> Enum
+  ExitStatus --|> IntEnum
   LogMessages --|> NamedTuple
   LoggingSetup --|> NamedTuple
   Tag --|> Enum
