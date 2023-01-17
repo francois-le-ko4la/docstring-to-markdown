@@ -144,7 +144,6 @@ classDiagram
 
 
 ```
-
 ## Objects:
 
 [dump()](#dump)<br />
