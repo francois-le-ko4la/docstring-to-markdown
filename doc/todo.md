@@ -32,5 +32,5 @@
 - [X] Use Enum class to define ExitStatus, Const and Tag
 - [X] Fix an issue on Atttributes management
 - [X] Fix decorator argument : add ()
-- [ ] Test
-- [ ] Release 0.5.0
+- [X] Test
+- [X] Release 0.5.0

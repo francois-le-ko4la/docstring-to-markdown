@@ -159,8 +159,8 @@ This package is distributed under the [GPLv3 license](./LICENSE)
 - [X] Use Enum class to define ExitStatus, Const and Tag
 - [X] Fix an issue on Atttributes management
 - [X] Fix decorator argument : add ()
-- [ ] Test
-- [ ] Release 0.5.0
+- [X] Test
+- [X] Release 0.5.0
 
 # Dev notes
 ## TOML file:
