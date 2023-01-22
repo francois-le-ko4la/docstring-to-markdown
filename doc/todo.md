@@ -34,3 +34,7 @@
 - [X] Fix decorator argument : add ()
 - [X] Test
 - [X] Release 0.5.0
+- [X] Detect and fix issue on Constant - Improve type detection/extraction
+- [X] Fix pyproject.toml
+- [X] Release 0.5.1
+

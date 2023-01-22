@@ -164,6 +164,10 @@ This package is distributed under the [GPLv3 license](./LICENSE)
 - [X] Fix decorator argument : add ()
 - [X] Test
 - [X] Release 0.5.0
+- [X] Detect and fix issue on Constant - Improve type detection/extraction
+- [X] Fix pyproject.toml
+- [X] Release 0.5.1
+
 
 # Dev notes
 ## TOML file:
@@ -173,7 +177,7 @@ This package is distributed under the [GPLv3 license](./LICENSE)
 # -*- coding: utf-8 -*-
 [project]
 name = "docstring2md"
-version = "0.5.0"
+version = "0.5.1"
 authors = [
   {name = "ko4la" }
 ]
@@ -195,7 +199,6 @@ classifiers = [
     "OSI Approved :: GNU General Public License v3 (GPLv3)",
 ]
 dependencies = [
-    "PyYAML>=3.12",
     "rich>=12.6.0",
     "rich_argparse>=0.6.0",
     "importlib-metadata ~= 1.0 ; python_version < '3.8'"
@@ -212,9 +215,7 @@ dev = [
     "pytest-pycodestyle",
     "pytest-mypy",
     "pytest-pydocstyle",
-    "pytest-isort",
-    "types-setuptools",
-    "types-PyYAML"]
+    "pytest-isort"]
 
 [project.urls]
 "Homepage" = "https://github.com/francois-le-ko4la/docstring-to-markdown"
@@ -243,7 +244,6 @@ filterwarnings = [
     "ignore:.*U.*mode is deprecated:DeprecationWarning",
     "ignore::DeprecationWarning"]
 [tool.mypy]
-mypy_path = "stubs/"
 disallow_any_generics = true
 disallow_untyped_defs = true
 warn_redundant_casts = true

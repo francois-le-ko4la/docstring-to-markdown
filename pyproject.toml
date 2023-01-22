@@ -23,7 +23,6 @@ classifiers = [
     "OSI Approved :: GNU General Public License v3 (GPLv3)",
 ]
 dependencies = [
-    "PyYAML>=3.12",
     "rich>=12.6.0",
     "rich_argparse>=0.6.0",
     "importlib-metadata ~= 1.0 ; python_version < '3.8'"
@@ -40,9 +39,7 @@ dev = [
     "pytest-pycodestyle",
     "pytest-mypy",
     "pytest-pydocstyle",
-    "pytest-isort",
-    "types-setuptools",
-    "types-PyYAML"]
+    "pytest-isort"]
 
 [project.urls]
 "Homepage" = "https://github.com/francois-le-ko4la/docstring-to-markdown"
@@ -71,7 +68,6 @@ filterwarnings = [
     "ignore:.*U.*mode is deprecated:DeprecationWarning",
     "ignore::DeprecationWarning"]
 [tool.mypy]
-mypy_path = "stubs/"
 disallow_any_generics = true
 disallow_untyped_defs = true
 warn_redundant_casts = true
