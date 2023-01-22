@@ -303,7 +303,7 @@ class ObjVisitor(ast.NodeVisitor):
     @staticmethod
     def __get_value_from_constant(
             node: Union[ast.Constant, ast.NameConstant]) -> str:
-        return node.value
+        return node.value if node.value != '' else '""'
 
     @staticmethod
     def __get_value_from_num(node: ast.Num) -> str:
@@ -373,12 +373,13 @@ class ObjVisitor(ast.NodeVisitor):
             ast.Subscript: self.__get_value_from_subscript,
             ast.UnaryOp: self.__get_value_from_unary}
 
-        result: str = methode_by_type[type(node)](node) \
-            if type(node) in methode_by_type else ""
-
-        if result == "":
+        result: str = ""
+        try:
+            result = methode_by_type[type(node)](node)
+        except KeyError:
             logger.warning(LOG_MSG.unknown_type_of_node.warning,
-                           str(ast.dump(node)))
+                           str(type(node)) + " / " + str(ast.dump(node)))
+
         return result
 
     # -------------------------------------------------------------------------

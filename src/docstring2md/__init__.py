@@ -87,6 +87,9 @@ Use:
         - EX_IOERR: 74 -> write error
     ```
 
+Compatibility:
+    Python 3.7+
+
 Setup:
     - User:
 

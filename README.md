@@ -83,6 +83,9 @@ EXIT STATUS:
     - EX_IOERR: 74 -> write error
 ```
 
+# Compatibility:
+Python 3.7+
+
 # Setup:
 - User:
 
@@ -212,6 +215,9 @@ dev = [
     "pytest-isort",
     "types-setuptools",
     "types-PyYAML"]
+
+[project.urls]
+"Homepage" = "https://github.com/francois-le-ko4la/docstring-to-markdown"
 
 [project.scripts]
 export_docstring2md = "docstring2md.cli:run"

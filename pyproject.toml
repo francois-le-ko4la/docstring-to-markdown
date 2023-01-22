@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 [project]
 name = "docstring2md"
-version = "0.5.0"
+version = "0.5.1"
 authors = [
   {name = "ko4la" }
 ]
