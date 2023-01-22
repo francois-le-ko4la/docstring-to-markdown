@@ -44,6 +44,9 @@ dev = [
     "types-setuptools",
     "types-PyYAML"]
 
+[project.urls]
+"Homepage" = "https://github.com/francois-le-ko4la/docstring-to-markdown"
+
 [project.scripts]
 export_docstring2md = "docstring2md.cli:run"
 
