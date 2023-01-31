@@ -93,7 +93,7 @@ Get the package:
 ```shell
 git clone https://github.com/francois-le-ko4la/docstring-to-markdown.git
 ```
-Enter in the directory:
+Change to the folder:
 ```shell
 cd docstring-to-markdown
 ```
@@ -108,7 +108,7 @@ Get the package:
 ```shell
 git clone https://github.com/francois-le-ko4la/docstring-to-markdown.git
 ```
-Enter in the directory:
+Change to the folder:
 ```shell
 cd docstring-to-markdown
 ```
