@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# Error on __version__:
-# mypy: disable-error-code=attr-defined
 """
 Docstring2md: cli.
 

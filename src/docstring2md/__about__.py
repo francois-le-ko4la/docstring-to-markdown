@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# Metadata with importlib_metadata:
-# mypy: disable-error-code=no-redef
 """
 Docstring2md: about.
 

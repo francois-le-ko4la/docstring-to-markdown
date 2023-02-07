@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# AST doesn't conform to snake_case naming style + return:
-# pylint: disable=invalid-name, too-many-return-statements, too-many-branches
+# AST doesn't conform to snake_case
+# pylint: disable=invalid-name
 """
 Docstring2md: AST Engine.
 
