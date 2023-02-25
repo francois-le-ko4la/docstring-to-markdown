@@ -1,6 +1,7 @@
 <p align="center">
   <img src="https://forthebadge.com/images/badges/made-with-python.svg" height="30" />
   <img src="https://img.shields.io/badge/Ubuntu-E95420?style=for-the-badge&logo=ubuntu&logoColor=white" height="30" />
+  <img src="https://img.shields.io/badge/Work_on-Linux_MACOS_Windows-0071C5?style=for-the-badge&logoColor=white" height="30" />
   <br />
   <img src="https://img.shields.io/github/v/release/francois-le-ko4la/docstring-to-markdown?display_name=tag" />
   <img src="https://img.shields.io/badge/python-3.7%2B-blue" />
